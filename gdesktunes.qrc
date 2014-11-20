@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>g_desk_tunes.ico</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>icons/32x32/preferences-other.png</file>
+        <file>icons/gdesktunes.iconset/icon_32x32@2x.png</file>
+        <file>icons/gdesktunes.iconset/icon_256x256.png</file>
+        <file>icons/gdesktunes.iconset/icon_128x128.png</file>
+        <file>icons/32x32/preferences-desktop-color.png</file>
+        <file>icons/32x32/preferences-desktop-keyboard.png</file>
+        <file>icons/32x32/preferences-desktop-user-password.png</file>
+        <file>icons/8x8/1415314633_circle_close_delete.png</file>
+        <file>icons/32x32/lastfm.png</file>
+    </qresource>
+</RCC>

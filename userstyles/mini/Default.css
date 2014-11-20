@@ -1,0 +1,84 @@
+/*
+#id Selects id
+.class selects class
+element selects element
+*/
+
+html {
+    min-width: 360px !important;
+}
+
+body {
+    background: rgb(225, 225, 225) !important;
+    width: 360px !important;
+    height: 160px !important;
+}
+
+#gba {
+    height: 0px !important;
+}
+
+#oneGoogleWrapper {
+    display: none !important;
+    height: 0px !important;
+
+}
+
+#nav-content-container {
+    display: none !important;
+}
+
+.player-top {
+    display: none !important;
+}
+
+#main {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+#player {
+    position: relative !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    height: 100% !important;
+}
+
+#player-left-wrapper {
+    float: none !important;
+    width: 100% !important;
+}
+
+.now-playing-menu-wrapper {
+    background: transparent !important;
+    background-image: none !important;
+    display: none !important;
+}
+
+.player-middle {
+    float: none !important;
+    background-color: transparent !important;
+}
+
+.fade-out:after {
+    background-image: none !important;
+    background: none !important;
+}
+
+#player-right-wrapper {
+    float: none !important;
+}
+
+.screensaver.visible, .panning {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.overlay {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#player .flat-button[data-id="queue"] {
+    display: none !important;
+}

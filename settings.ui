@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Settings</class>
+ <widget class="QDialog" name="Settings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>557</width>
+    <height>306</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GDeskTunes Settings</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="usesScrollButtons">
+      <bool>false</bool>
+     </property>
+     <property name="tabsClosable">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="general_tab">
+      <attribute name="icon">
+       <iconset resource="gdesktunes.qrc">
+        <normaloff>:/icons/32x32/preferences-other.png</normaloff>:/icons/32x32/preferences-other.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="mini_on_top">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Mini player on top</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="appearance_tab">
+      <attribute name="icon">
+       <iconset resource="gdesktunes.qrc">
+        <normaloff>:/icons/32x32/preferences-desktop-color.png</normaloff>:/icons/32x32/preferences-desktop-color.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Appearance</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
+       <property name="labelAlignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="customize">
+         <property name="text">
+          <string>Customize GDeskTunes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="customize_info">
+         <property name="styleSheet">
+          <string notr="true">QLabel { color: gray }</string>
+         </property>
+         <property name="text">
+          <string>GDeskTunes uses the stylesheets in the userstyles directory to change the appearance of the Google Play Music™ website. You can switch to another style with this selection box.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="style_label">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Style</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="style_combo"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="mini_style_label">
+         <property name="text">
+          <string>Mini player style</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="mini_style_combo"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="lastfm_tab">
+      <attribute name="icon">
+       <iconset resource="gdesktunes.qrc">
+        <normaloff>:/icons/32x32/lastfm.png</normaloff>:/icons/32x32/lastfm.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Last.fm</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="5" column="0">
+        <widget class="QLabel" name="lastfm_password">
+         <property name="text">
+          <string>Password:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="scrobble">
+         <property name="text">
+          <string>Scrobble songs to Last.fm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="auto_love">
+         <property name="text">
+          <string>Automatically love &quot;thumbs up&quot; tracks</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="last_fm_password_text">
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="last_fm_user_name_text"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="scrobbling_label">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Scrobbling:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lastfm_username">
+         <property name="text">
+          <string>Username:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="authorize">
+         <property name="text">
+          <string>Authorize</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="privacy_tab">
+      <attribute name="icon">
+       <iconset resource="gdesktunes.qrc">
+        <normaloff>:/icons/32x32/preferences-desktop-user-password.png</normaloff>:/icons/32x32/preferences-desktop-user-password.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Privacy</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_3">
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="cookies">
+         <property name="text">
+          <string>Don't save GDeskTunes cookies</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="clear">
+         <property name="text">
+          <string>Remove all stored cookies</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="cookies_info">
+         <property name="styleSheet">
+          <string notr="true">QLabel { color: gray }</string>
+         </property>
+         <property name="text">
+          <string>Enabling this preference will require you to log in every time you open GDeskTunes.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="clear_info">
+         <property name="styleSheet">
+          <string notr="true">QLabel { color: gray }</string>
+         </property>
+         <property name="text">
+          <string>This will clear all cookies stored by GDeskTunes and force a log in.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>last_fm_user_name_text</tabstop>
+  <tabstop>last_fm_password_text</tabstop>
+  <tabstop>authorize</tabstop>
+  <tabstop>scrobble</tabstop>
+  <tabstop>auto_love</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>customize</tabstop>
+  <tabstop>clear</tabstop>
+  <tabstop>style_combo</tabstop>
+  <tabstop>cookies</tabstop>
+  <tabstop>mini_style_combo</tabstop>
+  <tabstop>mini_on_top</tabstop>
+ </tabstops>
+ <resources>
+  <include location="gdesktunes.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cookies</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Settings</receiver>
+   <slot>doNotSaveCookies(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>482</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mini_on_top</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Settings</receiver>
+   <slot>miniPlayerOnTop(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mini_style_combo</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>Settings</receiver>
+   <slot>miniStyle(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>482</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>customize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Settings</receiver>
+   <slot>customize(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>58</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clear</sender>
+   <signal>clicked()</signal>
+   <receiver>Settings</receiver>
+   <slot>clearCookies()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>57</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>208</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>style_combo</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>Settings</receiver>
+   <slot>style(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>authorize</sender>
+   <signal>clicked()</signal>
+   <receiver>Settings</receiver>
+   <slot>authorize()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>344</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>miniPlayerOnTop(bool)</slot>
+  <slot>style(QString)</slot>
+  <slot>clearCookies()</slot>
+  <slot>doNotSaveCookies(bool)</slot>
+  <slot>customize(bool)</slot>
+  <slot>miniStyle(QString)</slot>
+  <slot>authorize()</slot>
+ </slots>
+</ui>
