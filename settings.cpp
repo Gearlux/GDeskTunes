@@ -10,12 +10,17 @@
 #include "cookiejar.h"
 
 Settings::Settings(MainWindow *parent) :
-    QDialog(parent->webView()),
+    QDialog(parent),
+    last_fm_authorized(false),
     ui(new Ui::Settings),
     main_window(parent),
     options(parent->options)
 {
     ui->setupUi(this);
+
+    setWindowFlags(Qt::Dialog
+                   | Qt::WindowCloseButtonHint
+                   | Qt::CustomizeWindowHint);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     // Remove the appearance and the shortcuts tab since it is not yet implemented in Qt4
@@ -25,11 +30,29 @@ Settings::Settings(MainWindow *parent) :
     ui->tabWidget->removeTab(1);
 #endif
 #endif
+}
 
+Settings::~Settings()
+{
+    delete ui;
+}
+
+void Settings::activateAndRaise()
+{
+    show();
+    raise();
+    activateWindow();
+}
+
+void Settings::show()
+{
     ui->mini_on_top->setChecked(options.isMiniPlayerOnTop());
 
     ui->cookies->setChecked(!options.saveCookies());
     ui->customize->setChecked(options.isCustomized());
+
+    ui->auto_love->setChecked(options.isAutoLiked());
+    ui->scrobble->setChecked(options.isScrobbled());
 
     QStringList styles = options.getStyles();
 
@@ -49,23 +72,12 @@ Settings::Settings(MainWindow *parent) :
     ui->last_fm_user_name_text->setText(options.getLastFMUserName());
     ui->last_fm_password_text->setText(options.getLastFMPassword());
 
-    this->lastFMChanged();
-
-#ifdef Q_OS_MACX
-    qDebug() << "Tweaking settings dialog for mac";
-#endif
-
-   connect(main_window->last_fm, SIGNAL(changed()), this, SLOT(lastFMChanged()));
+    QDialog::show();
 }
 
-Settings::~Settings()
+void Settings::closeEvent(QCloseEvent *ev)
 {
-    delete ui;
-}
-
-void Settings::closeEvent(QCloseEvent *)
-{
-    main_window->settingsDestroyed();
+    qDebug() << "Settings::closeEvent(" << ev << ")";
 }
 
 void Settings::miniPlayerOnTop(bool on_top)
@@ -118,23 +130,23 @@ void Settings::customize(bool customize)
 void Settings::authorize()
 {
     qDebug() << "Settings::authorize()";
-    if (!main_window->last_fm->isAuthorized())
+    if (last_fm_authorized)
     {
-        main_window->options.setLastFMUserName(this->ui->last_fm_user_name_text->text());
-        main_window->options.setLastFMPassword(this->ui->last_fm_password_text->text());
-        main_window->last_fm->login();
+        emit logout();
     }
     else
     {
-        main_window->last_fm->logout();
+        main_window->options.setLastFMUserName(this->ui->last_fm_user_name_text->text());
+        main_window->options.setLastFMPassword(this->ui->last_fm_password_text->text());
+        emit login();
     }
-    lastFMChanged();
 }
 
-void Settings::lastFMChanged()
+void Settings::setAuthorized(bool authorized)
 {
-    qDebug() << "Settings::lastFMChanged()";
-    if (main_window->last_fm->isAuthorized())
+    qDebug() << "Settings::setAuthorized(" << authorized << ")";
+    this->last_fm_authorized = authorized;
+    if (authorized)
     {
         ui->authorize->setText("Deauthorize");
     }
@@ -142,4 +154,16 @@ void Settings::lastFMChanged()
     {
         ui->authorize->setText("Authorize");
     }
+}
+
+void Settings::on_scrobble_toggled(bool checked)
+{
+    qDebug() << "Scrobble: " << checked;
+    main_window->options.setScrobbled(checked);
+}
+
+void Settings::on_auto_love_toggled(bool checked)
+{
+    qDebug() << "Auto Love: " << checked;
+    main_window->options.setAutoLiked(checked);
 }

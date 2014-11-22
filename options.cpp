@@ -15,6 +15,8 @@ Options::Options(MainWindow *window) :
     customize(false),
     css(""),
     mini_css(""),
+    scrobble(false),
+    auto_like(false),
     last_fm_user_name(QString::null),
     last_fm_password(QString::null)
 {
@@ -30,7 +32,7 @@ void Options::save(QSettings &settings)
     settings.setValue("customize", this->customize);
     settings.setValue("last.fm.username", this->last_fm_user_name);
     settings.setValue("last.fm.password", this->last_fm_password);
-    settings.setValue("last.fm.authorized", main_window->last_fm->isAuthorized());
+    settings.setValue("last.fm.authorized", this->last_fm_authorized);
     settings.setValue("last.fm.scrobble", this->scrobble);
     settings.setValue("last.fm.autolike", this->auto_like);
 }
@@ -45,11 +47,15 @@ void Options::restore(QSettings &settings)
     this->setHideMenu(settings.value("hideMenu", false).toBool());
     this->save_cookies = settings.value("saveCookies", true).toBool();
     this->customize = settings.value("customize", false).toBool();
-    this->last_fm_user_name = settings.value("last.fm.username", "").toString();
-    this->last_fm_password = settings.value("last.fm.password", "").toString();
+
+    setLastFMUserName(settings.value("last.fm.username", "").toString());
+    setLastFMPassword(settings.value("last.fm.password", "").toString());
+    setScrobbled(settings.value("last.fm.scrobble", false).toBool());
+    setAutoLiked(settings.value("last.fm.autolike", false).toBool());
+
     if (settings.value("last.fm.authorized", false).toBool())
     {
-        main_window->last_fm->login();
+        emit login();
     }
 }
 

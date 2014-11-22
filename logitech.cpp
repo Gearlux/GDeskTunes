@@ -1,6 +1,5 @@
 #include "logitech.h"
 
-#include <iostream>
 #include <QSettings>
 
 Logitech::Logitech()

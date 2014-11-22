@@ -8,12 +8,14 @@
 // Forward declarations
 class MainWindow;
 
-class Options
+class Options : public QObject
 {
     friend class MainWindow;
 
+    Q_OBJECT
+
 public:
-    Options(MainWindow *mainWindow);
+    explicit Options(MainWindow *mainWindow);
 
 public:
     void save(QSettings &settings);
@@ -42,16 +44,28 @@ public:
 
     Qt::WindowFlags miniPlayerFlags();
 
-    void setScrobble(bool scrobble) { this->scrobble = scrobble; }
-    bool isScrobble() { return this->scrobble; }
+signals:
+    void scrobbled(bool scrobble);
+    void autoLiked(bool like);
+    void lastFMUserName(QString name);
+    void lastFMPassword(QString name);
 
-    void setAutoLike(bool like) { this->auto_like = like; }
-    bool isAutoLike() { return this->auto_like; }
+    void login();
 
-    void setLastFMUserName(QString name) { this->last_fm_user_name = name; }
+public slots:
+    void setScrobbled(bool scrobble) { this->scrobble = scrobble; emit scrobbled(scrobble); }
+    bool isScrobbled() { return this->scrobble; }
+
+    void setAutoLiked(bool like) { this->auto_like = like; emit autoLiked(like); }
+    bool isAutoLiked() { return this->auto_like; }
+
+    void setLastFMUserName(QString name) { this->last_fm_user_name = name; emit lastFMUserName(name); }
     QString getLastFMUserName() { return this->last_fm_user_name; }
-    void setLastFMPassword(QString passwd) { this->last_fm_password = passwd; }
+
+    void setLastFMPassword(QString passwd) { this->last_fm_password = passwd; emit lastFMPassword(passwd); }
     QString getLastFMPassword() { return this->last_fm_password; }
+
+    void setAuthorized(bool status) { this->last_fm_authorized = status; }
 
 private:
     MainWindow *main_window;
@@ -63,10 +77,14 @@ private:
     bool customize;
     QString css;
     QString mini_css;
+
+    // LastFM functionality
     bool scrobble;
     bool auto_like;
     QString last_fm_user_name;
     QString last_fm_password;
+
+    bool last_fm_authorized;
 };
 
 #endif // OPTIONS_H

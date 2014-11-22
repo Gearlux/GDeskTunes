@@ -10,24 +10,34 @@ class LastFM : public QObject
 {
     Q_OBJECT
 public:
-    explicit LastFM(MainWindow *parent = 0);
+    explicit LastFM(QObject *parent = 0);
 
     bool isAuthorized();
 
 signals:
-    void changed();
+    void authorized(bool status);
 
 public slots:
-    void login();
-    void loggedIn();
+    void setLastFMUserName(QString username);
+    void setLastFMPassword(QString password);
+    void setScrobbled(bool);
+    void setAutoLiked(bool);
 
+    void login();
     void logout();
 
-    void scrobble(QString title, QString artist, QString album, int duration);
+    void nowPlaying(QString title, QString artist, QString album, int duration);
+    void love(QString title, QString artist, QString album);
+    void unlove(QString title, QString artist, QString album);
+
+private slots:
+    void loggedIn();
 
 private:
-    MainWindow* main_window;
     lastfm::Audioscrobbler audioscrobbler;
+    QString md5_password;
+    bool scrobbled;
+    bool auto_liked;
 };
 
 #endif // LASTFM_H

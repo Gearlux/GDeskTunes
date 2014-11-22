@@ -31,7 +31,19 @@ void GoogleMusicApp::playbackChanged(int mode)
 
 void GoogleMusicApp::ratingChanged(int rating)
 {
-    qDebug() << "Rating" << rating;
+    if (current_rating != rating)
+    {
+        qDebug() << "Rating" << rating;
+        current_rating = rating;
+        if (rating > 3)
+        {
+            emit love(current_title, current_artist, current_album);
+        }
+        else
+        {
+            emit unlove(current_title, current_artist, current_album);
+        }
+    }
 }
 
 void GoogleMusicApp::playbackTimeChanged(int current, int total)
@@ -41,17 +53,22 @@ void GoogleMusicApp::playbackTimeChanged(int current, int total)
 
 void GoogleMusicApp::repeatChanged(QString mode)
 {
-    qDebug() << mode << getRepeat();
-    main_window->repeat_all->setChecked(mode == "LIST_REPEAT");
-    main_window->repeat_one->setChecked(mode == "SINGLE_REPEAT");
-    main_window->repeat_off->setChecked(mode == "NO_REPEAT");
+    if (current_repeat != mode)
+    {
+        qDebug() << mode << getRepeat();
+        emit repeat(mode);
+        current_repeat = mode;
+    }
 }
 
 void GoogleMusicApp::shuffleChanged(QString mode)
 {
-    qDebug() << mode << getShuffle();
-    main_window->shuffle_on->setChecked(mode == "ALL_SHUFFLE");
-    main_window->shuffle_off->setChecked(mode == "NO_SHUFFLE");
+    if (current_shuffle != mode)
+    {
+        qDebug() << mode << getShuffle();
+        emit shuffle(mode);
+        current_shuffle = mode;
+    }
 }
 
 QString GoogleMusicApp::getShuffle()
@@ -59,12 +76,12 @@ QString GoogleMusicApp::getShuffle()
     return main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.getShuffle()").toString();
 }
 
-void GoogleMusicApp::shuffleOff()
+void GoogleMusicApp::on_shuffle_off_triggered()
 {
    main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeShuffle('NO_SHUFFLE')");
 }
 
-void GoogleMusicApp::shuffleOn()
+void GoogleMusicApp::on_shuffle_on_triggered()
 {
    main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeShuffle('ALL_SHUFFLE')");
 }
@@ -74,17 +91,17 @@ QString GoogleMusicApp::getRepeat()
     return main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.getRepeat()").toString();
 }
 
-void GoogleMusicApp::repeatOff()
+void GoogleMusicApp::on_repeat_off_triggered()
 {
     main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('NO_REPEAT')");
 }
 
-void GoogleMusicApp::repeatAll()
+void GoogleMusicApp::on_repeat_all_triggered()
 {
     main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('LIST_REPEAT')");
 }
 
-void GoogleMusicApp::repeatOne()
+void GoogleMusicApp::on_repeat_one_triggered()
 {
     main_window->webView()->page()->mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('SINGLE_REPEAT')");
 }
@@ -97,8 +114,31 @@ void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QS
     qDebug() << "Art: " << art;
     qDebug() << "Duration: " << duration;
 
+    current_title = title;
+    current_artist = artist;
+    current_album = album;
+
+    current_rating = -1;
+
     emit nowPlaying(title, artist, album, duration);
 }
+
+void GoogleMusicApp::loadFinished(bool status)
+{
+    emit shuffle(getShuffle());
+    emit repeat(getRepeat());
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+void GoogleMusicApp::addWindowObjects()
+{
+    qDebug() << "GoogleMusicApp::addWindowObjects()";
+    // FIXME
+    MainWindow *w = (MainWindow*)parent();
+    w->webView()->page()->mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", this);
+}
+#endif
+
 
 
 

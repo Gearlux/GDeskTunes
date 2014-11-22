@@ -58,10 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     options(this),
     ui(new Ui::GDeskTunes),
-    settings(0),
     windows_offset(0,0),
-    app(new GoogleMusicApp(this)),
-    last_fm(new LastFM(this)),
     mini(false),
     do_move(false),
     quitting(false)
@@ -69,15 +66,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     shuffle_menu = ui->menuControls->addMenu("Shuffle");
-    shuffle_on = shuffle_menu->addAction("On", app, SLOT(shuffleOn()));
-    shuffle_off = shuffle_menu->addAction("Off", app, SLOT(shuffleOff()));
+    // FIXME  shuffle_on = shuffle_menu->addAction("On", app, SLOT(shuffleOn()));
+    shuffle_on = shuffle_menu->addAction("On");
+    shuffle_on->setObjectName("shuffle_on");
+    // FIXME shuffle_off = shuffle_menu->addAction("Off", app, SLOT(shuffleOff()));
+    shuffle_off = shuffle_menu->addAction("Off");
+    shuffle_off->setObjectName("shuffle_off");
     shuffle_on->setCheckable(true);
     shuffle_off->setCheckable(true);
 
     repeat_menu = ui->menuControls->addMenu("Repeat");
-    repeat_off = repeat_menu->addAction("Off", app, SLOT(repeatOff()));
-    repeat_all = repeat_menu->addAction("All", app, SLOT(repeatAll()));
-    repeat_one = repeat_menu->addAction("One", app, SLOT(repeatOne()));
+    // FIXME repeat_off = repeat_menu->addAction("Off", app, SLOT(repeatOff()));
+    repeat_off = repeat_menu->addAction("Off");
+    repeat_off->setObjectName("repeat_off");
+    // FIXME repeat_all = repeat_menu->addAction("All", app, SLOT(repeatAll()));
+    repeat_all = repeat_menu->addAction("All");
+    repeat_all->setObjectName("repeat_all");
+    // FIXME repeat_one = repeat_menu->addAction("One", app, SLOT(repeatOne()));
+    repeat_one = repeat_menu->addAction("One");
+    repeat_one->setObjectName("repeat_one");
     repeat_off->setCheckable(true);
     repeat_all->setCheckable(true);
     repeat_one->setCheckable(true);
@@ -104,9 +111,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Setup webview and windows interaction
     connect(webView(), SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
-    connect(webView(), SIGNAL(loadFinished(bool)), this, SLOT(updateUI()));
-    connect(webView()->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addWindowObjects()));
-
 }
 
 MainWindow::~MainWindow()
@@ -155,7 +159,6 @@ void MainWindow::setupActions()
     connect(ui->actionPrevious, SIGNAL(triggered()), this, SLOT(previous()));
     connect(ui->actionNext, SIGNAL(triggered()), this, SLOT(next()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-    connect(ui->actionPreferences, SIGNAL(triggered()), this, SLOT(changeSettings()));
     connect(ui->actionQuit_GDeskTunes, SIGNAL(triggered()), this, SLOT(quitGDeskTunes()));
     connect(ui->actionSwitch_mini, SIGNAL(triggered()), this, SLOT(switchMiniPlayer()));
     connect(ui->actionEnter_Full_Screen, SIGNAL(triggered()), this, SLOT(switchFullScreen()));
@@ -168,8 +171,8 @@ void MainWindow::setupActions()
 #ifndef Q_OS_WIN
     connect(ui->actionClose_Window, SIGNAL(triggered()), this, SLOT(closeWindow()));
 #endif
-    connect(ui->actionIncrease_Volume, SIGNAL(triggered()), app, SLOT(increaseVolume()));
-    connect(ui->actionDecrease_Volume, SIGNAL(triggered()), app, SLOT(decreaseVolume()));
+    // FIXME connect(ui->actionIncrease_Volume, SIGNAL(triggered()), app, SLOT(increaseVolume()));
+    // FIXME connect(ui->actionDecrease_Volume, SIGNAL(triggered()), app, SLOT(decreaseVolume()));
 }
 
 #if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -182,7 +185,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
          {
             *result = 0;
             // open preferences dialog
-            changeSettings();
+            emit ui->actionPreferences->triggered();
             return (true);
          }
 
@@ -203,20 +206,6 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     return false;
 }
 #endif
-
-void MainWindow::changeSettings()
-{
-    if (settings == 0)
-    {
-        settings = new Settings(this);
-        settings->setWindowFlags(Qt::Dialog
-                                 | Qt::WindowCloseButtonHint
-                                 | Qt::CustomizeWindowHint);
-        settings->show();
-    }
-    settings->raise();
-    settings->activateWindow();
-}
 
 void MainWindow::switchMiniPlayer()
 {
@@ -252,11 +241,6 @@ void MainWindow::setMenuVisible(bool visible)
     }
     ::SetMenuItemInfoA(hMenu, IDM_SHOW_MENU, false, &mii);
 #endif
-}
-
-void MainWindow::settingsDestroyed()
-{
-    settings = 0;
 }
 
 QWebView* MainWindow::webView()
@@ -417,7 +401,7 @@ void MainWindow::receiveMessage(const QString &msg)
     }
     if (commands.contains("--settings"))
     {
-        changeSettings();
+        emit ui->actionPreferences->triggered();
     }
 }
 
@@ -761,12 +745,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::addWindowObjects()
-{
-    qDebug() << "addWindowObjects";
-    webView()->page()->mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", app);
-}
-
 void MainWindow::finishedLoad(bool ok)
 {
     if (!ok)
@@ -809,13 +787,6 @@ void MainWindow::switchFullScreen()
         showFullScreen();
 }
 
-void MainWindow::updateUI()
-{
-    qDebug() << app->getRepeat() << " " << app->getShuffle();
-    app->repeatChanged(app->getRepeat());
-    app->shuffleChanged(app->getShuffle());
-}
-
 void MainWindow::applyStyle(QString css, QString subdir)
 {
     QString full_css = options.getStyle(css, subdir);
@@ -836,4 +807,17 @@ void MainWindow::disableStyle(QString css, QString subdir)
 {
     webView()->page()->mainFrame()->evaluateJavaScript(QString("Styles.disableStyle(\"%2%1\")").arg(css, subdir));
 
+}
+
+void MainWindow::setRepeat(QString mode)
+{
+    repeat_all->setChecked(mode == "LIST_REPEAT");
+    repeat_one->setChecked(mode == "SINGLE_REPEAT");
+    repeat_off->setChecked(mode == "NO_REPEAT");
+}
+
+void MainWindow::setShuffle(QString mode)
+{
+    shuffle_on->setChecked(mode == "ALL_SHUFFLE");
+    shuffle_off->setChecked(mode == "NO_SHUFFLE");
 }

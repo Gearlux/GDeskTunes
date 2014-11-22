@@ -35,7 +35,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -142,6 +142,13 @@
        <string>Last.fm</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="auto_love">
+         <property name="text">
+          <string>Automatically love &quot;thumbs up&quot; tracks</string>
+         </property>
+        </widget>
+       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="lastfm_password">
          <property name="text">
@@ -152,24 +159,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="scrobble">
-         <property name="text">
-          <string>Scrobble songs to Last.fm</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0" colspan="2">
         <widget class="Line" name="line">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="auto_love">
-         <property name="text">
-          <string>Automatically love &quot;thumbs up&quot; tracks</string>
          </property>
         </widget>
        </item>
@@ -180,8 +173,15 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="last_fm_user_name_text"/>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lastfm_username">
+         <property name="text">
+          <string>Username:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="scrobbling_label">
@@ -196,13 +196,13 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lastfm_username">
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="last_fm_user_name_text"/>
+       </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="authorize">
          <property name="text">
-          <string>Username:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <string>Authorize</string>
          </property>
         </widget>
        </item>
@@ -219,10 +219,10 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="1">
-        <widget class="QPushButton" name="authorize">
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="scrobble">
          <property name="text">
-          <string>Authorize</string>
+          <string>Scrobble songs to Last.fm</string>
          </property>
         </widget>
        </item>
@@ -330,7 +330,7 @@
    <slot>miniPlayerOnTop(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
+     <x>224</x>
      <y>61</y>
     </hint>
     <hint type="destinationlabel">
@@ -346,7 +346,7 @@
    <slot>miniStyle(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
+     <x>258</x>
      <y>176</y>
     </hint>
     <hint type="destinationlabel">
@@ -378,7 +378,7 @@
    <slot>clearCookies()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
+     <x>60</x>
      <y>139</y>
     </hint>
     <hint type="destinationlabel">
@@ -394,7 +394,7 @@
    <slot>style(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
+     <x>258</x>
      <y>80</y>
     </hint>
     <hint type="destinationlabel">
@@ -421,6 +421,7 @@
   </connection>
  </connections>
  <slots>
+  <signal>on_scrobble_checked(bool)</signal>
   <slot>miniPlayerOnTop(bool)</slot>
   <slot>style(QString)</slot>
   <slot>clearCookies()</slot>

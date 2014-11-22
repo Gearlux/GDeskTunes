@@ -5,6 +5,8 @@
 #-------------------------------------------------
 QT       += core gui webkit widgets network xml
 
+greaterThan(QT_MAJOR_VERSION, 4): CONFIG += c++11
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
 CONFIG(release, debug|release): DESTDIR = $$OUT_PWD/release
@@ -24,7 +26,8 @@ HEADERS += \
 SOURCES += \
     thirdparty/liblastfm/src/win/NdisEvents.cpp \
     thirdparty/liblastfm/src/win/WmiSink.cpp \
-    thirdparty/liblastfm/src/win/WNetworkConnectionMonitor_win.cpp
+    thirdparty/liblastfm/src/win/WNetworkConnectionMonitor_win.cpp \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile_win.cpp
 
 LIBS += -lwinhttp -lwbemuuid
 
@@ -50,7 +53,8 @@ HEADERS += mac/cocoainit.h \
     thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor.h \
     thirdparty/liblastfm/src/mac/ProxyDict.h
 SOURCES += \
-    thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor_mac.cpp
+    thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor_mac.cpp \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile_unix.cpp
 
 LIBS += -framework Cocoa -framework Carbon -framework CoreFoundation -framework SystemConfiguration
 
@@ -101,7 +105,12 @@ HEADERS += \
     thirdparty/liblastfm/src/XmlQuery.h \
     thirdparty/liblastfm/src/Xspf.h \
     thirdparty/liblastfm/src/misc.h \
-    thirdparty/liblastfm/src/ws.h
+    thirdparty/liblastfm/src/ws.h \
+    \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.h \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.h \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h
+
 
 SOURCES += *.cpp
 SOURCES += \
@@ -130,7 +139,11 @@ SOURCES += \
     thirdparty/liblastfm/src/User.cpp \
     thirdparty/liblastfm/src/ws.cpp \
     thirdparty/liblastfm/src/XmlQuery.cpp \
-    thirdparty/liblastfm/src/Xspf.cpp
+    thirdparty/liblastfm/src/Xspf.cpp \
+    \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.cpp \
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
 
 RESOURCES += \
     gdesktunes.qrc

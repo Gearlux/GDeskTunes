@@ -13,6 +13,11 @@ public:
 
 signals:
     void nowPlaying(QString title, QString artist, QString album, int duration);
+    void love(QString title, QString artist, QString album);
+    void unlove(QString title, QString artist, QString album);
+
+    void repeat(QString mode);
+    void shuffle(QString mode);
 
 public slots:
     void increaseVolume();
@@ -26,17 +31,30 @@ public slots:
 
     void notifySong(QString title, QString artist, QString album, QString art, int duration);
 
+    void loadFinished(bool status);
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    void addWindowObjects();
+#endif
+
     QString getShuffle();
-    void shuffleOff();
-    void shuffleOn();
+    void on_shuffle_off_triggered();
+    void on_shuffle_on_triggered();
 
     QString getRepeat();
-    void repeatOff();
-    void repeatAll();
-    void repeatOne();
+    void on_repeat_off_triggered();
+    void on_repeat_all_triggered();
+    void on_repeat_one_triggered();
 
 private:
     MainWindow* main_window;
+
+    QString current_title;
+    QString current_artist;
+    QString current_album;
+    int current_rating;
+
+    QString current_repeat;
+    QString current_shuffle;
 
 };
 

@@ -10,14 +10,11 @@
 namespace Ui {
 class GDeskTunes;
 }
-class Settings;
 class Options;
 
 // The menu is declared within the MainWindow class and forwards
 // key events to the mainwindow to get the media keys working
 class Menu;
-class GoogleMusicApp;
-class LastFM;
 
 class MainWindow : public QMainWindow
 {
@@ -25,8 +22,6 @@ class MainWindow : public QMainWindow
 
     friend class Menu;
     friend class Options;
-    friend class Settings;
-    friend class GoogleMusicApp;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -68,8 +63,6 @@ public slots:
     void next();
     void previous();
 
-    void changeSettings();
-    void settingsDestroyed();
     void switchMiniPlayer();
     void switchMenu();
     void switchFullScreen();
@@ -83,11 +76,12 @@ public slots:
     void quitGDeskTunes();
     void closeWindow();
 
-    void addWindowObjects();
     void finishedLoad(bool);
-    void updateUI();
 
     void evaluateJavaScriptFile(QString filename);
+
+    void setShuffle(QString mode);
+    void setRepeat(QString mode);
 
 private:
     void createThumbnailToolBar();
@@ -100,11 +94,8 @@ public:
     Options options;
 
     Ui::GDeskTunes *ui;
-    GoogleMusicApp *app;
-    LastFM *last_fm;
-    Settings *settings;
 
-private:
+    // UI stuff that can not be created with Qt Creator
     QMenu *shuffle_menu;
     QAction *shuffle_on;
     QAction *shuffle_off;
@@ -114,13 +105,15 @@ private:
     QAction *repeat_all;
     QAction *repeat_one;
 
+private:
     // Variables related to mini player switching
-    QPoint windows_offset;
     bool mini;
     Qt::WindowFlags normal_flags;
 
     bool quitting;
 
+    // Variables to drag the mini player without title bar
+    QPoint windows_offset;
     bool do_move;
     int mouse_click_x_coordinate;
     int mouse_click_y_coordinate;
