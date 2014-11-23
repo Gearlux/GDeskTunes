@@ -58,31 +58,26 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     options(this),
     ui(new Ui::GDeskTunes),
-    windows_offset(0,0),
     mini(false),
-    do_move(false),
-    quitting(false)
+    quitting(false),
+    windows_offset(0,0),
+    do_move(false)
 {
     ui->setupUi(this);
 
     shuffle_menu = ui->menuControls->addMenu("Shuffle");
-    // FIXME  shuffle_on = shuffle_menu->addAction("On", app, SLOT(shuffleOn()));
     shuffle_on = shuffle_menu->addAction("On");
     shuffle_on->setObjectName("shuffle_on");
-    // FIXME shuffle_off = shuffle_menu->addAction("Off", app, SLOT(shuffleOff()));
     shuffle_off = shuffle_menu->addAction("Off");
     shuffle_off->setObjectName("shuffle_off");
     shuffle_on->setCheckable(true);
     shuffle_off->setCheckable(true);
 
     repeat_menu = ui->menuControls->addMenu("Repeat");
-    // FIXME repeat_off = repeat_menu->addAction("Off", app, SLOT(repeatOff()));
     repeat_off = repeat_menu->addAction("Off");
     repeat_off->setObjectName("repeat_off");
-    // FIXME repeat_all = repeat_menu->addAction("All", app, SLOT(repeatAll()));
     repeat_all = repeat_menu->addAction("All");
     repeat_all->setObjectName("repeat_all");
-    // FIXME repeat_one = repeat_menu->addAction("One", app, SLOT(repeatOne()));
     repeat_one = repeat_menu->addAction("One");
     repeat_one->setObjectName("repeat_one");
     repeat_off->setCheckable(true);
@@ -171,8 +166,6 @@ void MainWindow::setupActions()
 #ifndef Q_OS_WIN
     connect(ui->actionClose_Window, SIGNAL(triggered()), this, SLOT(closeWindow()));
 #endif
-    // FIXME connect(ui->actionIncrease_Volume, SIGNAL(triggered()), app, SLOT(increaseVolume()));
-    // FIXME connect(ui->actionDecrease_Volume, SIGNAL(triggered()), app, SLOT(decreaseVolume()));
 }
 
 #if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
@@ -629,6 +622,7 @@ void MainWindow::about()
     flags |= Qt::WindowCloseButtonHint;
     flags |= Qt::CustomizeWindowHint;
     about->setWindowFlags(flags);
+    about->setAttribute( Qt::WA_DeleteOnClose, true );
     about->show();
 }
 
@@ -820,4 +814,18 @@ void MainWindow::setShuffle(QString mode)
 {
     shuffle_on->setChecked(mode == "ALL_SHUFFLE");
     shuffle_off->setChecked(mode == "NO_SHUFFLE");
+}
+
+void MainWindow::isPlaying(bool playing)
+{
+    ui->actionNext->setEnabled(playing);
+    ui->actionStop->setEnabled(playing);
+    ui->actionPrevious->setEnabled(playing);
+}
+
+void MainWindow::activateWindow()
+{
+    show();
+    raise();
+    QMainWindow::activateWindow();
 }

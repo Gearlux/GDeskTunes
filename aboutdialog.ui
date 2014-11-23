@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
-    <height>278</height>
+    <width>251</width>
+    <height>348</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -142,6 +142,53 @@
     </spacer>
    </item>
    <item>
+    <widget class="QWidget" name="widget_2" native="true">
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton">
+        <property name="maximumSize">
+         <size>
+          <width>90</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="gdesktunes.qrc">
+          <normaloff>:/resources/btn_donateCC_LG.gif</normaloff>:/resources/btn_donateCC_LG.gif</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>92</width>
+          <height>47</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -161,5 +208,25 @@
  <resources>
   <include location="gdesktunes.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>donate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>donate()</slot>
+ </slots>
 </ui>

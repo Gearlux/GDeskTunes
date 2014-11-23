@@ -26,6 +26,14 @@
 #include <QtCore/QDir>
 #include <QWebFrame>
 
+void restore()
+{
+    qDebug() << "restore()";
+
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+    qDebug() << "Preferences: " << settings.fileName();
+
+}
 
 /*
  * Program entry point.
@@ -82,11 +90,15 @@ int main(int argc, char *argv[])
         qDebug() << "Create GoogleMusicApp";
         GoogleMusicApp *app = new GoogleMusicApp(w);
 
-        QObject::connect(w->shuffle_off, SIGNAL(triggered()), app, SLOT(on_shuffle_off_triggered()));
-        QObject::connect(w->shuffle_on, SIGNAL(triggered()), app, SLOT(on_shuffle_on_triggered()));
-        QObject::connect(w->repeat_off, SIGNAL(triggered()), app, SLOT(on_repeat_off_triggered()));
-        QObject::connect(w->repeat_one, SIGNAL(triggered()), app, SLOT(on_repeat_one_triggered()));
-        QObject::connect(w->repeat_all, SIGNAL(triggered()), app, SLOT(on_repeat_all_triggered()));
+        w->webView()->setPage(app);
+
+        QObject::connect(w->shuffle_off, SIGNAL(triggered()), app, SLOT(shuffleOff()));
+        QObject::connect(w->shuffle_on, SIGNAL(triggered()), app, SLOT(shuffleOn()));
+        QObject::connect(w->repeat_off, SIGNAL(triggered()), app, SLOT(repeatOff()));
+        QObject::connect(w->repeat_one, SIGNAL(triggered()), app, SLOT(repeatOne()));
+        QObject::connect(w->repeat_all, SIGNAL(triggered()), app, SLOT(repeatOne()));
+        QObject::connect(w->ui->actionIncrease_Volume, SIGNAL(triggered()), app, SLOT(increaseVolume()));
+        QObject::connect(w->ui->actionDecrease_Volume, SIGNAL(triggered()), app, SLOT(decreaseVolume()));
 
 #ifdef Q_OS_DARWIN
         qDebug() << "Mac application";
@@ -119,16 +131,6 @@ int main(int argc, char *argv[])
         QObject::connect(app, SIGNAL(shuffle(QString)), w, SLOT(setShuffle(QString)));
 
         QObject::connect(w->webView(), SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-        QObject::connect(w->webView()->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), app, SLOT(addWindowObjects()));
-#else
-        QObject::connect(w->webView()->page()->mainFrame(), &QWebFrame::javaScriptWindowObjectCleared,
-                         [w,app]() {
-                            w->webView()->page()->mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", app);
-                          }
-        );
-#endif
 
         qDebug() << "Starting application";
         w->restoreOptions();

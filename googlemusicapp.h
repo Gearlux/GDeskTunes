@@ -1,17 +1,16 @@
 #ifndef GOOGLEMUSICAPP_H
 #define GOOGLEMUSICAPP_H
 
-#include <QObject>
+#include <QWebPage>
 
-class MainWindow;
-
-class GoogleMusicApp : public QObject
+class GoogleMusicApp : public QWebPage
 {
     Q_OBJECT
 public:
-    explicit GoogleMusicApp(MainWindow *parent);
+    explicit GoogleMusicApp(QObject *parent);
 
 signals:
+    void isPlaying(bool playing);
     void nowPlaying(QString title, QString artist, QString album, int duration);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
@@ -32,22 +31,18 @@ public slots:
     void notifySong(QString title, QString artist, QString album, QString art, int duration);
 
     void loadFinished(bool status);
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     void addWindowObjects();
-#endif
 
     QString getShuffle();
-    void on_shuffle_off_triggered();
-    void on_shuffle_on_triggered();
+    void shuffleOff();
+    void shuffleOn();
 
     QString getRepeat();
-    void on_repeat_off_triggered();
-    void on_repeat_all_triggered();
-    void on_repeat_one_triggered();
+    void repeatOff();
+    void repeatAll();
+    void repeatOne();
 
 private:
-    MainWindow* main_window;
-
     QString current_title;
     QString current_artist;
     QString current_album;

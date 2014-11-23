@@ -15,6 +15,9 @@ public:
     explicit AboutDialog(QWidget *parent = 0);
     ~AboutDialog();
 
+public slots:
+    void donate();
+
 private:
     Ui::AboutDialog *ui;
 };

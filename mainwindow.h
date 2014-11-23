@@ -39,6 +39,7 @@ public:
     void setMini(bool toMini);
 
     void restoreOptions();
+
     void applyStyle(QString css, QString subdir = QString::null);
     void disableStyle(QString css, QString subdir = QString::null);
 
@@ -82,6 +83,9 @@ public slots:
 
     void setShuffle(QString mode);
     void setRepeat(QString mode);
+
+    void isPlaying(bool playing);
+    void activateWindow();
 
 private:
     void createThumbnailToolBar();

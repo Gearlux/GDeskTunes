@@ -4,8 +4,6 @@
 #include <QObject>
 #include "thirdparty/liblastfm/src/Audioscrobbler.h"
 
-#include "mainwindow.h"
-
 class LastFM : public QObject
 {
     Q_OBJECT
