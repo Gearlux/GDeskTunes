@@ -15,3 +15,11 @@ if [[ -d "liblastfm" ]]; then
 else
 	git clone https://github.com/lastfm/liblastfm
 fi
+
+if [[ -d "qt-solutions" ]]; then
+	cd qt-solutions
+	git pull --rebase
+	cd -
+else
+	git clone https://gitorious.org/qt-solutions/qt-solutions.git
+fi

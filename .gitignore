@@ -3,3 +3,8 @@ Makefile
 debug
 release
 *.o
+ui_*.h
+.qmake.stash
+moc_*
+*.moc
+qrc*
