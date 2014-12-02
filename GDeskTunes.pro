@@ -5,16 +5,13 @@
 #-------------------------------------------------
 QT       += core gui webkit widgets network xml
 
-greaterThan(QT_MAJOR_VERSION, 4): CONFIG += c++11
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
 CONFIG(release, debug|release): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
 win32: {
-greaterThan(QT_MAJOR_VERSION, 4):
-greaterThan(QT_MINOR_VERISON, 0): QT += winextras
+greaterThan(QT_MAJOR_VERSION, 4): greaterThan(QT_MINOR_VERSION, 0): QT += winextras
 
 HEADERS += \
     thirdparty/liblastfm/src/win/ComSetup.h \
@@ -39,6 +36,7 @@ TEMPLATE = app
 
 mac: {
 QMAKE_INFO_PLIST = Info.plist
+
 ICON = g_desk_tunes.icns
 
 OBJECTIVE_SOURCES += thirdparty/SPMediaKeyTap/SPMediaKeyTap.m \
@@ -60,18 +58,18 @@ LIBS += -framework Cocoa -framework Carbon -framework CoreFoundation -framework 
 
 greaterThan(QT_MAJOR_VERSION, 4): QMAKE_MAC_SDK = macosx10.9
 
-lessThan(QT_MAJOR_VERSION, 5): {
+#lessThan(QT_MAJOR_VERSION, 5): {
 
 info.path = $$DESTDIR/$${TARGET}.app/Contents
 info.files = $$QMAKE_INFO_PLIST
+export(info)
 
 icns.path = $$DESTDIR/$${TARGET}.app/Contents/Resources
 icns.files = $$ICON
-export(info)
 export(icns)
 
 INSTALLS += icns info
-}
+#}
 }
 
 # Needed to compile liblastfm

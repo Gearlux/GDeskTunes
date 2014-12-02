@@ -3,6 +3,8 @@
 #include "ui_mainwindow.h"
 
 #include <QWebFrame>
+#include <QWebElement>
+#include <QDebug>
 
 GoogleMusicApp::GoogleMusicApp(QObject *parent) :
     QWebPage(parent)
@@ -136,6 +138,28 @@ void GoogleMusicApp::addWindowObjects()
     qDebug() << "GoogleMusicApp::addWindowObjects()";
     mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", this);
 }
+
+void GoogleMusicApp::play()
+{
+    qDebug() << "GoogleMusicApp::play()";
+    QWebElement elt = mainFrame()->findFirstElement("*[data-id='play-pause']");
+    elt.evaluateJavaScript("this.click();");
+}
+
+void GoogleMusicApp::next()
+{
+    qDebug() << "GoogleMusicApp::next()";
+    QWebElement elt = mainFrame()->findFirstElement("*[data-id='forward']");
+    elt.evaluateJavaScript("this.click();");
+}
+
+void GoogleMusicApp::previous()
+{
+    qDebug() << "GoogleMusicApp::previous()";
+    QWebElement elt = mainFrame()->findFirstElement("*[data-id='rewind']");
+    elt.evaluateJavaScript("this.click();");
+}
+
 
 
 

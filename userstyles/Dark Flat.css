@@ -143,11 +143,11 @@ a, .simple-dialog a {
 
 .song-row .rating-container.stars {
     height: 100% !important;
-    margin-top: 0px !important;
+    margin-top: 22px !important;
 }
 
 .song-row .rating-container.thumbs [data-rating] {
-    margin-top: 0px;
+    margin-top: 22px !important;
 }
 
 .song-row .hover-button[data-id="menu"], .song-row .hover-button[data-id="menu"]:hover {
@@ -432,8 +432,6 @@ div.simple-dialog-bg {
     border-width: 0 !important;
 }
 
-.song-row [data-col="rating"],
-.song-row .rating-container [data-col="rating"], 
 .song-row .rating-container [data-col="rating"]:hover,
 .song-row.selected-song-row .hover-button[data-id="menu"],
 .nav-item-container .playlistDropDown, .nav-item-container.selected .playlistDropDown,

@@ -3,24 +3,28 @@
 
 #include <QDir>
 #include <QDebug>
+#include <QKeyEvent>
 
-#include "mainwindow.h"
+#include "gdesktunes.h"
+#include "ui_mainwindow.h"
 #include "lastfm.h"
-#include "options.h"
 #include "cookiejar.h"
 
-Settings::Settings(MainWindow *parent) :
+Settings::Settings(GDeskTunes *parent) :
     QDialog(parent),
-    last_fm_authorized(false),
     ui(new Ui::Settings),
-    main_window(parent),
-    options(parent->options)
+    last_fm_authorized(false),
+    // FIXME: remove reference to main_window
+    main_window(parent)
 {
     ui->setupUi(this);
 
     setWindowFlags(Qt::Dialog
                    | Qt::WindowCloseButtonHint
-                   | Qt::CustomizeWindowHint);
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
+                   | Qt::CustomizeWindowHint
+#endif
+                   );
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     // Remove the appearance and the shortcuts tab since it is not yet implemented in Qt4
@@ -46,31 +50,26 @@ void Settings::activateAndRaise()
 
 void Settings::show()
 {
-    ui->mini_on_top->setChecked(options.isMiniPlayerOnTop());
+    ui->mini_on_top->setChecked(main_window->isMiniPlayerOnTop());
 
-    ui->cookies->setChecked(!options.saveCookies());
-    ui->customize->setChecked(options.isCustomized());
+    ui->customize->setChecked(main_window->isCustomized());
 
-    ui->auto_love->setChecked(options.isAutoLiked());
-    ui->scrobble->setChecked(options.isScrobbled());
+    QStringList styles = getStyles();
 
-    QStringList styles = options.getStyles();
-
-    QString css_path = options.getCSS();
+    QString css_path = main_window->getCSS();
     QFileInfo css_info(css_path);
     int index = styles.indexOf(css_info.baseName());
+    ui->style_combo->clear();
     ui->style_combo->addItems(styles);
     ui->style_combo->setCurrentIndex(index);
 
-    QStringList mini_styles = options.getStyles(QString("mini"));
-    QString mini_css = options.getMiniCSS();
+    QStringList mini_styles = getStyles(QString("mini"));
+    QString mini_css = main_window->getMiniCSS();
     QFileInfo mini_css_info(mini_css);
     int mini_index = mini_styles.indexOf(mini_css_info.baseName());
+    ui->mini_style_combo->clear();
     ui->mini_style_combo->addItems(mini_styles);
     ui->mini_style_combo->setCurrentIndex(mini_index);
-
-    ui->last_fm_user_name_text->setText(options.getLastFMUserName());
-    ui->last_fm_password_text->setText(options.getLastFMPassword());
 
     QDialog::show();
 }
@@ -82,28 +81,28 @@ void Settings::closeEvent(QCloseEvent *ev)
 
 void Settings::miniPlayerOnTop(bool on_top)
 {
-    options.setMiniPlayerOnTop(on_top);
+    main_window->setMiniPlayerOnTop(on_top);
 }
 
 void Settings::style(QString style)
 {
-    options.setCSS(style);
+    main_window->setCSS(style);
 }
 
 void Settings::miniStyle(QString style)
 {
-    options.setMiniCSS(style);
+    main_window->setMiniCSS(style);
 }
 
 void Settings::clearCookies()
 {
-    QNetworkCookieJar *cookiejar = this->main_window->webView()->page()->networkAccessManager()->cookieJar();
+    QNetworkCookieJar *cookiejar = this->main_window->ui->webView->page()->networkAccessManager()->cookieJar();
     CookieJar *jar = qobject_cast<CookieJar*>(cookiejar);
     if (jar != 0)
     {
         qDebug() << "Deleting all cookies";
        jar->deleteAllCookies();
-       main_window->webView()->load(QUrl("https://play.google.com/music/listen#"));
+       main_window->ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     }
 }
 
@@ -111,7 +110,7 @@ void Settings::doNotSaveCookies(bool do_not_save)
 {
     if (do_not_save)
     {
-        QNetworkCookieJar *cookiejar = this->main_window->webView()->page()->networkAccessManager()->cookieJar();
+        QNetworkCookieJar *cookiejar = this->main_window->ui->webView->page()->networkAccessManager()->cookieJar();
         CookieJar *jar = qobject_cast<CookieJar*>(cookiejar);
         if (jar != 0)
         {
@@ -119,12 +118,12 @@ void Settings::doNotSaveCookies(bool do_not_save)
            jar->removeCookieFile();
         }
     }
-    options.setSaveCookies(!do_not_save);
+    emit saveCookies(!do_not_save);
 }
 
 void Settings::customize(bool customize)
 {
-    options.setCustomize(customize);
+    main_window->setCustomize(customize);
 }
 
 void Settings::authorize()
@@ -136,9 +135,7 @@ void Settings::authorize()
     }
     else
     {
-        main_window->options.setLastFMUserName(this->ui->last_fm_user_name_text->text());
-        main_window->options.setLastFMPassword(this->ui->last_fm_password_text->text());
-        emit login();
+        emit login(this->ui->last_fm_user_name_text->text(), this->ui->last_fm_password_text->text());
     }
 }
 
@@ -156,14 +153,46 @@ void Settings::setAuthorized(bool authorized)
     }
 }
 
-void Settings::on_scrobble_toggled(bool checked)
+QStringList Settings::getStyles(QString subdir)
 {
-    qDebug() << "Scrobble: " << checked;
-    main_window->options.setScrobbled(checked);
+#ifdef Q_OS_MAC
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../../../userstyles" + QDir::separator() + subdir);
+#else
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles" + QDir::separator() + subdir);
+#endif
+    qDebug() << dir;
+    QList<QFileInfo> files = dir.entryInfoList();
+    QStringList result;
+    for(QList<QFileInfo>::iterator it = files.begin(); it != files.end(); ++it)
+    {
+        if ((*it).isFile())
+        {
+            QString basename = (*it).baseName();
+            if (!basename.contains("mini"))
+                result.append(basename);
+        }
+    }
+    return result;
 }
 
-void Settings::on_auto_love_toggled(bool checked)
+void Settings::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << "Auto Love: " << checked;
-    main_window->options.setAutoLiked(checked);
+    switch(event->key())
+    {
+    case Qt::Key_MediaPlay:
+    case Qt::Key_MediaNext:
+    case Qt::Key_MediaPrevious:
+    {
+        MainWindow *w = qobject_cast<MainWindow*>(parent());
+        if (w != 0)
+        {
+            qDebug() << "Settings dialog captures media key";
+            w->keyPressEvent(event);
+            break;
+        }
+    }
+    default:
+        QDialog::keyPressEvent(event);
+        break;
+    }
 }

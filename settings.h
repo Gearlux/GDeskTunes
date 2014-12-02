@@ -2,24 +2,25 @@
 #define SETTINGS_H
 
 #include <QDialog>
-#include "options.h"
 
 namespace Ui {
 class Settings;
 }
-class MainWindow;
+class GDeskTunes;
 
 class Settings : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Settings(MainWindow *window);
+    explicit Settings(GDeskTunes *window);
     ~Settings();
 
 signals:
-    void login();
+    void login(QString username, QString password);
     void logout();
+
+    void saveCookies(bool saveCookie);
 
 public slots:
     void activateAndRaise();
@@ -37,17 +38,19 @@ public slots:
 
     void authorize();
 
-    void on_scrobble_toggled(bool);
-    void on_auto_love_toggled(bool);
+public:
+    QStringList getStyles(QString subdir = QString::null);
 
 protected:
     void closeEvent(QCloseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+
+public:
+    Ui::Settings *ui;
 
 private:
     bool last_fm_authorized;
-    Ui::Settings *ui;
-    MainWindow *main_window;
-    Options &options;
+    GDeskTunes *main_window;
 };
 
 #endif // SETTINGS_H

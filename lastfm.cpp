@@ -1,5 +1,9 @@
 #include "lastfm.h"
 
+#include <QSettings>
+#include <QApplication>
+#include <QDebug>
+
 #include "thirdparty/liblastfm/src/ws.h"
 #include "thirdparty/liblastfm/src/misc.h"
 #include "thirdparty/liblastfm/src/XmlQuery.h"
@@ -7,33 +11,21 @@
 
 LastFM::LastFM(QObject *parent) :
     QObject(parent),
-    audioscrobbler("GDeskTunes")
+    audioscrobbler(0)
 {
     lastfm::ws::SessionKey = QString::null;
+
+    current_track.setDuration(-1);
 }
 
-void LastFM::setLastFMUserName(QString username)
+QString LastFM::getLastFMUserName()
 {
-    qDebug() << "LastFM::setLastFMUserName(" << username << ")";
-    lastfm::ws::Username = username;
+    return lastfm::ws::Username;
 }
 
-void LastFM::setLastFMPassword(QString password)
+QString LastFM::getLastFMPassword()
 {
-    qDebug() << "LastFM::setLastFMPassword(" << password << ")";
-    this->md5_password = lastfm::md5( password.toUtf8() );
-}
-
-void LastFM::setScrobbled(bool scrobbled)
-{
-    qDebug() << "LastFM::setScrobbled(" << scrobbled << ")";
-    this->scrobbled = scrobbled;
-}
-
-void LastFM::setAutoLiked(bool auto_liked)
-{
-    qDebug() << "LastFM::setAutoLiked(" << auto_liked << ")";
-    this->auto_liked = auto_liked;
+    return this->password;
 }
 
 bool LastFM::isAuthorized()
@@ -41,10 +33,14 @@ bool LastFM::isAuthorized()
     return lastfm::ws::SessionKey != QString::null;
 }
 
-void LastFM::login()
+void LastFM::login(QString username, QString password)
 {
     qDebug() << "LastFM::login()";
 
+    this->password = password;
+    this->md5_password = lastfm::md5( password.toUtf8() );
+
+    lastfm::ws::Username = username;
     lastfm::ws::ApiKey = "6d6878dfb071f682d6cbe4f76cd7955a";
     lastfm::ws::SharedSecret = "97e8de952255bab40ea4443e84eda3d6";
 
@@ -72,6 +68,11 @@ void LastFM::loggedIn()
        status = true;
        lastfm::ws::Username = lfm["session"]["name"].text();
        lastfm::ws::SessionKey = lfm["session"]["key"].text();
+
+       audioscrobbler = new lastfm::Audioscrobbler("GDeskTunes");
+
+       emit lastFMUserName(lastfm::ws::Username);
+       emit lastFMPassword(this->password);
    }
 
    emit authorized(status);
@@ -86,9 +87,24 @@ void LastFM::logout()
 
 void LastFM::nowPlaying(QString title, QString artist, QString album, int duration)
 {
-    if (isAuthorized() && scrobbled)
+    if (isAuthorized() && scrobble)
     {
         qDebug() << "LastFM::nowPlaying(" << title << "," << artist << "," << album << "," << duration << ")";
+        if (current_track.duration() != -1)
+        {
+            unsigned int playtime = current_track.timestamp().secsTo(QDateTime::currentDateTime());
+            qDebug() << "Song " << current_track << " has played " << playtime << " seconds";
+            if (playtime > current_track.duration() / 2)
+            {
+                if (audioscrobbler != 0)
+                {
+                    audioscrobbler->cache(current_track);
+                    audioscrobbler->submit();
+                }
+            }
+            current_track.setDuration(-1);
+        }
+
         lastfm::MutableTrack t;
 
         t.setArtist(artist);
@@ -97,15 +113,15 @@ void LastFM::nowPlaying(QString title, QString artist, QString album, int durati
         t.setDuration(duration);
         t.stamp();
 
-        audioscrobbler.nowPlaying(t);
-        audioscrobbler.cache(t);
-        audioscrobbler.submit();
+        if (audioscrobbler != 0)
+            audioscrobbler->nowPlaying(t);
+        current_track = t;
     }
 }
 
 void LastFM::love(QString title, QString artist, QString album)
 {
-    if (isAuthorized() && auto_liked)
+    if (isAuthorized() && auto_like)
     {
         qDebug() << "LastFM::love(" << title << "," << artist << "," << album <<")";
         lastfm::MutableTrack t;
@@ -120,7 +136,7 @@ void LastFM::love(QString title, QString artist, QString album)
 
 void LastFM::unlove(QString title, QString artist, QString album)
 {
-    if (isAuthorized() && auto_liked)
+    if (isAuthorized() && auto_like)
     {
         qDebug() << "LastFM::unlove(" << title << "," << artist << "," << album <<")";
 
@@ -131,5 +147,31 @@ void LastFM::unlove(QString title, QString artist, QString album)
         t.setAlbum(album);
 
         t.unlove();
+    }
+}
+
+void LastFM::save()
+{
+    qDebug() << "LastFM::save()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    settings.setValue("last.fm.username", this->getLastFMUserName());
+    settings.setValue("last.fm.password", this->getLastFMPassword());
+    settings.setValue("last.fm.authorized", this->isAuthorized());
+    settings.setValue("last.fm.scrobble", this->isScrobbled());
+    settings.setValue("last.fm.autolike", this->isAutoLiked());
+}
+
+void LastFM::load()
+{
+    qDebug() << "LastFM::load()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    this->setScrobbled(settings.value("last.fm.scrobble", false).toBool());
+    this->setAutoLiked(settings.value("last.fm.autolike", false).toBool());
+
+    if (settings.value("last.fm.authorized", false).toBool())
+    {
+        this->login(settings.value("last.fm.username", "").toString(), settings.value("last.fm.password", "").toString());
     }
 }

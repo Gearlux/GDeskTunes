@@ -18,6 +18,9 @@ public:
 public slots:
     void donate();
 
+public:
+    void keyPressEvent(QKeyEvent *event);
+
 private:
     Ui::AboutDialog *ui;
 };

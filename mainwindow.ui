@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="WebView" name="webView" native="true"/>
+     <widget class="QWebView" name="webView" native="true"/>
     </item>
    </layout>
   </widget>
@@ -294,14 +294,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>WebView</class>
-   <extends>QWidget</extends>
-   <header>webview.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="gdesktunes.qrc"/>
  </resources>

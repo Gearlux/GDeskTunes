@@ -1,6 +1,7 @@
-#include "mainwindow.h"
+#include "gdesktunes.h"
 #include "ui_mainwindow.h"
 #include "settings.h"
+#include "ui_settings.h"
 #include "googlemusicapp.h"
 #include "lastfm.h"
 #include "cookiejar.h"
@@ -25,15 +26,6 @@
 #include <QSettings>
 #include <QtCore/QDir>
 #include <QWebFrame>
-
-void restore()
-{
-    qDebug() << "restore()";
-
-    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
-    qDebug() << "Preferences: " << settings.fileName();
-
-}
 
 /*
  * Program entry point.
@@ -82,15 +74,18 @@ int main(int argc, char *argv[])
         // Create the main window and all the components it interacts with
         qDebug() << "Creating components";
         qDebug() << "Create MainWindow";
-        MainWindow *w = new MainWindow();
+        GDeskTunes *w = new GDeskTunes();
+        w->setWindowIcon(QIcon(":/icons/gdesktunes.iconset/icon_128x128.png"));
         qDebug() << "Create LastFM";
         LastFM *last_fm = new LastFM(w);
-        qDebug() << "Create Settings";
-        Settings *settings = new Settings(w);
         qDebug() << "Create GoogleMusicApp";
         GoogleMusicApp *app = new GoogleMusicApp(w);
+        qDebug() << "Create Settings";
+        Settings *settings = new Settings(w);
+        qDebug() << "Create CookeJar";
+        CookieJar *jar = new CookieJar();
 
-        w->webView()->setPage(app);
+        w->ui->webView->setPage(app);
 
         QObject::connect(w->shuffle_off, SIGNAL(triggered()), app, SLOT(shuffleOff()));
         QObject::connect(w->shuffle_on, SIGNAL(triggered()), app, SLOT(shuffleOn()));
@@ -110,64 +105,80 @@ int main(int argc, char *argv[])
         QObject::connect(app, SIGNAL(love(QString, QString, QString)), last_fm, SLOT(love(QString,QString,QString)));
         QObject::connect(app, SIGNAL(unlove(QString, QString, QString)), last_fm, SLOT(unlove(QString,QString,QString)));
 
-        QObject::connect(&(w->options), SIGNAL(lastFMUserName(QString)), last_fm, SLOT(setLastFMUserName(QString)));
-        QObject::connect(&(w->options), SIGNAL(lastFMPassword(QString)), last_fm, SLOT(setLastFMPassword(QString)));
-        QObject::connect(&(w->options), SIGNAL(scrobbled(bool)), last_fm, SLOT(setScrobbled(bool)));
-        QObject::connect(&(w->options), SIGNAL(autoLiked(bool)), last_fm, SLOT(setAutoLiked(bool)));
-
         // If last_fm is authorized, we want to know this to store the status of last_fm when quitting
-        QObject::connect(last_fm, SIGNAL(authorized(bool)), &(w->options), SLOT(setAuthorized(bool)));
+        QObject::connect(last_fm, SIGNAL(authorized(bool)), settings, SLOT(setAuthorized(bool)));
         // On application startup, options requests login if the previous session was authorized
-        QObject::connect(&(w->options), SIGNAL(login()), last_fm, SLOT(login()));
+        QObject::connect(settings, SIGNAL(login(QString, QString)), last_fm, SLOT(login(QString, QString)));
+        QObject::connect(settings, SIGNAL(logout()), last_fm, SLOT(logout()));
 
         // If last_fm is authorized, we want the settings dialog to update the
         QObject::connect(last_fm, SIGNAL(authorized(bool)), settings, SLOT(setAuthorized(bool)));
-        QObject::connect(settings, SIGNAL(login()),last_fm, SLOT(login()));
-        QObject::connect(settings, SIGNAL(logout()), last_fm, SLOT(logout()));
+        QObject::connect(last_fm, SIGNAL(scrobbled(bool)), settings->ui->scrobble, SLOT(setChecked(bool)));
+        QObject::connect(settings->ui->scrobble, SIGNAL(toggled(bool)), last_fm, SLOT(setScrobbled(bool)));
+        QObject::connect(last_fm, SIGNAL(autoLiked(bool)), settings->ui->auto_love, SLOT(setChecked(bool)));
+        QObject::connect(settings->ui->auto_love, SIGNAL(toggled(bool)), last_fm, SLOT(setAutoLiked(bool)));
+        QObject::connect(last_fm, SIGNAL(lastFMPassword(QString)), settings->ui->last_fm_password_text, SLOT(setText(QString)));
+        QObject::connect(last_fm, SIGNAL(lastFMUserName(QString)), settings->ui->last_fm_user_name_text, SLOT(setText(QString)));
+        QObject::connect(jar, SIGNAL(dontSaveCookies(bool)), settings->ui->cookies, SLOT(setChecked(bool)));
+        QObject::connect(settings->ui->cookies, SIGNAL(checked(bool)), jar, SLOT(setDontSaveCookies(bool)));
         QObject::connect(w->ui->actionPreferences, SIGNAL(triggered()), settings, SLOT(activateAndRaise()));
 
         // Notify changes of the google app to the application
         QObject::connect(app, SIGNAL(repeat(QString)), w, SLOT(setRepeat(QString)));
         QObject::connect(app, SIGNAL(shuffle(QString)), w, SLOT(setShuffle(QString)));
+        QObject::connect(app, SIGNAL(isPlaying(bool)), w, SLOT(isPlaying(bool)));
 
-        QObject::connect(w->webView(), SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
+        QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
+
+        // Connect the ui and the application
+        QObject::connect(w->ui->actionPlay, SIGNAL(triggered()), app, SLOT(play()));
+        QObject::connect(w->ui->actionPrevious, SIGNAL(triggered()), app, SLOT(previous()));
+        QObject::connect(w->ui->actionNext, SIGNAL(triggered()), app, SLOT(next()));
+        QObject::connect(w->ui->actionAbout, SIGNAL(triggered()), w, SLOT(about()));
+        QObject::connect(w->ui->actionSwitch_mini, SIGNAL(triggered()), w, SLOT(switchMini()));
+        QObject::connect(w->ui->actionQuit_GDeskTunes, SIGNAL(triggered()), w, SLOT(quitGDeskTunes()));
+        QObject::connect(w->ui->actionEnter_Full_Screen, SIGNAL(triggered()), w, SLOT(switchFullScreen()));
+        QObject::connect(w->ui->actionMinimize, SIGNAL(triggered()), w, SLOT(showMinimized()));
+        QObject::connect(w->ui->actionZoom, SIGNAL(triggered()), w, SLOT(zoom()));
+        QObject::connect(w->ui->actionBring_All_To_Front, SIGNAL(triggered()), w, SLOT(activateWindow()));
+ #ifndef Q_OS_MAC
+        QObject::connect(w->ui->actionShow_menu, SIGNAL(triggered()), w, SLOT(switchMenu()));
+#endif
+#ifndef Q_OS_WIN
+        QObject::connect(w->ui->actionClose_Window, SIGNAL(triggered()), w, SLOT(closeWindow()));
+#endif
+        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+
+        QObject::connect(w, SIGNAL(play()), app, SLOT(play()));
+        QObject::connect(w, SIGNAL(next()), app, SLOT(next()));
+        QObject::connect(w, SIGNAL(previous()), app, SLOT(previous()));
+        QObject::connect(w, SIGNAL(changeSettings()), settings, SLOT(activateAndRaise()));
 
         qDebug() << "Starting application";
-        w->restoreOptions();
+        w->load();
+        last_fm->load();
+        jar->load();
 
         QNetworkAccessManager* manager = new QNetworkAccessManager();
-        CookieJar *jar = new CookieJar();
-        jar->load();
         manager->setCookieJar(jar);
 
         a.setActivationWindow(w);
         QObject::connect(&a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
 
-        QWebView *web_view = w->webView();
+        QWebView *web_view = w->ui->webView;
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
         web_view->load(QUrl("https://play.google.com/music/listen#"));
         web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-        if (w->options.isCustomized())
-            w->applyStyle(w->options.getCSS());
-
 
         qDebug() << "Showing application";
         w->restore();
         w->show();
 
         exit_result = a.exec();
-
-        if (w->options.saveCookies())
-        {
-            qDebug() << "Saving cookies";
-            jar->save();
-        }
-
-        if (w->isMini())
-            w->saveMini();
-        else
-            w->save();
     }
 
     return exit_result;

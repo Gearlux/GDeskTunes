@@ -4,6 +4,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
+#include <QApplication>
 #include <QtNetwork/QNetworkCookie>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -59,6 +60,11 @@ CookieJar::CookieJar(QObject *parent) :
 
 void CookieJar::load()
 {
+    qDebug() << "CookieJar::load()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    this->setSaveCookies(settings.value("saveCookies", true).toBool());
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 #else
@@ -106,24 +112,32 @@ void CookieJar::deleteAllCookies()
 
 void CookieJar::save()
 {
+    qDebug() << "CookieJar::save()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    settings.setValue("saveCookies", save_cookies);
+
     purgeOldCookies();
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
-    QString directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
-    qDebug() << "Saving cookies in " << directory;
-    if (!QFile::exists(directory))
+    if (save_cookies)
     {
-        QDir dir;
-        dir.mkpath(directory);
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+        QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#else
+        QString directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+        qDebug() << "Saving cookies in " << directory;
+        if (!QFile::exists(directory))
+        {
+            QDir dir;
+            dir.mkpath(directory);
+        }
+        QSettings cookieSettings(directory + QLatin1String("/cookies.ini"), QSettings::IniFormat);
+        QList<QNetworkCookie> cookies = allCookies();
+        for(int i=cookies.count()-1; i>=0; --i)
+            if (cookies.at(i).isSessionCookie())
+                cookies.removeAt(i);
+        cookieSettings.setValue(QLatin1String("cookies"), QVariant::fromValue<QList<QNetworkCookie> >(cookies));
     }
-    QSettings cookieSettings(directory + QLatin1String("/cookies.ini"), QSettings::IniFormat);
-    QList<QNetworkCookie> cookies = allCookies();
-    for(int i=cookies.count()-1; i>=0; --i)
-        if (cookies.at(i).isSessionCookie())
-            cookies.removeAt(i);
-    cookieSettings.setValue(QLatin1String("cookies"), QVariant::fromValue<QList<QNetworkCookie> >(cookies));
 }
 
 

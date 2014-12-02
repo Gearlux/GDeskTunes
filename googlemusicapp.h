@@ -42,6 +42,10 @@ public slots:
     void repeatAll();
     void repeatOne();
 
+    void play();
+    void next();
+    void previous();
+
 private:
     QString current_title;
     QString current_artist;

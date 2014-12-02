@@ -8,11 +8,16 @@
         <file>icons/gdesktunes.iconset/icon_256x256.png</file>
         <file>icons/gdesktunes.iconset/icon_128x128.png</file>
         <file>icons/32x32/preferences-desktop-color.png</file>
-        <file>icons/32x32/preferences-desktop-keyboard.png</file>
         <file>icons/32x32/preferences-desktop-user-password.png</file>
         <file>icons/8x8/1415314633_circle_close_delete.png</file>
         <file>icons/32x32/lastfm.png</file>
         <file>resources/paypal.html</file>
         <file>resources/btn_donateCC_LG.gif</file>
+        <file>icons/32x32/next.png</file>
+        <file>icons/32x32/play.png</file>
+        <file>icons/32x32/prev.png</file>
+        <file>icons/32x32/show-menu.png</file>
+        <file>icons/32x32/view-fullscreen.png</file>
+        <file>icons/32x32/multimedia-player-apple-ipod.png</file>
     </qresource>
 </RCC>

@@ -9,19 +9,28 @@ class CookieJar : public QNetworkCookieJar
 public:
     explicit CookieJar(QObject *parent = 0);
 
-public:
-    void load();
-    void save();
+signals:
+    void saveCookies(bool save);
+    void dontSaveCookies(bool dont_save);
 
+public slots:
+    void setSaveCookies(bool saveCookie) { this->save_cookies = saveCookie; emit saveCookies(saveCookie); emit dontSaveCookies(!saveCookie); }
+    void setDontSaveCookies(bool dontSaveCookie) { setSaveCookies(!dontSaveCookie); }
+    void removeCookieFile();
     void deleteAllCookies();
 
-    void removeCookieFile();
+    void save();
+
+public:
+    void load();
+
+    bool isSaveCookies() { return this->save_cookies; }
+
 private:
     void purgeOldCookies();
 
-signals:
-
-public slots:
+private:
+    bool save_cookies;
 
 };
 
