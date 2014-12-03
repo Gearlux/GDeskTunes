@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd thirdparty
+
 if [[ -d  "SPMediaKeyTap" ]]; then
     cd SPMediaKeyTap
     git pull --rebase

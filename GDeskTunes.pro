@@ -11,6 +11,8 @@ CONFIG(release, debug|release): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
 win32: {
+system(thirdparty\bootstrap.bat)
+
 greaterThan(QT_MAJOR_VERSION, 4): greaterThan(QT_MINOR_VERSION, 0): QT += winextras
 
 HEADERS += \
@@ -35,6 +37,8 @@ TARGET = GDeskTunes
 TEMPLATE = app
 
 mac: {
+system(./thirdparty/bootstrap.sh)
+
 QMAKE_INFO_PLIST = Info.plist
 
 ICON = g_desk_tunes.icns
@@ -150,7 +154,9 @@ OTHER_FILES += \
     icons/gdesktunes.iconset/* \
     js/*.js \
     userstyles/*.css \
-    userstyles/mini/*.css
+    userstyles/mini/*.css \
+    README.md \
+    LICENSE
 
 FORMS += \
     mainwindow.ui \
