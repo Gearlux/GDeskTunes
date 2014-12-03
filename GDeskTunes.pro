@@ -80,7 +80,14 @@ INSTALLS += icns info
 DEFINES += LASTFM_LIB_STATIC
 INCLUDEPATH += .
 
-HEADERS += *.h
+HEADERS += \
+    aboutdialog.h \
+    cookiejar.h \
+    gdesktunes.h \
+    googlemusicapp.h \
+    lastfm.h \
+    mainwindow.h \
+    settings.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -114,7 +121,15 @@ HEADERS += \
     thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h
 
 
-SOURCES += *.cpp
+SOURCES += \
+    aboutdialog.cpp \
+    cookiejar.cpp \
+    gdesktunes.cpp \
+    googlemusicapp.cpp \
+    lastfm.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    settings.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -163,15 +178,18 @@ FORMS += \
     settings.ui \
     aboutdialog.ui
 
-css.path = $$DESTDIR/userstyles
+win32: css.path = $$DESTDIR/userstyles
+mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
 css.files = userstyles/*
 export(css)
 
-minicss.path = $$DESTDIR/userstyles/mini
+win32: minicss.path = $$DESTDIR/userstyles/mini
+mac: minicss.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles/mini
 minicss.files = userstyles/mini/*
 export(minicss)
 
-js.path = $$DESTDIR/js
+win32: js.path = $$DESTDIR/js
+mac: js.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/js
 js.files = js/*
 export(js)
 

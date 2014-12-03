@@ -156,7 +156,7 @@ void Settings::setAuthorized(bool authorized)
 QStringList Settings::getStyles(QString subdir)
 {
 #ifdef Q_OS_MAC
-    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../../../userstyles" + QDir::separator() + subdir);
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/userstyles" + QDir::separator() + subdir);
 #else
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles" + QDir::separator() + subdir);
 #endif

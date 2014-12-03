@@ -171,7 +171,7 @@ void GDeskTunes::finishedLoad(bool ok)
         return;
 
 #ifdef Q_OS_MAC
-    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../../../js");
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/js");
 #else
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "js");
 #endif
@@ -238,7 +238,7 @@ void GDeskTunes::disableStyle(QString css, QString subdir)
 QString GDeskTunes::getStyle(QString name, QString subdir)
 {
 #ifdef Q_OS_MAC
-    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../../../userstyles" + QDir::separator() + subdir);
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/userstyles" + QDir::separator() + subdir);
 #else
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles" + QDir::separator()+ subdir);
 #endif
