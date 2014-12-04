@@ -351,6 +351,7 @@ void GDeskTunes::save()
     settings.setValue("customize", this->isCustomized());
 
     settings.setValue("keeplogo", this->keep_logo);
+    settings.setValue("navigation.buttons", this->navigation_buttons);
 }
 
 void GDeskTunes::load()
@@ -365,6 +366,7 @@ void GDeskTunes::load()
     this->setCustomize(settings.value("customize", false).toBool());
 
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
+    this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
 }
 
 void GDeskTunes::restore()
@@ -406,11 +408,14 @@ void GDeskTunes::updateAppearance()
     qDebug() << "GDeskTunes::updateAppearance()";
     disableStyle("gdesktunes.navigation.customization");
 
+    qDebug() << "keep_logo: " << keep_logo;
+    qDebug() << "navigations_buttons: " << navigation_buttons;
+    qDebug() << "keep_links: " << keep_links;
     QString css;
     if (keep_logo)
     {
         if (navigation_buttons)
-            css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) { width: 310px !important; }";
+            css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) { min-width: 310px !important; }";
     }
     else
     {
@@ -418,10 +423,29 @@ void GDeskTunes::updateAppearance()
     }
     if (navigation_buttons)
     {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(1) { -webkit-flex-grow: 0; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(3) { -webkit-flex-grow: 1; }";
+
+        css += ".gm-nav-button { display: inline-block; border: none; outline: none; vertical-align: top; opacity: 0.6; ";
+        css += " width: 30px; height: 30px; background-color: transparent; background-size: 30px 30px; margin: 15px 8px 0 8px; }";
+
+        css += " .gm-nav-button:hover { opacity: 0.4; } ";
+        css += ".gm-nav-button:active { opacity: 0.6; }";
+
+        css += "#gm-back { background-image: url(http://radiant-player-mac/images/arrow-left.png); }";
+        css += "#gm-forward { background-image: url(http://radiant-player-mac/images/arrow-right.png); }";
     }
     else
     {
         css += " .gm-nav-button { display: none; }";
+    }
+    if (!keep_links)
+    {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) { min-width: 0px !important; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:first-child { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(2) { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(3) { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(4) { display: none; }";
     }
 
     qDebug() << css;

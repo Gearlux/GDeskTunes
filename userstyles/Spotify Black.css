@@ -496,11 +496,11 @@ div.simple-dialog-bg {
 }
 
 #gm-back {
-    background-image: url(https://radiant-player-mac/images/arrow-left-white.png) !important;
+    background-image: url(http://radiant-player-mac/images/arrow-left-white.png) !important;
 }
 
 #gm-forward {
-    background-image: url(https://radiant-player-mac/images/arrow-right-white.png) !important;
+    background-image: url(http://radiant-player-mac/images/arrow-right-white.png) !important;
 }
 
 .gm-nav-button {

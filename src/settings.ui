@@ -58,6 +58,12 @@
        <string>General</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+       <property name="labelAlignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="formAlignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+       </property>
        <item row="0" column="0">
         <widget class="QCheckBox" name="mini_on_top">
          <property name="layoutDirection">
@@ -68,17 +74,24 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QCheckBox" name="logo">
          <property name="text">
-          <string>Keep Google Logo</string>
+          <string>Keep Google logo</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <widget class="QCheckBox" name="navigation_buttons">
          <property name="text">
           <string>Add navigation buttons</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="links">
+         <property name="text">
+          <string>Keep Google links</string>
          </property>
         </widget>
        </item>

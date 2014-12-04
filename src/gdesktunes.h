@@ -13,6 +13,7 @@ public:
 signals:
     void keepLogo(bool keep);
     void navigationButtons(bool buttons);
+    void keepLinks(bool keep);
 
 public slots:
     void finishedLoad(bool ok);
@@ -28,6 +29,7 @@ public slots:
 
     void setKeepLogo(bool keep) { if (keep == keep_logo) return; keep_logo = keep; emit keepLogo(keep); }
     void setNavigationButtons(bool buttons) { if (navigation_buttons == buttons) return; navigation_buttons = buttons; emit navigationButtons(buttons); }
+    void setKeepLinks(bool keep) { if (keep == keep_links) return; keep_links = keep; emit keepLinks(keep); }
 
     void updateAppearance();
 
@@ -64,6 +66,7 @@ private:
     bool mini_player_on_top;
 
     bool keep_logo;
+    bool keep_links;
     bool navigation_buttons;
 
     Qt::WindowFlags normal_flags;

@@ -95,7 +95,8 @@ HEADERS += \
     src/googlemusicapp.h \
     src/lastfm.h \
     src/mainwindow.h \
-    src/settings.h
+    src/settings.h \
+    src/networkmanager.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -137,7 +138,8 @@ SOURCES += \
     src/lastfm.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/settings.cpp
+    src/settings.cpp \
+    src/networkmanager.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \

@@ -5,6 +5,7 @@
 #include "googlemusicapp.h"
 #include "lastfm.h"
 #include "cookiejar.h"
+#include "networkmanager.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -109,8 +110,11 @@ int main(int argc, char *argv[])
         QObject::connect(w, SIGNAL(keepLogo(bool)), w, SLOT(updateAppearance()));
         QObject::connect(w, SIGNAL(navigationButtons(bool)), settings->ui->navigation_buttons, SLOT(setChecked(bool)));
         QObject::connect(w, SIGNAL(navigationButtons(bool)), w, SLOT(updateAppearance()));
+        QObject::connect(w, SIGNAL(keepLinks(bool)), settings->ui->links, SLOT(setChecked(bool)));
+        QObject::connect(w, SIGNAL(keepLinks(bool)), w, SLOT(updateAppearance()));
 
-        QObject::connect(settings->ui->logo, SIGNAL(toggled(bool)), w, SLOT(setLogo(bool)));
+        QObject::connect(settings->ui->logo, SIGNAL(toggled(bool)), w, SLOT(setKeepLogo(bool)));
+        QObject::connect(settings->ui->links, SIGNAL(toggled(bool)), w, SLOT(setKeepLinks(bool)));
         QObject::connect(settings->ui->navigation_buttons, SIGNAL(toggled(bool)), w, SLOT(setNavigationButtons(bool)));
 
         // Connect settings and jar
@@ -170,7 +174,7 @@ int main(int argc, char *argv[])
         last_fm->load();
         jar->load();
 
-        QNetworkAccessManager* manager = new QNetworkAccessManager();
+        NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
 
         a.setActivationWindow(w);
