@@ -187,6 +187,8 @@ void GDeskTunes::finishedLoad(bool ok)
 
     if (this->customize)
         applyStyle(this->css);
+
+    updateAppearance();
 }
 
 /*
@@ -203,6 +205,20 @@ void GDeskTunes::evaluateJavaScriptFile(QString filePath)
 }
 
 /*
+ * Set the style.
+ */
+void GDeskTunes::setStyle(QString name, QString css_content)
+{
+    css_content.remove(QRegExp("[\\n\\t\\r]"));
+    css_content.replace("\"", "\\\"");
+
+    qDebug() << "GDeskTunes::setStyle(" << name << "," << css_content.left(100) << ")";
+
+    QString script = QString("Styles.applyStyle(\"%2\",\"%1\");").arg(css_content, name);
+    ui->webView->page()->mainFrame()->evaluateJavaScript(script);
+}
+
+/*
  * Applies the style with name css and in located in the subdir
  * of the application's directory.
  */
@@ -215,11 +231,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     cssFile.open(QFile::ReadOnly);
     QTextStream stream(&cssFile);
     QString css_content = stream.readAll();
-    css_content.remove(QRegExp("[\\n\\t\\r]"));
-    css_content.replace("\"", "\\\"");
-
-    QString script = QString("Styles.applyStyle(\"%3%2\",\"%1\");").arg(css_content, css, subdir);
-    ui->webView->page()->mainFrame()->evaluateJavaScript(script);
+    setStyle(subdir + css, css_content);
 }
 
 /*
@@ -337,6 +349,8 @@ void GDeskTunes::save()
     settings.setValue("minicss", this->getMiniCSS());
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
     settings.setValue("customize", this->isCustomized());
+
+    settings.setValue("keeplogo", this->keep_logo);
 }
 
 void GDeskTunes::load()
@@ -349,6 +363,8 @@ void GDeskTunes::load()
     this->setMiniCSS(settings.value("minicss", "Default").toString());
     setMenuVisible(!settings.value("hideMenu", false).toBool());
     this->setCustomize(settings.value("customize", false).toBool());
+
+    this->setKeepLogo(settings.value("keeplogo", true).toBool());
 }
 
 void GDeskTunes::restore()
@@ -385,4 +401,29 @@ void GDeskTunes::switchMini()
     setMini(!isMini());
 }
 
+void GDeskTunes::updateAppearance()
+{
+    qDebug() << "GDeskTunes::updateAppearance()";
+    disableStyle("gdesktunes.navigation.customization");
 
+    QString css;
+    if (keep_logo)
+    {
+        if (navigation_buttons)
+            css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) { width: 310px !important; }";
+    }
+    else
+    {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) > div:first-child > a:first-child { display: none !important; }";
+    }
+    if (navigation_buttons)
+    {
+    }
+    else
+    {
+        css += " .gm-nav-button { display: none; }";
+    }
+
+    qDebug() << css;
+    setStyle("gdesktunes.navigation.customization", css);
+}

@@ -3,38 +3,41 @@
 # Project created by QtCreator 2014-09-29T14:09:30
 #
 #-------------------------------------------------
+
+TARGET = GDeskTunes
+TEMPLATE = app
+
 QT       += core gui webkit widgets network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
-CONFIG(release, debug|release): DESTDIR = $$OUT_PWD/release
+# Needed to deploy the userstyles and java scripts to the correct directory
+CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
 win32: {
+# Clone some thirdparty software into our path
 system(thirdparty\bootstrap.bat)
 
 greaterThan(QT_MAJOR_VERSION, 4): greaterThan(QT_MINOR_VERSION, 0): QT += winextras
 
+# Windows specific lastfm dependencies
 HEADERS += \
     thirdparty/liblastfm/src/win/ComSetup.h \
     thirdparty/liblastfm/src/win/IeSettings.h \
     thirdparty/liblastfm/src/win/NdisEvents.h \
     thirdparty/liblastfm/src/win/WmiSink.h \
     thirdparty/liblastfm/src/win/WNetworkConnectionMonitor.h
-
 SOURCES += \
     thirdparty/liblastfm/src/win/NdisEvents.cpp \
     thirdparty/liblastfm/src/win/WmiSink.cpp \
     thirdparty/liblastfm/src/win/WNetworkConnectionMonitor_win.cpp \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile_win.cpp
-
 LIBS += -lwinhttp -lwbemuuid
 
+# Resource file for windows systems
 RC_FILE = gdesktunes.rc
 }
-
-TARGET = GDeskTunes
-TEMPLATE = app
 
 mac: {
 system(./thirdparty/bootstrap.sh)
@@ -43,17 +46,22 @@ QMAKE_INFO_PLIST = Info.plist
 
 ICON = g_desk_tunes.icns
 
-OBJECTIVE_SOURCES += thirdparty/SPMediaKeyTap/SPMediaKeyTap.m \
-    thirdparty/SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.m \
+OBJECTIVE_SOURCES += \
     mac/cocoainit.mm \
     mac/macutils.mm \
-    mac/mediakeys.mm
+    mac/mediakeys.mm \
+	\
+	thirdparty/SPMediaKeyTap/SPMediaKeyTap.m \
+    thirdparty/SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.m 
 
-HEADERS += mac/cocoainit.h \
+HEADERS += \
+	mac/cocoainit.h \
     mac/macutils.h \
     mac/mediakeys.h \
+	\
     thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor.h \
     thirdparty/liblastfm/src/mac/ProxyDict.h
+	
 SOURCES += \
     thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor_mac.cpp \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile_unix.cpp
@@ -62,7 +70,7 @@ LIBS += -framework Cocoa -framework Carbon -framework CoreFoundation -framework 
 
 greaterThan(QT_MAJOR_VERSION, 4): QMAKE_MAC_SDK = macosx10.9
 
-#lessThan(QT_MAJOR_VERSION, 5): {
+lessThan(QT_MAJOR_VERSION, 5): {
 
 info.path = $$DESTDIR/$${TARGET}.app/Contents
 info.files = $$QMAKE_INFO_PLIST
@@ -73,21 +81,21 @@ icns.files = $$ICON
 export(icns)
 
 INSTALLS += icns info
-#}
+}
 }
 
 # Needed to compile liblastfm
 DEFINES += LASTFM_LIB_STATIC
-INCLUDEPATH += .
+INCLUDEPATH += src .
 
 HEADERS += \
-    aboutdialog.h \
-    cookiejar.h \
-    gdesktunes.h \
-    googlemusicapp.h \
-    lastfm.h \
-    mainwindow.h \
-    settings.h
+    src/aboutdialog.h \
+    src/cookiejar.h \
+    src/gdesktunes.h \
+    src/googlemusicapp.h \
+    src/lastfm.h \
+    src/mainwindow.h \
+    src/settings.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -122,14 +130,14 @@ HEADERS += \
 
 
 SOURCES += \
-    aboutdialog.cpp \
-    cookiejar.cpp \
-    gdesktunes.cpp \
-    googlemusicapp.cpp \
-    lastfm.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    settings.cpp
+    src/aboutdialog.cpp \
+    src/cookiejar.cpp \
+    src/gdesktunes.cpp \
+    src/googlemusicapp.cpp \
+    src/lastfm.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/settings.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -174,9 +182,9 @@ OTHER_FILES += \
     LICENSE
 
 FORMS += \
-    mainwindow.ui \
-    settings.ui \
-    aboutdialog.ui
+    src/mainwindow.ui \
+    src/settings.ui \
+    src/aboutdialog.ui
 
 win32: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
