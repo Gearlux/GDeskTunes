@@ -187,6 +187,8 @@ void GDeskTunes::finishedLoad(bool ok)
 
     if (this->customize)
         applyStyle(this->css);
+
+    updateAppearance();
 }
 
 /*
@@ -203,6 +205,20 @@ void GDeskTunes::evaluateJavaScriptFile(QString filePath)
 }
 
 /*
+ * Set the style.
+ */
+void GDeskTunes::setStyle(QString name, QString css_content)
+{
+    css_content.remove(QRegExp("[\\n\\t\\r]"));
+    css_content.replace("\"", "\\\"");
+
+    qDebug() << "GDeskTunes::setStyle(" << name << "," << css_content.left(100) << ")";
+
+    QString script = QString("Styles.applyStyle(\"%2\",\"%1\");").arg(css_content, name);
+    ui->webView->page()->mainFrame()->evaluateJavaScript(script);
+}
+
+/*
  * Applies the style with name css and in located in the subdir
  * of the application's directory.
  */
@@ -215,11 +231,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     cssFile.open(QFile::ReadOnly);
     QTextStream stream(&cssFile);
     QString css_content = stream.readAll();
-    css_content.remove(QRegExp("[\\n\\t\\r]"));
-    css_content.replace("\"", "\\\"");
-
-    QString script = QString("Styles.applyStyle(\"%3%2\",\"%1\");").arg(css_content, css, subdir);
-    ui->webView->page()->mainFrame()->evaluateJavaScript(script);
+    setStyle(subdir + css, css_content);
 }
 
 /*
@@ -337,6 +349,9 @@ void GDeskTunes::save()
     settings.setValue("minicss", this->getMiniCSS());
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
     settings.setValue("customize", this->isCustomized());
+
+    settings.setValue("keeplogo", this->keep_logo);
+    settings.setValue("navigation.buttons", this->navigation_buttons);
 }
 
 void GDeskTunes::load()
@@ -349,6 +364,9 @@ void GDeskTunes::load()
     this->setMiniCSS(settings.value("minicss", "Default").toString());
     setMenuVisible(!settings.value("hideMenu", false).toBool());
     this->setCustomize(settings.value("customize", false).toBool());
+
+    this->setKeepLogo(settings.value("keeplogo", true).toBool());
+    this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
 }
 
 void GDeskTunes::restore()
@@ -385,4 +403,51 @@ void GDeskTunes::switchMini()
     setMini(!isMini());
 }
 
+void GDeskTunes::updateAppearance()
+{
+    qDebug() << "GDeskTunes::updateAppearance()";
+    disableStyle("gdesktunes.navigation.customization");
 
+    qDebug() << "keep_logo: " << keep_logo;
+    qDebug() << "navigations_buttons: " << navigation_buttons;
+    qDebug() << "keep_links: " << keep_links;
+    QString css;
+    if (keep_logo)
+    {
+        if (navigation_buttons)
+            css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) { min-width: 310px !important; }";
+    }
+    else
+    {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) > div:first-child > a:first-child { display: none !important; }";
+    }
+    if (navigation_buttons)
+    {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(1) { -webkit-flex-grow: 0; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(3) { -webkit-flex-grow: 1; }";
+
+        css += ".gm-nav-button { display: inline-block; border: none; outline: none; vertical-align: top; opacity: 0.6; ";
+        css += " width: 30px; height: 30px; background-color: transparent; background-size: 30px 30px; margin: 15px 8px 0 8px; }";
+
+        css += " .gm-nav-button:hover { opacity: 0.4; } ";
+        css += ".gm-nav-button:active { opacity: 0.6; }";
+
+        css += "#gm-back { background-image: url(http://radiant-player-mac/images/arrow-left.png); }";
+        css += "#gm-forward { background-image: url(http://radiant-player-mac/images/arrow-right.png); }";
+    }
+    else
+    {
+        css += " .gm-nav-button { display: none; }";
+    }
+    if (!keep_links)
+    {
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) { min-width: 0px !important; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:first-child { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(2) { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(3) { display: none; }";
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(4) { display: none; }";
+    }
+
+    qDebug() << css;
+    setStyle("gdesktunes.navigation.customization", css);
+}

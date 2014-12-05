@@ -51,13 +51,19 @@
      </property>
      <widget class="QWidget" name="general_tab">
       <attribute name="icon">
-       <iconset resource="gdesktunes.qrc">
+       <iconset resource="../gdesktunes.qrc">
         <normaloff>:/icons/32x32/preferences-other.png</normaloff>:/icons/32x32/preferences-other.png</iconset>
       </attribute>
       <attribute name="title">
        <string>General</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+       <property name="labelAlignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="formAlignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+       </property>
        <item row="0" column="0">
         <widget class="QCheckBox" name="mini_on_top">
          <property name="layoutDirection">
@@ -68,11 +74,32 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="logo">
+         <property name="text">
+          <string>Keep Google logo</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="navigation_buttons">
+         <property name="text">
+          <string>Add navigation buttons</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="links">
+         <property name="text">
+          <string>Keep Google links</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="appearance_tab">
       <attribute name="icon">
-       <iconset resource="gdesktunes.qrc">
+       <iconset resource="../gdesktunes.qrc">
         <normaloff>:/icons/32x32/preferences-desktop-color.png</normaloff>:/icons/32x32/preferences-desktop-color.png</iconset>
       </attribute>
       <attribute name="title">
@@ -135,7 +162,7 @@
      </widget>
      <widget class="QWidget" name="lastfm_tab">
       <attribute name="icon">
-       <iconset resource="gdesktunes.qrc">
+       <iconset resource="../gdesktunes.qrc">
         <normaloff>:/icons/32x32/lastfm.png</normaloff>:/icons/32x32/lastfm.png</iconset>
       </attribute>
       <attribute name="title">
@@ -230,7 +257,7 @@
      </widget>
      <widget class="QWidget" name="privacy_tab">
       <attribute name="icon">
-       <iconset resource="gdesktunes.qrc">
+       <iconset resource="../gdesktunes.qrc">
         <normaloff>:/icons/32x32/preferences-desktop-user-password.png</normaloff>:/icons/32x32/preferences-desktop-user-password.png</iconset>
       </attribute>
       <attribute name="title">
@@ -304,7 +331,7 @@
   <tabstop>mini_on_top</tabstop>
  </tabstops>
  <resources>
-  <include location="gdesktunes.qrc"/>
+  <include location="../gdesktunes.qrc"/>
  </resources>
  <connections>
   <connection>
