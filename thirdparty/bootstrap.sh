@@ -2,7 +2,8 @@
 
 cd thirdparty
 
-if [[ -d  "SPMediaKeyTap" ]]; then
+echo "SPMediaKeyTap" 
+if [ -d  "SPMediaKeyTap" ]; then
     cd SPMediaKeyTap
     git pull --rebase
     cd -
@@ -10,7 +11,8 @@ else
     git clone https://github.com/nevyn/SPMediaKeyTap
 fi
 
-if [[ -d "liblastfm" ]]; then
+echo "liblastfm" 
+if [ -d "liblastfm" ]; then
 	cd liblastfm
 	git pull --rebase
 	cd -
@@ -18,7 +20,8 @@ else
 	git clone https://github.com/lastfm/liblastfm
 fi
 
-if [[ -d "qt-solutions" ]]; then
+echo "qt-solutions"
+if [ -d "qt-solutions" ]; then
 	cd qt-solutions
 	git pull --rebase
 	cd -
