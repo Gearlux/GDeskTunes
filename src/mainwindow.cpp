@@ -102,7 +102,7 @@ void MainWindow::setupActions()
     ui->menuWindow->deleteLater();
 #endif
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
     // In Windows when the menu bar is hidden, shortcuts do not reach this application
     addAction(ui->actionPlay);
     addAction(ui->actionPrevious);
@@ -159,6 +159,7 @@ void MainWindow::switchMenu()
 
 void MainWindow::setMenuVisible(bool visible)
 {
+    qDebug() << "MainWindow::setMenuVisible(" << visible << ")";
     ui->menuBar->setVisible(visible);
     this->hide_menu = !visible;
 #ifdef Q_OS_WIN
