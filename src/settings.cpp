@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QSystemTrayIcon>
 
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
@@ -13,9 +14,7 @@
 Settings::Settings(GDeskTunes *parent) :
     QDialog(parent),
     ui(new Ui::Settings),
-    last_fm_authorized(false),
-    // FIXME: remove reference to main_window
-    main_window(parent)
+    last_fm_authorized(false)
 {
     ui->setupUi(this);
 
@@ -34,6 +33,21 @@ Settings::Settings(GDeskTunes *parent) :
     ui->tabWidget->removeTab(1);
 #endif
 #endif
+
+    bool tray = QSystemTrayIcon::isSystemTrayAvailable();
+
+    if (!tray)
+    {
+        ui->tray_icon->hide();
+        ui->notifications->hide();
+        ui->notifications_label->hide();
+    }
+
+    QStringList styles = getStyles();
+    ui->style_combo->addItems(styles);
+
+    QStringList mini_styles = getStyles(QString("mini"));
+    ui->mini_style_combo->addItems(mini_styles);
 }
 
 Settings::~Settings()
@@ -46,84 +60,6 @@ void Settings::activateAndRaise()
     show();
     raise();
     activateWindow();
-}
-
-void Settings::show()
-{
-    ui->mini_on_top->setChecked(main_window->isMiniPlayerOnTop());
-
-    ui->customize->setChecked(main_window->isCustomized());
-
-    QStringList styles = getStyles();
-
-    QString css_path = main_window->getCSS();
-    QFileInfo css_info(css_path);
-    int index = styles.indexOf(css_info.baseName());
-    ui->style_combo->clear();
-    ui->style_combo->addItems(styles);
-    ui->style_combo->setCurrentIndex(index);
-
-    QStringList mini_styles = getStyles(QString("mini"));
-    QString mini_css = main_window->getMiniCSS();
-    QFileInfo mini_css_info(mini_css);
-    int mini_index = mini_styles.indexOf(mini_css_info.baseName());
-    ui->mini_style_combo->clear();
-    ui->mini_style_combo->addItems(mini_styles);
-    ui->mini_style_combo->setCurrentIndex(mini_index);
-
-    QDialog::show();
-}
-
-void Settings::closeEvent(QCloseEvent *ev)
-{
-    qDebug() << "Settings::closeEvent(" << ev << ")";
-}
-
-void Settings::miniPlayerOnTop(bool on_top)
-{
-    main_window->setMiniPlayerOnTop(on_top);
-}
-
-void Settings::style(QString style)
-{
-    main_window->setCSS(style);
-}
-
-void Settings::miniStyle(QString style)
-{
-    main_window->setMiniCSS(style);
-}
-
-void Settings::clearCookies()
-{
-    QNetworkCookieJar *cookiejar = this->main_window->ui->webView->page()->networkAccessManager()->cookieJar();
-    CookieJar *jar = qobject_cast<CookieJar*>(cookiejar);
-    if (jar != 0)
-    {
-        qDebug() << "Deleting all cookies";
-       jar->deleteAllCookies();
-       main_window->ui->webView->load(QUrl("https://play.google.com/music/listen#"));
-    }
-}
-
-void Settings::doNotSaveCookies(bool do_not_save)
-{
-    if (do_not_save)
-    {
-        QNetworkCookieJar *cookiejar = this->main_window->ui->webView->page()->networkAccessManager()->cookieJar();
-        CookieJar *jar = qobject_cast<CookieJar*>(cookiejar);
-        if (jar != 0)
-        {
-            qDebug() << "Deleting cookie file";
-           jar->removeCookieFile();
-        }
-    }
-    emit saveCookies(!do_not_save);
-}
-
-void Settings::customize(bool customize)
-{
-    main_window->setCustomize(customize);
 }
 
 void Settings::authorize()

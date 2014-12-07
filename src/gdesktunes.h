@@ -11,9 +11,13 @@ public:
     explicit GDeskTunes(QWidget *parent = 0);
 
 signals:
+    void miniPlayerOnTop(bool top);
+    void customized(bool custom);
     void keepLogo(bool keep);
     void navigationButtons(bool buttons);
     void keepLinks(bool keep);
+    void CSS(QString style);
+    void miniCSS(QString style);
 
 public slots:
     void finishedLoad(bool ok);
@@ -27,24 +31,24 @@ public slots:
     void saveState();
     void show();
 
+    void setMiniPlayerOnTop(bool on_top);
+    void setCustomize(bool customize);
+
     void setKeepLogo(bool keep) { if (keep == keep_logo) return; keep_logo = keep; emit keepLogo(keep); }
     void setNavigationButtons(bool buttons) { if (navigation_buttons == buttons) return; navigation_buttons = buttons; emit navigationButtons(buttons); }
     void setKeepLinks(bool keep) { if (keep == keep_links) return; keep_links = keep; emit keepLinks(keep); }
 
     void updateAppearance();
 
-public:
     void setCSS(QString css);
     void setMiniCSS(QString css);
-    void setMini(bool toMini);
-    void setCustomize(bool customize);
-    void setMiniPlayerOnTop(bool on_top);
 
-    QString getCSS() { return this->css; }
-    QString getMiniCSS() { return this->mini_css; }
+    void loadUrl();
+
+public:
+    void setMini(bool toMini);
+
     bool isMini() { return this->mini; }
-    bool isCustomized() { return this->customize; }
-    bool isMiniPlayerOnTop() { return this->mini_player_on_top; }
 
     void restore();
     void restoreMini();

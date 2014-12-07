@@ -19,8 +19,8 @@
   <property name="sizeGripEnabled">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="contextMenuPolicy">
       <enum>Qt::NoContextMenu</enum>
@@ -57,14 +57,15 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout">
-       <property name="labelAlignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-       <property name="formAlignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
-       </property>
-       <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Customization:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
         <widget class="QCheckBox" name="mini_on_top">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -74,24 +75,45 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="logo">
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="notifications">
          <property name="text">
-          <string>Keep Google logo</string>
+          <string>Display notification when song changes</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="1" column="1">
         <widget class="QCheckBox" name="navigation_buttons">
          <property name="text">
           <string>Add navigation buttons</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="3" column="1">
         <widget class="QCheckBox" name="links">
          <property name="text">
           <string>Keep Google links</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="tray_icon">
+         <property name="text">
+          <string>Show tray icon</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="logo">
+         <property name="text">
+          <string>Keep Google logo</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="notifications_label">
+         <property name="text">
+          <string>Notifications:</string>
          </property>
         </widget>
        </item>
@@ -335,110 +357,14 @@
  </resources>
  <connections>
   <connection>
-   <sender>cookies</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Settings</receiver>
-   <slot>doNotSaveCookies(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>66</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>75</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>mini_on_top</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Settings</receiver>
-   <slot>miniPlayerOnTop(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>224</x>
-     <y>61</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>92</x>
-     <y>97</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>mini_style_combo</sender>
-   <signal>currentIndexChanged(QString)</signal>
-   <receiver>Settings</receiver>
-   <slot>miniStyle(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>215</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>customize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Settings</receiver>
-   <slot>customize(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>43</x>
-     <y>57</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>0</x>
-     <y>58</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clear</sender>
-   <signal>clicked()</signal>
-   <receiver>Settings</receiver>
-   <slot>clearCookies()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>60</x>
-     <y>139</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>208</x>
-     <y>268</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>style_combo</sender>
-   <signal>currentIndexChanged(QString)</signal>
-   <receiver>Settings</receiver>
-   <slot>style(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>80</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>339</x>
-     <y>23</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>authorize</sender>
    <signal>clicked()</signal>
    <receiver>Settings</receiver>
    <slot>authorize()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>342</x>
-     <y>199</y>
+     <x>148</x>
+     <y>181</y>
     </hint>
     <hint type="destinationlabel">
      <x>344</x>

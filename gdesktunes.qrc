@@ -23,5 +23,6 @@
         <file>radiant-player-mac/images/arrow-left.png</file>
         <file>radiant-player-mac/images/arrow-right-white.png</file>
         <file>radiant-player-mac/images/arrow-right.png</file>
+        <file>icons/gdesktunes.iconset/icon_16x16.png</file>
     </qresource>
 </RCC>

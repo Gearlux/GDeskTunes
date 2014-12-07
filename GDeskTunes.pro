@@ -96,7 +96,8 @@ HEADERS += \
     src/lastfm.h \
     src/mainwindow.h \
     src/settings.h \
-    src/networkmanager.h
+    src/networkmanager.h \
+    src/systemtrayicon.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -127,7 +128,9 @@ HEADERS += \
     \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.h \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.h \
-    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h \
+    \
+    thirdparty/QtWaitingSpinner/QtWaitingSpinner.h
 
 
 SOURCES += \
@@ -139,7 +142,8 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/settings.cpp \
-    src/networkmanager.cpp
+    src/networkmanager.cpp \
+    src/systemtrayicon.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -170,7 +174,9 @@ SOURCES += \
     \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.cpp \
-    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp \
+    \
+    thirdparty/QtWaitingSpinner/QtWaitingSpinner.cpp
 
 RESOURCES += \
     gdesktunes.qrc
@@ -181,7 +187,9 @@ OTHER_FILES += \
     userstyles/*.css \
     userstyles/mini/*.css \
     README.md \
-    LICENSE
+    LICENSE \
+    thirdparty/bootstrap.sh \
+    thirdparty/bootstrap.bat
 
 FORMS += \
     src/mainwindow.ui \

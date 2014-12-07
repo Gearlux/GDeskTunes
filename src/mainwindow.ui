@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QWebView" name="webView" native="true"/>
+     <widget class="QWebView" name="webView"/>
     </item>
    </layout>
   </widget>
@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
@@ -147,7 +147,7 @@
   </widget>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="gdesktunes.qrc">
+    <iconset resource="../gdesktunes.qrc">
      <normaloff>:/icons/gdesktunes.iconset/icon_32x32@2x.png</normaloff>:/icons/gdesktunes.iconset/icon_32x32@2x.png</iconset>
    </property>
    <property name="text">
@@ -211,7 +211,7 @@
   </action>
   <action name="actionSwitch_mini">
    <property name="icon">
-    <iconset resource="gdesktunes.qrc">
+    <iconset resource="../gdesktunes.qrc">
      <normaloff>:/icons/8x8/1415314633_circle_close_delete.png</normaloff>:/icons/8x8/1415314633_circle_close_delete.png</iconset>
    </property>
    <property name="text">
@@ -294,8 +294,15 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="gdesktunes.qrc"/>
+  <include location="../gdesktunes.qrc"/>
  </resources>
  <connections/>
  <slots>

@@ -30,8 +30,10 @@ GDeskTunes::GDeskTunes(QWidget* parent):
 void GDeskTunes::setCSS(QString css)
 {
     qDebug() << "GDeskTunes::setCSS(" << css << ")";
+    if (this->css == css) return;
     disableStyle(this->css);
     this->css = css;
+    emit CSS(css);
     if (this->customize && !this->isMini())
     {
         applyStyle(css);
@@ -45,8 +47,9 @@ void GDeskTunes::setCSS(QString css)
 void GDeskTunes::setMiniCSS(QString css)
 {
     qDebug() << "GDeskTunes::setMiniCSS(" << css << ")";
+    if (this->mini_css == css) return;
     disableStyle(this->mini_css, "mini");
-    this->mini_css = css;
+    emit miniCSS(css);
     if (isMini())
     {
         applyStyle(css, "mini");
@@ -135,7 +138,10 @@ void GDeskTunes::setMini(bool toMini)
  */
 void GDeskTunes::setMiniPlayerOnTop(bool on_top)
 {
+    if (on_top == this->mini_player_on_top) return;
+
     this->mini_player_on_top = on_top;
+    emit miniPlayerOnTop(on_top);
 
     if (isMini())
     {
@@ -149,7 +155,11 @@ void GDeskTunes::setMiniPlayerOnTop(bool on_top)
  */
 void GDeskTunes::setCustomize(bool customize)
 {
+    if (customize == this->customize) return;
+
     this->customize = customize;
+    emit customized(customize);
+
     if (customize )
     {
         applyStyle(css);
@@ -344,11 +354,11 @@ void GDeskTunes::save()
     qDebug() << "GDeskTunes::save()";
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
 
-    settings.setValue("miniPlayerOnTop", this->isMiniPlayerOnTop());
-    settings.setValue("css", this->getCSS());
-    settings.setValue("minicss", this->getMiniCSS());
+    settings.setValue("miniPlayerOnTop", this->mini_player_on_top);
+    settings.setValue("customize", this->customize);
+    settings.setValue("css", this->css);
+    settings.setValue("minicss", this->mini_css);
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
-    settings.setValue("customize", this->isCustomized());
 
     settings.setValue("keeplogo", this->keep_logo);
     settings.setValue("navigation.buttons", this->navigation_buttons);
@@ -450,4 +460,9 @@ void GDeskTunes::updateAppearance()
 
     qDebug() << css;
     setStyle("gdesktunes.navigation.customization", css);
+}
+
+void GDeskTunes::loadUrl()
+{
+    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
 }
