@@ -61,6 +61,7 @@ void GDeskTunes::setMiniCSS(QString css)
  */
 void GDeskTunes::setMini(bool toMini)
 {
+    qDebug() << "GDeskTunes::setMini(" << toMini << ")";
     this->draggable = toMini;
 
     if (toMini)
@@ -110,7 +111,11 @@ void GDeskTunes::setMini(bool toMini)
 
         ui->actionSwitch_mini->setText("Switch to Miniplayer");
 
-        setWindowFlags(normal_flags | Qt::WindowStaysOnBottomHint);
+        setWindowFlags(normal_flags
+#ifndef Q_OS_LINUX
+                       | Qt::WindowStaysOnBottomHint
+#endif
+                       );
         // Show hide combination is only to apply the window flags
         // This will lose the geometry which will be set after hide()
         show();
@@ -123,6 +128,9 @@ void GDeskTunes::setMini(bool toMini)
             applyStyle(this->css);
         }
 
+#ifdef Q_OS_LINUX
+        activateWindow();
+#endif
         show();
     }
 
@@ -318,15 +326,19 @@ void GDeskTunes::receiveMessage(const QString &msg)
 
 void GDeskTunes::show()
 {
+    qDebug() << "GDeskTunes::show()";
     ui->toolBar->setVisible(isMini());
 
 #ifndef Q_OS_MAC
     if (isMini())
     {
+        bool old_hide_menu = this->hide_menu;
        setMenuVisible(false);
+       this->hide_menu = old_hide_menu;
     }
     else
     {
+        qDebug() << "GDeskTunes::show()::setMenuVisible(" << !this->hide_menu << ")";
         setMenuVisible(!this->hide_menu);
     }
 #endif

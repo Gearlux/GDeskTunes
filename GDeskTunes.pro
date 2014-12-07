@@ -15,6 +15,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
+linux: {
+system(thirdparty/bootstrap.sh)
+
+QT += dbus
+
+HEADERS += \
+    thirdparty/liblastfm/src/linux/LNetworkConnectionMonitor.h
+SOURCES += \
+    thirdparty/liblastfm/src/linux/LNetworkConnectionMonitor_linux.cpp
+}
+
 win32: {
 # Clone some thirdparty software into our path
 system(thirdparty\bootstrap.bat)
@@ -104,7 +115,7 @@ HEADERS += \
     thirdparty/liblastfm/src/Audioscrobbler.h \
     thirdparty/liblastfm/src/Auth.h \
     thirdparty/liblastfm/src/Chart.h \
-    thirdparty/liblastfm/src/FingerPrintId.h \
+    thirdparty/liblastfm/src/FingerprintId.h \
     thirdparty/liblastfm/src/InternetConnectionMonitor.h \
     thirdparty/liblastfm/src/Library.h \
     thirdparty/liblastfm/src/Mbid.h \
@@ -196,17 +207,17 @@ FORMS += \
     src/settings.ui \
     src/aboutdialog.ui
 
-win32: css.path = $$DESTDIR/userstyles
+win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
 css.files = userstyles/*
 export(css)
 
-win32: minicss.path = $$DESTDIR/userstyles/mini
+win32|linux: minicss.path = $$DESTDIR/userstyles/mini
 mac: minicss.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles/mini
 minicss.files = userstyles/mini/*
 export(minicss)
 
-win32: js.path = $$DESTDIR/js
+win32|linux: js.path = $$DESTDIR/js
 mac: js.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/js
 js.files = js/*
 export(js)
