@@ -14,7 +14,7 @@ signals:
     void dontSaveCookies(bool dont_save);
 
 public slots:
-    void setSaveCookies(bool saveCookie) { this->save_cookies = saveCookie; emit saveCookies(saveCookie); emit dontSaveCookies(!saveCookie); }
+    void setSaveCookies(bool saveCookie);
     void setDontSaveCookies(bool dontSaveCookie) { setSaveCookies(!dontSaveCookie); }
     void removeCookieFile();
     void deleteAllCookies();

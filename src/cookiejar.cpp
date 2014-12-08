@@ -53,7 +53,8 @@ QDataStream &operator>>(QDataStream &stream, QList<QNetworkCookie> &list)
 }
 
 CookieJar::CookieJar(QObject *parent) :
-    QNetworkCookieJar(parent)
+    QNetworkCookieJar(parent),
+    save_cookies(true)
 {
     qRegisterMetaTypeStreamOperators<QList<QNetworkCookie> >("QList<QNetworkCookie>");
 }
@@ -140,4 +141,14 @@ void CookieJar::save()
     }
 }
 
-
+void CookieJar::setSaveCookies(bool saveCookie)
+{
+    if (this->save_cookies == saveCookie) return;
+    this->save_cookies = saveCookie;
+    emit saveCookies(saveCookie);
+    emit dontSaveCookies(!saveCookie);
+    if (!saveCookie)
+    {
+        removeCookieFile();
+    }
+}

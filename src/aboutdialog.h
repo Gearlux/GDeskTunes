@@ -2,6 +2,7 @@
 #define ABOUTDIALOG_H
 
 #include <QDialog>
+#include <QNetworkReply>
 
 namespace Ui {
 class AboutDialog;
@@ -18,8 +19,11 @@ public:
 public slots:
     void donate();
 
+    void checkVersion(QNetworkReply *reply);
+
 public:
     void keyPressEvent(QKeyEvent *event);
+    void setText(QString msg, QString link);
 
 private:
     Ui::AboutDialog *ui;

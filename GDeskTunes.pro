@@ -15,6 +15,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
+linux: {
+system(thirdparty/bootstrap.sh)
+
+QT += dbus
+
+HEADERS += \
+    thirdparty/liblastfm/src/linux/LNetworkConnectionMonitor.h
+SOURCES += \
+    thirdparty/liblastfm/src/linux/LNetworkConnectionMonitor_linux.cpp
+}
+
 win32: {
 # Clone some thirdparty software into our path
 system(thirdparty\bootstrap.bat)
@@ -96,14 +107,15 @@ HEADERS += \
     src/lastfm.h \
     src/mainwindow.h \
     src/settings.h \
-    src/networkmanager.h
+    src/networkmanager.h \
+    src/systemtrayicon.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
     thirdparty/liblastfm/src/Audioscrobbler.h \
     thirdparty/liblastfm/src/Auth.h \
     thirdparty/liblastfm/src/Chart.h \
-    thirdparty/liblastfm/src/FingerPrintId.h \
+    thirdparty/liblastfm/src/FingerprintId.h \
     thirdparty/liblastfm/src/InternetConnectionMonitor.h \
     thirdparty/liblastfm/src/Library.h \
     thirdparty/liblastfm/src/Mbid.h \
@@ -127,7 +139,9 @@ HEADERS += \
     \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.h \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.h \
-    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h \
+    \
+    thirdparty/QtWaitingSpinner/QtWaitingSpinner.h
 
 
 SOURCES += \
@@ -139,7 +153,8 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/settings.cpp \
-    src/networkmanager.cpp
+    src/networkmanager.cpp \
+    src/systemtrayicon.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -170,7 +185,9 @@ SOURCES += \
     \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp \
     thirdparty/qt-solutions/qtsingleapplication/src/qtlockedfile.cpp \
-    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
+    thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp \
+    \
+    thirdparty/QtWaitingSpinner/QtWaitingSpinner.cpp
 
 RESOURCES += \
     gdesktunes.qrc
@@ -181,24 +198,26 @@ OTHER_FILES += \
     userstyles/*.css \
     userstyles/mini/*.css \
     README.md \
-    LICENSE
+    LICENSE \
+    thirdparty/bootstrap.sh \
+    thirdparty/bootstrap.bat
 
 FORMS += \
     src/mainwindow.ui \
     src/settings.ui \
     src/aboutdialog.ui
 
-win32: css.path = $$DESTDIR/userstyles
+win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
 css.files = userstyles/*
 export(css)
 
-win32: minicss.path = $$DESTDIR/userstyles/mini
+win32|linux: minicss.path = $$DESTDIR/userstyles/mini
 mac: minicss.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles/mini
 minicss.files = userstyles/mini/*
 export(minicss)
 
-win32: js.path = $$DESTDIR/js
+win32|linux: js.path = $$DESTDIR/js
 mac: js.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/js
 js.files = js/*
 export(js)

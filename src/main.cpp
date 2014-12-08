@@ -6,6 +6,7 @@
 #include "lastfm.h"
 #include "cookiejar.h"
 #include "networkmanager.h"
+#include "systemtrayicon.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
 
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
-    QApplication::setApplicationVersion("0.2");
+    QApplication::setApplicationVersion("0.2-beta");
     QApplication::setOrganizationName("GearLux");
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -79,6 +80,9 @@ int main(int argc, char *argv[])
         Settings *settings = new Settings(w);
         qDebug() << "Create CookeJar";
         CookieJar *jar = new CookieJar();
+        qDebug() << "Create SystemTrayIcon";
+        SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
+        trayIcon->show();
 
         w->ui->webView->setPage(app);
 
@@ -106,6 +110,16 @@ int main(int argc, char *argv[])
         QObject::connect(last_fm, SIGNAL(lastFMUserName(QString)), settings->ui->last_fm_user_name_text, SLOT(setText(QString)));
 
         // Connect settings and application
+        QObject::connect(settings->ui->mini_on_top, SIGNAL(toggled(bool)), w, SLOT(setMiniPlayerOnTop(bool)) );
+        QObject::connect(settings->ui->customize, SIGNAL(toggled(bool)), w, SLOT(setCustomize(bool)) );
+        QObject::connect(settings->ui->style_combo, SIGNAL(currentIndexChanged(QString)), w, SLOT(setCSS(QString)));
+        QObject::connect(settings->ui->mini_style_combo, SIGNAL(currentIndexChanged(QString)), w, SLOT(setMiniCSS(QString)));
+        QObject::connect(w, SIGNAL(miniPlayerOnTop(bool)), settings->ui->mini_on_top, SLOT(setChecked(bool)));
+        QObject::connect(w, SIGNAL(customized(bool)), settings->ui->customize, SLOT(setChecked(bool)));
+        QObject::connect(w, SIGNAL(CSS(QString)), settings->ui->style_combo, SLOT(setCurrentText(QString)));
+        QObject::connect(w, SIGNAL(miniCSS(QString)), settings->ui->mini_style_combo, SLOT(setCurrentText(QString)));
+
+
         QObject::connect(w, SIGNAL(keepLogo(bool)), settings->ui->logo, SLOT(setChecked(bool)));
         QObject::connect(w, SIGNAL(keepLogo(bool)), w, SLOT(updateAppearance()));
         QObject::connect(w, SIGNAL(navigationButtons(bool)), settings->ui->navigation_buttons, SLOT(setChecked(bool)));
@@ -120,6 +134,8 @@ int main(int argc, char *argv[])
         // Connect settings and jar
         QObject::connect(jar, SIGNAL(dontSaveCookies(bool)), settings->ui->cookies, SLOT(setChecked(bool)));
         QObject::connect(settings->ui->cookies, SIGNAL(toggled(bool)), jar, SLOT(setDontSaveCookies(bool)));
+        QObject::connect(settings->ui->clear, SIGNAL(clicked()), jar, SLOT(deleteAllCookies()));
+        QObject::connect(settings->ui->clear, SIGNAL(clicked()), w, SLOT(loadUrl()));
 
         // Notify changes of the google app to the application
         QObject::connect(app, SIGNAL(repeat(QString)), w, SLOT(setRepeat(QString)));
@@ -166,6 +182,16 @@ int main(int argc, char *argv[])
         QObject::connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
         QObject::connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
 
+        // Connect settings and trayIcon
+        QObject::connect(settings->ui->notifications, SIGNAL(toggled(bool)), trayIcon, SLOT(setShowNotifications(bool)));
+        QObject::connect(settings->ui->tray_icon, SIGNAL(toggled(bool)), trayIcon, SLOT(setTrayIcon(bool)));
+
+        QObject::connect(trayIcon, SIGNAL(trayIcon(bool)), settings->ui->tray_icon, SLOT(setChecked(bool)));
+        QObject::connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
+        QObject::connect(trayIcon, SIGNAL(showNotifications(bool)), settings->ui->notifications, SLOT(setChecked(bool)));
+
+        QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), trayIcon, SLOT(nowPlaying(QString,QString,QString,int)));
+
         // Apply website customizations
         QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
 
@@ -173,6 +199,7 @@ int main(int argc, char *argv[])
         w->load();
         last_fm->load();
         jar->load();
+        trayIcon->load();
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
@@ -183,10 +210,10 @@ int main(int argc, char *argv[])
         QWebView *web_view = w->ui->webView;
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
-        web_view->load(QUrl("https://play.google.com/music/listen#"));
         web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
 
         qDebug() << "Showing application";
+        w->loadUrl();
         w->restore();
         w->show();
 

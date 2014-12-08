@@ -5,6 +5,11 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QKeyEvent>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
@@ -18,11 +23,77 @@ AboutDialog::AboutDialog(QWidget *parent) :
                    | Qt::CustomizeWindowHint
 #endif
                    );
+
+    ui->version->setText("Version " + QApplication::applicationVersion());
+
+    ui->latest_version->setText("Checking for updates ...");
+    ui->spinner->setLineLength(8);
+    ui->spinner->start();
+
+    QNetworkAccessManager* network_manager = new QNetworkAccessManager(this);
+    QObject::connect(network_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkVersion(QNetworkReply*)));
+
+    QUrl url = QUrl("https://api.github.com/repos/Gearlux/GDeskTunes/releases");
+    network_manager->get(QNetworkRequest(url));
 }
 
 AboutDialog::~AboutDialog()
 {
     delete ui;
+}
+
+void AboutDialog::setText(QString msg, QString msg2)
+{
+    QString html = "<p style='text-align: center'>" + msg + "<br><a href='http://gearlux.github.io/GDeskTunes/'>" + msg2 + "</a></p>";
+    ui->latest_version->setText(html);
+}
+
+void AboutDialog::checkVersion(QNetworkReply *reply)
+{
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QStringList propertyNames;
+        QStringList propertyKeys;
+
+        QString strReply = (QString)reply->readAll();
+
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(strReply.toUtf8());
+
+        if (jsonResponse.isArray())
+        {
+            QJsonArray jsonArray = jsonResponse.array();
+            if (jsonArray.count() > 0)
+            {
+                QJsonValue first = jsonArray.at(0);
+                QString tag_name = first.toObject().take("tag_name").toString();
+
+                if (tag_name.right(tag_name.length()-1) == QApplication::applicationVersion())
+                {
+                    setText("You are running the latest version:", tag_name);
+                }
+                else
+                {
+                    setText("New version available: " + tag_name, "Download it now");
+                }
+           }
+            else
+            {
+                setText("Unable to find any release from GitHub.", "Check the homepage.");
+            }
+        }
+        else
+        {
+            setText("Unable to process data from GitHub.", "Check the homepage");
+        }
+    }
+    else
+    {
+        setText("Unable to obtain response from GitHub.", "Check the homepage");
+    }
+
+    ui->spinner->stop();
+    ui->spinner->hide();
 }
 
 void AboutDialog::donate()

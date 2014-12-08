@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>251</width>
-    <height>355</height>
+    <width>271</width>
+    <height>415</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="gdesktunes.qrc">:/icons/gdesktunes.iconset/icon_128x128.png</pixmap>
+      <pixmap resource="../gdesktunes.qrc">:/icons/gdesktunes.iconset/icon_128x128.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -115,6 +115,31 @@
     </widget>
    </item>
    <item>
+    <widget class="QWidget" name="spinner_widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QtWaitingSpinner" name="spinner" native="true"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="latest_version">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -181,7 +206,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="gdesktunes.qrc">
+         <iconset resource="../gdesktunes.qrc">
           <normaloff>:/resources/btn_donateCC_LG.gif</normaloff>:/resources/btn_donateCC_LG.gif</iconset>
         </property>
         <property name="iconSize">
@@ -228,8 +253,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtWaitingSpinner</class>
+   <extends>QWidget</extends>
+   <header>thirdparty/QtWaitingSpinner/qtwaitingspinner.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="gdesktunes.qrc"/>
+  <include location="../gdesktunes.qrc"/>
  </resources>
  <connections>
   <connection>
