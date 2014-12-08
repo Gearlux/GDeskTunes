@@ -5,7 +5,7 @@
 
 Multi Platform Desktop Player for Google Play Music that integrates beatifully in your OS.
 
-Developed by [Gert Behies][2]. Inspired by [Radiant Player][3] and [Google Music Desktop Player][4]
+Developed by [Gert Behiels][2]. Inspired by [Radiant Player][3] and [Google Music Desktop Player][4]
 
 GDeskTunes comes with ABSOLUTELY NO WARRANT.
 
