@@ -10,8 +10,8 @@ html {
 
 body {
     background: rgb(225, 225, 225) !important;
-    width: 860px;
-    height: 100px;
+    width: 1000px;
+    height: 56px;
 }
 
 #gba {
@@ -91,4 +91,8 @@ body {
 
 #player .flat-button[data-id="queue"] {
     display: none !important;
+}
+
+#player .player-rating-container {
+    margin-right: 20px;
 }

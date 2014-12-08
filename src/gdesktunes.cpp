@@ -16,7 +16,9 @@
 
 GDeskTunes::GDeskTunes(QWidget* parent):
     MainWindow(parent),
-    mini(false)
+    mini(false),
+    css(QString::null),
+    mini_css(QString::null)
 {
     // Setup webview and windows interaction
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
@@ -41,7 +43,7 @@ void GDeskTunes::setCSS(QString css)
 }
 
 /*
- * Set the style for the mini-player and applies if the
+ * Set the style for the mini-player and applies if  the
  * application is in mini-player mode.
  */
 void GDeskTunes::setMiniCSS(QString css)
@@ -49,11 +51,13 @@ void GDeskTunes::setMiniCSS(QString css)
     qDebug() << "GDeskTunes::setMiniCSS(" << css << ")";
     if (this->mini_css == css) return;
     disableStyle(this->mini_css, "mini");
-    emit miniCSS(css);
+    this->mini_css = css;
     if (isMini())
     {
         applyStyle(css, "mini");
     }
+    qDebug() << "Sending signal miniCSS(" << css << ")";
+    emit miniCSS(css);
 }
 
 /*
@@ -78,6 +82,7 @@ void GDeskTunes::setMini(bool toMini)
 
         // Apply the mini style
         QString mini_style = this->mini_css;
+        qDebug() << "Apply mini style: " << mini_style;
         applyStyle(mini_style, "mini");
 
         // Find the body element which must contain the width and height of the mini player

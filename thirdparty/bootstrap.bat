@@ -39,10 +39,24 @@ cd qt-solutions
 git pull --rebase
 cd ..
 
-goto END
+goto QTWAITINGSPINNER
 
 :CLONEQTSOLUTIONS
 
 git clone https://gitorious.org/qt-solutions/qt-solutions.git
+
+:QTWAITINGSPINNER
+
+if not exist "QtWaitingSpinner" goto CLONEQTWAITINGSPINNER
+
+cd QtWaitingSpinner
+git pull --rebase
+cd ..
+
+goto END
+
+:CLONEQTWAITINGSPINNER
+
+git clone https://github.com/snowwlex/QtWaitingSpinner.git
 
 :END

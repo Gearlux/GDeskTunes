@@ -200,7 +200,8 @@ OTHER_FILES += \
     README.md \
     LICENSE \
     thirdparty/bootstrap.sh \
-    thirdparty/bootstrap.bat
+    thirdparty/bootstrap.bat \
+    userstyles/mini/Flat.css
 
 FORMS += \
     src/mainwindow.ui \
