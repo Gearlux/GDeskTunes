@@ -1,0 +1,94 @@
+/*
+#id Selects id
+.class selects class
+element selects element
+*/
+
+html {
+    min-width: 360px !important;
+}
+
+body {
+    background: rgb(225, 225, 225) !important;
+    width: 860px;
+    height: 100px;
+}
+
+#gba {
+    height: 0px !important;
+}
+
+#oneGoogleWrapper {
+    display: none !important;
+    height: 0px !important;
+}
+
+#nav-content-container {
+    display: none !important;
+}
+
+#player {
+    position: relative !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    height: 100% !important;
+    border-top: 0px !important;
+    display: table;
+    min-width: 360px;
+}
+
+#player.visualize {
+    background: none;
+}
+#player.visualize > .player-middle {
+    background: none;
+}
+
+#player.active:hover .playing-progress-background {
+    background: transparent;
+}
+
+#volume_low {
+    opacity: 100;
+}
+
+#vslider {
+    opacity: 100;
+}
+
+#player-left-wrapper {
+    background-color: transparent !important;
+}
+
+.now-playing-menu-wrapper {
+    background: transparent !important;
+    background-image: none !important;
+    display: none !important;
+}
+
+.player-middle {
+    background-color: transparent !important;
+}
+
+.fade-out:after {
+    background-image: none !important;
+    background: none !important;
+}
+
+#player-right-wrapper {
+    background-color: transparent !important;
+}
+
+.screensaver.visible, .panning {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.overlay {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#player .flat-button[data-id="queue"] {
+    display: none !important;
+}
