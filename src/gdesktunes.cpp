@@ -351,6 +351,7 @@ void GDeskTunes::save()
     settings.setValue("customize", this->isCustomized());
 
     settings.setValue("keeplogo", this->keep_logo);
+    settings.setValue("keeplinks", this->keep_links);
     settings.setValue("navigation.buttons", this->navigation_buttons);
 }
 
@@ -366,6 +367,7 @@ void GDeskTunes::load()
     this->setCustomize(settings.value("customize", false).toBool());
 
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
+    this->setKeepLinks(settings.value("keeplinks", true).toBool());
     this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
 }
 
