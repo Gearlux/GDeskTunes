@@ -31,13 +31,13 @@ void GoogleMusicApp::playbackChanged(int mode)
     // FIXME
 }
 
-void GoogleMusicApp::ratingChanged(int rating)
+void GoogleMusicApp::ratingChanged(int rate)
 {
-    if (current_rating != rating)
+    if (current_rating != rate)
     {
-        qDebug() << "Rating" << rating;
-        current_rating = rating;
-        if (rating > 3)
+        qDebug() << "Rating" << rate;
+        current_rating = rate;
+        if (rate > 3)
         {
             emit love(current_title, current_artist, current_album);
         }
@@ -46,6 +46,7 @@ void GoogleMusicApp::ratingChanged(int rating)
             emit unlove(current_title, current_artist, current_album);
         }
     }
+    emit rating(rate);
 }
 
 void GoogleMusicApp::playbackTimeChanged(int current, int total)
@@ -78,9 +79,10 @@ QString GoogleMusicApp::getShuffle()
     return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getShuffle()").toString();
 }
 
-void GoogleMusicApp::changeShuffle()
+void GoogleMusicApp::toggleShuffle()
 {
-    mainFrame()->evaluateJavaScript("MusicApi.Playback.changeShuffle()");
+    qDebug() << "GoogleMusicApp::toggleShuffle()";
+    mainFrame()->evaluateJavaScript("MusicAPI.Playback.toggleShuffle()");
 }
 
 void GoogleMusicApp::shuffleOff()
@@ -98,9 +100,10 @@ QString GoogleMusicApp::getRepeat()
     return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getRepeat()").toString();
 }
 
-void GoogleMusicApp::changeRepeat()
+void GoogleMusicApp::toggleRepeat()
 {
-    mainFrame()->evaluateJavaScript("MusicApi.Playback.changeRepeat()");
+    qDebug() << "GoogleMusicApp::toggleRepeat()";
+    mainFrame()->evaluateJavaScript("MusicAPI.Playback.toggleRepeat()");
 }
 
 void GoogleMusicApp::repeatOff()
@@ -133,6 +136,9 @@ void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QS
     current_rating = -1;
 
     emit nowPlaying(title, artist, album, duration);
+
+    int rate = getRating();
+    emit rating(rate);
 
     FileDownloader *loader = new FileDownloader(art, this);
     connect(loader, SIGNAL(downloaded(QByteArray &)), this, SLOT(onDownloaded(QByteArray &)));
@@ -183,7 +189,22 @@ void GoogleMusicApp::previous()
     elt.evaluateJavaScript("this.click();");
 }
 
+void GoogleMusicApp::toggleThumbsUp()
+{
+    qDebug() << "GoogleMusicApp::toggleThumbsUp()";
+    mainFrame()->evaluateJavaScript("MusicAPI.Rating.toggleThumbsUp()");
+}
 
+void GoogleMusicApp::toggleThumbsDown()
+{
+    qDebug() << "GoogleMusicApp::toggleThumbsDown()";
+    mainFrame()->evaluateJavaScript("MusicAPI.Rating.toggleThumbsDown()");
+}
+
+int GoogleMusicApp::getRating()
+{
+    return mainFrame()->evaluateJavaScript("MusicAPI.Rating.getRating()").toInt();
+}
 
 
 

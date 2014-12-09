@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
-    <height>258</height>
+    <width>352</width>
+    <height>177</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>352</width>
+    <height>212</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>GDeskTunes Mini Player</string>
@@ -20,6 +26,21 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="top_row">
      <property name="frameShape">
@@ -29,6 +50,18 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QFrame" name="frame_5">
         <property name="frameShape">
@@ -38,6 +71,9 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="album_art">
            <property name="minimumSize">
@@ -48,8 +84,8 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>64</width>
-             <height>64</height>
+             <width>88</width>
+             <height>88</height>
             </size>
            </property>
            <property name="text">
@@ -59,6 +95,12 @@
          </item>
          <item>
           <widget class="QFrame" name="song_info">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>88</height>
+            </size>
+           </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -121,11 +163,11 @@
        </spacer>
       </item>
       <item>
-       <widget class="QFrame" name="frame_3">
+       <widget class="QFrame" name="thumbs_frame">
         <property name="maximumSize">
          <size>
           <width>64</width>
-          <height>64</height>
+          <height>138</height>
          </size>
         </property>
         <property name="frameShape">
@@ -134,11 +176,27 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,2" columnstretch="0,0">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item row="1" column="0">
           <widget class="QPushButton" name="thumbs_up">
            <property name="text">
-            <string>good</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/thumbs_up_off.png</normaloff>:/icons/32x32/thumbs_up_off.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -148,7 +206,17 @@
          <item row="2" column="0">
           <widget class="QPushButton" name="thumbs_down">
            <property name="text">
-            <string>bad</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/thumbs_down_off.png</normaloff>:/icons/32x32/thumbs_down_off.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -158,7 +226,11 @@
          <item row="0" column="1">
           <widget class="QPushButton" name="maximize">
            <property name="text">
-            <string>maximize</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/expand.png</normaloff>:/icons/32x32/expand.png</iconset>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -185,7 +257,13 @@
     </spacer>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="control_frame">
+     <property name="maximumSize">
+      <size>
+       <width>352</width>
+       <height>83</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -193,8 +271,23 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QFrame" name="frame">
+       <widget class="QFrame" name="button_frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -202,10 +295,35 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="repeat">
            <property name="text">
-            <string>repeat</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/repeat_off.png</normaloff>:/icons/32x32/repeat_off.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -215,7 +333,17 @@
          <item>
           <widget class="QPushButton" name="previous">
            <property name="text">
-            <string>previous</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/prev.png</normaloff>:/icons/32x32/prev.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -225,7 +353,17 @@
          <item>
           <widget class="QPushButton" name="play">
            <property name="text">
-            <string>play</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/play.png</normaloff>:/icons/32x32/play.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -235,7 +373,17 @@
          <item>
           <widget class="QPushButton" name="next">
            <property name="text">
-            <string>next</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/next.png</normaloff>:/icons/32x32/next.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -245,7 +393,17 @@
          <item>
           <widget class="QPushButton" name="shuffle">
            <property name="text">
-            <string>shuffle</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../gdesktunes.qrc">
+             <normaloff>:/icons/32x32/shuffle_off.png</normaloff>:/icons/32x32/shuffle_off.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -281,7 +439,7 @@
          <item>
           <widget class="QLabel" name="duration">
            <property name="text">
-            <string>10:00</string>
+            <string>0:00</string>
            </property>
           </widget>
          </item>
@@ -294,10 +452,32 @@
   </layout>
   <zorder>album</zorder>
   <zorder>top_row</zorder>
-  <zorder>frame_2</zorder>
-  <zorder>frame</zorder>
+  <zorder>control_frame</zorder>
+  <zorder>button_frame</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../gdesktunes.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>maximize</sender>
+   <signal>clicked()</signal>
+   <receiver>MiniPlayer</receiver>
+   <slot>changeBackground()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeBackground()</slot>
+ </slots>
 </ui>

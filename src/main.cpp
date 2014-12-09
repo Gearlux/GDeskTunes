@@ -199,14 +199,19 @@ int main(int argc, char *argv[])
         // Connect the mini player
         QObject::connect(trayIcon, SIGNAL(triggerMiniPlayer(QPoint&)), miniplayer, SLOT(onTriggerMiniPlayer(QPoint &)));
         QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), miniplayer, SLOT(nowPlaying(QString,QString,QString,int)));
-        QObject::connect(app, SIGNAL(albumArt(QPixmap)), miniplayer->ui->album_art, SLOT(setPixmap(const QPixmap&)));
-        QObject::connect(miniplayer->ui->repeat, SIGNAL(clicked()), app, SLOT(changeRepeat()));
+        QObject::connect(app, SIGNAL(albumArt(QPixmap)), miniplayer, SLOT(albumArt(QPixmap)));
+        QObject::connect(miniplayer->ui->repeat, SIGNAL(clicked()), app, SLOT(toggleRepeat()));
         QObject::connect(miniplayer->ui->play, SIGNAL(clicked()), app, SLOT(play()));
         QObject::connect(miniplayer->ui->previous, SIGNAL(clicked()), app, SLOT(previous()));
         QObject::connect(miniplayer->ui->next, SIGNAL(clicked()), app, SLOT(next()));
-        QObject::connect(miniplayer->ui->shuffle, SIGNAL(clicked()), app, SLOT(changeShuffle()));
+        QObject::connect(miniplayer->ui->shuffle, SIGNAL(clicked()), app, SLOT(toggleShuffle()));
         QObject::connect(app, SIGNAL(playbackTime(int,int)), miniplayer, SLOT(playbackTime(int,int)));
 
+        QObject::connect(miniplayer->ui->thumbs_up, SIGNAL(clicked()), app, SLOT(toggleThumbsUp()));
+        QObject::connect(miniplayer->ui->thumbs_down, SIGNAL(clicked()), app, SLOT(toggleThumbsDown()));
+        QObject::connect(app, SIGNAL(rating(int)), miniplayer, SLOT(rating(int)));
+        QObject::connect(app, SIGNAL(repeat(QString)), miniplayer, SLOT(setRepeat(QString)));
+        QObject::connect(app, SIGNAL(shuffle(QString)), miniplayer, SLOT(setShuffle(QString)));
 
         // Apply website customizations
         QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));

@@ -13,6 +13,7 @@ signals:
     void isPlaying(bool playing);
     void nowPlaying(QString title, QString artist, QString album, int duration);
     void albumArt(QPixmap array);
+    void rating(int rating);
     void playbackTime(int current, int total);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
@@ -32,20 +33,24 @@ public slots:
     void ratingChanged(int rating);
 
     void notifySong(QString title, QString artist, QString album, QString art, int duration);
+    int getRating();
 
     void loadFinished(bool status);
     void addWindowObjects();
 
     QString getShuffle();
-    void changeShuffle();
+    void toggleShuffle();
     void shuffleOff();
     void shuffleOn();
 
     QString getRepeat();
-    void changeRepeat();
+    void toggleRepeat();
     void repeatOff();
     void repeatAll();
     void repeatOne();
+
+    void toggleThumbsUp();
+    void toggleThumbsDown();
 
     void play();
     void next();

@@ -15,7 +15,7 @@ void SystemTrayIcon::nowPlaying(QString title, QString artist, QString album, in
 {
     qDebug() << "SystemTrayIcon::nowPlaying(" << title << "," << artist << "," << album << "," << duration << ")";
     if (show_notifications)
-        showMessage(title, artist + "(" + album + ")", QSystemTrayIcon::MessageIcon(NoIcon), 1000);
+        showMessage(title, artist + " (" + album + ")", QSystemTrayIcon::MessageIcon(NoIcon), 1000);
 }
 
 void SystemTrayIcon::save()

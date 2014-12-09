@@ -112,6 +112,7 @@ if (typeof window.MusicAPI === 'undefined') {
         getRepeat:      function() {
             return MusicAPI.Playback._erepeat.value;
         },
+        toggleRepeat:   function() { MusicAPI.Playback._erepeat.click(); },
 
         changeRepeat:   function(mode) {
             if (!mode) {
