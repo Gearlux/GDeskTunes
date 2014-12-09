@@ -108,7 +108,8 @@ HEADERS += \
     src/mainwindow.h \
     src/settings.h \
     src/networkmanager.h \
-    src/systemtrayicon.h
+    src/systemtrayicon.h \
+    src/miniplayer.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -154,7 +155,8 @@ SOURCES += \
     src/mainwindow.cpp \
     src/settings.cpp \
     src/networkmanager.cpp \
-    src/systemtrayicon.cpp
+    src/systemtrayicon.cpp \
+    src/miniplayer.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -206,7 +208,8 @@ OTHER_FILES += \
 FORMS += \
     src/mainwindow.ui \
     src/settings.ui \
-    src/aboutdialog.ui
+    src/aboutdialog.ui \
+    src/miniplayer.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles

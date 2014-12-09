@@ -13,11 +13,15 @@ signals:
     void trayIcon(bool);
     void showNotifications(bool);
 
+    void triggerMiniPlayer(QPoint &pt);
+
 public slots:
     void setTrayIcon(bool icon) { if (icon == tray_icon) return; tray_icon = icon; emit trayIcon(icon); }
     void setShowNotifications(bool show) { if (show == show_notifications) return; show_notifications = show; emit showNotifications(show); }
 
     void nowPlaying(QString title, QString artist, QString album, int duration);
+
+    void onActivated(QSystemTrayIcon::ActivationReason);
 
     void load();
     void save();

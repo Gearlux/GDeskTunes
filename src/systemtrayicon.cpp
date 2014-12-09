@@ -7,6 +7,8 @@ SystemTrayIcon::SystemTrayIcon(QObject *parent) :
     QSystemTrayIcon(parent)
 {
     setIcon(QIcon(":/icons/gdesktunes.iconset/icon_16x16.png"));
+
+    connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onActivated(QSystemTrayIcon::ActivationReason)));
 }
 
 void SystemTrayIcon::nowPlaying(QString title, QString artist, QString album, int duration)
@@ -32,4 +34,15 @@ void SystemTrayIcon::load()
 
     this->setTrayIcon(settings.value("tray_icon", false).toBool());
     this->setShowNotifications(settings.value("show_notifications", true).toBool());
+}
+
+void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == ActivationReason::Trigger)
+    {
+        QRect geom = this->geometry();
+        QPoint pt = geom.topLeft();
+
+        emit triggerMiniPlayer(pt);
+    }
 }

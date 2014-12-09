@@ -7,6 +7,8 @@
 #include "cookiejar.h"
 #include "networkmanager.h"
 #include "systemtrayicon.h"
+#include "miniplayer.h"
+#include "ui_miniplayer.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -83,6 +85,8 @@ int main(int argc, char *argv[])
         qDebug() << "Create SystemTrayIcon";
         SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
         trayIcon->show();
+        qDebug() << "Create MiniPlayer";
+        MiniPlayer *miniplayer = new MiniPlayer(w);
 
         w->ui->webView->setPage(app);
 
@@ -191,6 +195,18 @@ int main(int argc, char *argv[])
         QObject::connect(trayIcon, SIGNAL(showNotifications(bool)), settings->ui->notifications, SLOT(setChecked(bool)));
 
         QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), trayIcon, SLOT(nowPlaying(QString,QString,QString,int)));
+
+        // Connect the mini player
+        QObject::connect(trayIcon, SIGNAL(triggerMiniPlayer(QPoint&)), miniplayer, SLOT(onTriggerMiniPlayer(QPoint &)));
+        QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), miniplayer, SLOT(nowPlaying(QString,QString,QString,int)));
+        QObject::connect(app, SIGNAL(albumArt(QPixmap)), miniplayer->ui->album_art, SLOT(setPixmap(const QPixmap&)));
+        QObject::connect(miniplayer->ui->repeat, SIGNAL(clicked()), app, SLOT(changeRepeat()));
+        QObject::connect(miniplayer->ui->play, SIGNAL(clicked()), app, SLOT(play()));
+        QObject::connect(miniplayer->ui->previous, SIGNAL(clicked()), app, SLOT(previous()));
+        QObject::connect(miniplayer->ui->next, SIGNAL(clicked()), app, SLOT(next()));
+        QObject::connect(miniplayer->ui->shuffle, SIGNAL(clicked()), app, SLOT(changeShuffle()));
+        QObject::connect(app, SIGNAL(playbackTime(int,int)), miniplayer, SLOT(playbackTime(int,int)));
+
 
         // Apply website customizations
         QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));

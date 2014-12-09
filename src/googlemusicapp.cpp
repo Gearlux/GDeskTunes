@@ -1,6 +1,7 @@
 #include "googlemusicapp.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "networkmanager.h"
 
 #include <QWebFrame>
 #include <QWebElement>
@@ -49,7 +50,7 @@ void GoogleMusicApp::ratingChanged(int rating)
 
 void GoogleMusicApp::playbackTimeChanged(int current, int total)
 {
-
+    emit playbackTime(current, total);
 }
 
 void GoogleMusicApp::repeatChanged(QString mode)
@@ -77,6 +78,11 @@ QString GoogleMusicApp::getShuffle()
     return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getShuffle()").toString();
 }
 
+void GoogleMusicApp::changeShuffle()
+{
+    mainFrame()->evaluateJavaScript("MusicApi.Playback.changeShuffle()");
+}
+
 void GoogleMusicApp::shuffleOff()
 {
    mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeShuffle('NO_SHUFFLE')");
@@ -90,6 +96,11 @@ void GoogleMusicApp::shuffleOn()
 QString GoogleMusicApp::getRepeat()
 {
     return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getRepeat()").toString();
+}
+
+void GoogleMusicApp::changeRepeat()
+{
+    mainFrame()->evaluateJavaScript("MusicApi.Playback.changeRepeat()");
 }
 
 void GoogleMusicApp::repeatOff()
@@ -122,6 +133,18 @@ void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QS
     current_rating = -1;
 
     emit nowPlaying(title, artist, album, duration);
+
+    FileDownloader *loader = new FileDownloader(art, this);
+    connect(loader, SIGNAL(downloaded(QByteArray &)), this, SLOT(onDownloaded(QByteArray &)));
+}
+
+void GoogleMusicApp::onDownloaded(QByteArray &data)
+{
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    sender()->deleteLater();
+
+    emit albumArt(pixmap);
 }
 
 void GoogleMusicApp::loadFinished(bool status)

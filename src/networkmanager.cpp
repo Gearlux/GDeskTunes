@@ -8,6 +8,7 @@ ImageReply::ImageReply(const QUrl &url) :
     QNetworkReply(),
     offset(0)
 {
+    qDebug() << "ImageReply::ImageReply(" << url << ")";
     setUrl(url);
 
     QString resourceName = url.toString().replace("https", "").replace("http","").replace("//","/");
@@ -28,6 +29,11 @@ ImageReply::ImageReply(const QUrl &url) :
     open(ReadOnly);
     setHeader(QNetworkRequest::ContentLengthHeader, QVariant(content.size()));
     QTimer::singleShot(0, this, SLOT(deferEmitSignals()));
+}
+
+ImageReply::~ImageReply()
+{
+    qDebug() << "ImageReply::~ImageReply()";
 }
 
 void ImageReply::deferEmitSignals()
@@ -97,4 +103,31 @@ QNetworkReply *NetworkManager::createRequest(
     }
     else
         return QNetworkAccessManager::createRequest(operation, request, device);
+}
+
+FileDownloader::FileDownloader(QUrl imageUrl, QObject *parent) :
+    QObject(parent)
+{
+    connect(&network_manager, SIGNAL(finished(QNetworkReply*)), SLOT(fileDownloaded(QNetworkReply*)));
+
+    QNetworkRequest request(imageUrl);
+    network_manager.get(request);
+}
+
+FileDownloader::~FileDownloader()
+{
+    qDebug() << "FileDownloader::~FileDownloader()";
+}
+
+void FileDownloader::fileDownloaded(QNetworkReply* pReply)
+{
+    downloaded_data = pReply->readAll();
+    //emit a signal
+    pReply->deleteLater();
+    emit downloaded(downloaded_data);
+}
+
+QByteArray FileDownloader::downloadedData() const
+{
+    return downloaded_data;
 }

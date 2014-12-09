@@ -12,6 +12,8 @@ public:
 signals:
     void isPlaying(bool playing);
     void nowPlaying(QString title, QString artist, QString album, int duration);
+    void albumArt(QPixmap array);
+    void playbackTime(int current, int total);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
 
@@ -22,6 +24,7 @@ public slots:
     void increaseVolume();
     void decreaseVolume();
 
+    // FIXME: Are these real slots ?
     void playbackTimeChanged(int current, int total);
     void repeatChanged(QString mode);
     void shuffleChanged(QString mode);
@@ -34,10 +37,12 @@ public slots:
     void addWindowObjects();
 
     QString getShuffle();
+    void changeShuffle();
     void shuffleOff();
     void shuffleOn();
 
     QString getRepeat();
+    void changeRepeat();
     void repeatOff();
     void repeatAll();
     void repeatOne();
@@ -45,6 +50,9 @@ public slots:
     void play();
     void next();
     void previous();
+
+private slots:
+    void onDownloaded(QByteArray &data);
 
 private:
     QString current_title;
