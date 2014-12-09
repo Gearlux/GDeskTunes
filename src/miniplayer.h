@@ -38,6 +38,7 @@ public:
     Ui::MiniPlayer *ui;
 
 private:
+    bool positioned;
     QPixmap album_picture;
     bool large;
 

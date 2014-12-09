@@ -4,7 +4,8 @@
 #include <QApplication>
 
 SystemTrayIcon::SystemTrayIcon(QObject *parent) :
-    QSystemTrayIcon(parent)
+    QSystemTrayIcon(parent),
+    tray_icon(false)
 {
     setIcon(QIcon(":/icons/gdesktunes.iconset/icon_16x16.png"));
 
@@ -34,11 +35,13 @@ void SystemTrayIcon::load()
 
     this->setTrayIcon(settings.value("tray_icon", false).toBool());
     this->setShowNotifications(settings.value("show_notifications", true).toBool());
+
+    emit trayIcon(this->tray_icon);
 }
 
 void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    if (reason == ActivationReason::Trigger)
+    if (reason == QSystemTrayIcon::Trigger)
     {
         QRect geom = this->geometry();
         QPoint pt = geom.topLeft();

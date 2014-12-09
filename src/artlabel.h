@@ -7,9 +7,12 @@ class ArtLabel : public QLabel
 {
     Q_OBJECT
 public:
-    explicit ArtLabel(QObject *parent = 0);
+    explicit ArtLabel(QWidget *parent = 0);
+
+    void mouseDoubleClickEvent(QMouseEvent * event);
 
 signals:
+    void clicked();
 
 public slots:
 
