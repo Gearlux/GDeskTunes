@@ -9,3 +9,4 @@ ui_*.h
 moc_*
 *.moc
 qrc*
+*.autosave
