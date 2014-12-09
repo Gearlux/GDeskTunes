@@ -1,13 +1,13 @@
 #ifndef MINIPLAYER_H
 #define MINIPLAYER_H
 
-#include <QDialog>
+#include <QWidget>
 
 namespace Ui {
 class MiniPlayer;
 }
 
-class MiniPlayer : public QDialog
+class MiniPlayer : public QWidget
 {
     Q_OBJECT
 

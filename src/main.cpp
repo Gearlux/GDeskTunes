@@ -9,6 +9,7 @@
 #include "systemtrayicon.h"
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
+#include "application.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -56,7 +57,8 @@ int main(int argc, char *argv[])
 
 
     // Create a single application
-    QtSingleApplication a(argc, argv);
+    Application a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
 
     if (a.isRunning())
     {
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
         SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
         trayIcon->show();
         qDebug() << "Create MiniPlayer";
-        MiniPlayer *miniplayer = new MiniPlayer(w);
+        MiniPlayer *miniplayer = new MiniPlayer();
 
         w->ui->webView->setPage(app);
 

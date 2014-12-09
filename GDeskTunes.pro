@@ -110,7 +110,8 @@ HEADERS += \
     src/networkmanager.h \
     src/systemtrayicon.h \
     src/miniplayer.h \
-    src/artlabel.h
+    src/artlabel.h \
+    src/application.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -158,7 +159,8 @@ SOURCES += \
     src/networkmanager.cpp \
     src/systemtrayicon.cpp \
     src/miniplayer.cpp \
-    src/artlabel.cpp
+    src/artlabel.cpp \
+    src/application.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \

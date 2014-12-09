@@ -23,7 +23,7 @@ QString seconds_to_DHMS(quint32 duration)
 }
 
 MiniPlayer::MiniPlayer(QWidget *parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::MiniPlayer),
     large(false),
     positioned(false)
@@ -99,7 +99,7 @@ void MiniPlayer::keyPressEvent(QKeyEvent *event)
         }
     }
     default:
-        QDialog::keyPressEvent(event);
+        QWidget::keyPressEvent(event);
         break;
     }
 }
@@ -244,14 +244,14 @@ void MiniPlayer::mouseMoveEvent(QMouseEvent *event)
     }
     else
     {
-        QDialog::mouseMoveEvent(event);
+        QWidget::mouseMoveEvent(event);
     }
 }
 
 void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 {
     do_move = false;
-    QDialog::mouseReleaseEvent(event);
+    QWidget::mouseReleaseEvent(event);
 }
 
 
