@@ -209,7 +209,10 @@ OTHER_FILES += \
     thirdparty/bootstrap.bat \
     userstyles/mini/Flat.css \
     deploy/windows.bat \
-    deploy/mac.sh
+    deploy/mac.sh \
+    deploy/cpld.bash \
+    deploy/GDeskTunes.sh \
+    deploy/linux.sh
 
 FORMS += \
     src/mainwindow.ui \
