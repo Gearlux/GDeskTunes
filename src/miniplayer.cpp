@@ -72,7 +72,11 @@ void MiniPlayer::onTriggerMiniPlayer(QPoint& pt)
         show();
         if (!positioned)
         {
-            this->move(pt.x(), pt.y());
+            // FIXME: quick hack for windows
+            int y = pt.y();
+            if (pt.y() > 100)
+                y -= height();
+            this->move(pt.x(), y);
             positioned = true;
         }
     }
@@ -253,5 +257,14 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
     do_move = false;
     QWidget::mouseReleaseEvent(event);
 }
+
+void MiniPlayer::applicationStateChanged(Qt::ApplicationState state)
+{
+    if (state == Qt::ApplicationInactive)
+    {
+        hide();
+    }
+}
+
 
 

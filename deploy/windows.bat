@@ -7,7 +7,3 @@ del GDeskTunes\*.cpp
 del GDeskTunes\*.moc
 windeployQt GDeskTunes\GDeskTunes.exe
 zip -r GDeskTunes.zip GDeskTunes
-
-
-
-

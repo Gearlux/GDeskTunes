@@ -34,6 +34,8 @@ public slots:
     void enableBackground();
     void disableBackground();
 
+    void applicationStateChanged(Qt::ApplicationState state);
+
 public:
     Ui::MiniPlayer *ui;
 

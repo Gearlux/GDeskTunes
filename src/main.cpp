@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 
     // Create a single application
     Application a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
 
     if (a.isRunning())
     {
@@ -209,6 +208,8 @@ int main(int argc, char *argv[])
         QObject::connect(app, SIGNAL(rating(int)), miniplayer, SLOT(rating(int)));
         QObject::connect(app, SIGNAL(repeat(QString)), miniplayer, SLOT(setRepeat(QString)));
         QObject::connect(app, SIGNAL(shuffle(QString)), miniplayer, SLOT(setShuffle(QString)));
+
+        QObject::connect(&a, SIGNAL(applicationStateChanged(Qt::ApplicationState)), miniplayer, SLOT(applicationStateChanged(Qt::ApplicationState)));
 
         // Save status on exit
         QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
