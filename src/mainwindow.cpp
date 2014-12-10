@@ -488,7 +488,8 @@ void MainWindow::quitGDeskTunes()
 void MainWindow::closeWindow()
 {
 #ifdef Q_OS_MAC
-    hideMac();
+    // FIXME
+    // hideMac();
 #endif
 }
 
@@ -501,8 +502,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-        hideMac();
-        event->ignore();
+        // FIXME
+        // hideMac();
+        event->accept();
     }
 #else
 #if defined(Q_OS_WIN) && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)

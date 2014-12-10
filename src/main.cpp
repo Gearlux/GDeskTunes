@@ -9,6 +9,7 @@
 #include "systemtrayicon.h"
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
+#include "application.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -56,7 +57,8 @@ int main(int argc, char *argv[])
 
 
     // Create a single application
-    QtSingleApplication a(argc, argv);
+    Application a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
 
     if (a.isRunning())
     {
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
         SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
         trayIcon->show();
         qDebug() << "Create MiniPlayer";
-        MiniPlayer *miniplayer = new MiniPlayer(w);
+        MiniPlayer *miniplayer = new MiniPlayer();
 
         w->ui->webView->setPage(app);
 
@@ -181,11 +183,6 @@ int main(int argc, char *argv[])
         QObject::connect(w->repeat_one, SIGNAL(triggered()), app, SLOT(repeatOne()));
         QObject::connect(w->repeat_all, SIGNAL(triggered()), app, SLOT(repeatOne()));
 
-        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
-
         // Connect settings and trayIcon
         QObject::connect(settings->ui->notifications, SIGNAL(toggled(bool)), trayIcon, SLOT(setShowNotifications(bool)));
         QObject::connect(settings->ui->tray_icon, SIGNAL(toggled(bool)), trayIcon, SLOT(setTrayIcon(bool)));
@@ -212,6 +209,13 @@ int main(int argc, char *argv[])
         QObject::connect(app, SIGNAL(rating(int)), miniplayer, SLOT(rating(int)));
         QObject::connect(app, SIGNAL(repeat(QString)), miniplayer, SLOT(setRepeat(QString)));
         QObject::connect(app, SIGNAL(shuffle(QString)), miniplayer, SLOT(setShuffle(QString)));
+
+        // Save status on exit
+        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+        QObject::connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
 
         // Apply website customizations
         QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
