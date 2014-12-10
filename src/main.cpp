@@ -225,7 +225,9 @@ int main(int argc, char *argv[])
         w->load();
         last_fm->load();
         jar->load();
+#ifndef Q_OS_LINUX
         trayIcon->load();
+#endif
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
