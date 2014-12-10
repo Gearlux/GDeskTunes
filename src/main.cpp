@@ -209,6 +209,8 @@ int main(int argc, char *argv[])
         QObject::connect(app, SIGNAL(repeat(QString)), miniplayer, SLOT(setRepeat(QString)));
         QObject::connect(app, SIGNAL(shuffle(QString)), miniplayer, SLOT(setShuffle(QString)));
 
+        QObject::connect(miniplayer, SIGNAL(showMainWindow()), w, SLOT(activateWindow()));
+
         QObject::connect(&a, SIGNAL(applicationStateChanged(Qt::ApplicationState)), miniplayer, SLOT(applicationStateChanged(Qt::ApplicationState)));
 
         // Save status on exit

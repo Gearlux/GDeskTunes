@@ -41,6 +41,12 @@ void SystemTrayIcon::load()
 
 void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
+    qDebug() << "SystemTrayIcon::onActivated(" << reason << ")";
+    if (reason == QSystemTrayIcon::DoubleClick)
+    {
+        emit showMainWindow();
+        return;
+    }
     if (reason == QSystemTrayIcon::Trigger)
     {
         QRect geom = this->geometry();

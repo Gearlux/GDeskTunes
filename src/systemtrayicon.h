@@ -14,6 +14,7 @@ signals:
     void showNotifications(bool);
 
     void triggerMiniPlayer(QPoint &pt);
+    void showMainWindow();
 
 public slots:
     void setTrayIcon(bool icon) { if (icon == tray_icon) return; tray_icon = icon; emit trayIcon(icon); }

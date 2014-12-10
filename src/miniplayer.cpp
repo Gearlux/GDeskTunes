@@ -56,16 +56,7 @@ void MiniPlayer::onTriggerMiniPlayer(QPoint& pt)
         qDebug() << "Focus widget: " << focus_widget->objectName();
     qDebug() << isHidden();
 
-    if (active_window == 0)
-    {
-        MainWindow *w = qobject_cast<MainWindow*>(parent());
-        if (w != 0)
-        {
-            w->activateWindow();
-            w->raise();
-        }
-    }
-    if (isHidden() || active_window != this)
+    if (isHidden())
     {
         activateWindow();
         raise();
@@ -260,10 +251,12 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 
 void MiniPlayer::applicationStateChanged(Qt::ApplicationState state)
 {
+    /*
     if (state == Qt::ApplicationInactive)
     {
         hide();
     }
+    */
 }
 
 
