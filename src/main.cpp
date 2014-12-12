@@ -1,15 +1,15 @@
 #include "gdesktunes.h"
-#include "ui_mainwindow.h"
 #include "settings.h"
-#include "ui_settings.h"
 #include "googlemusicapp.h"
 #include "lastfm.h"
 #include "cookiejar.h"
 #include "networkmanager.h"
 #include "systemtrayicon.h"
 #include "miniplayer.h"
-#include "ui_miniplayer.h"
 #include "application.h"
+
+#include "ui_mainwindow.h"
+#include "ui_settings.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
