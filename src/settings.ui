@@ -66,7 +66,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="mini_on_top">
+        <widget class="QCheckBox" name="mini_player_on_top">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -76,7 +76,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QCheckBox" name="notifications">
+        <widget class="QCheckBox" name="show_notifications">
          <property name="text">
           <string>Display notification when song changes</string>
          </property>
@@ -90,7 +90,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QCheckBox" name="links">
+        <widget class="QCheckBox" name="keep_links">
          <property name="text">
           <string>Keep Google links</string>
          </property>
@@ -104,7 +104,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QCheckBox" name="logo">
+        <widget class="QCheckBox" name="keep_logo">
          <property name="text">
           <string>Keep Google logo</string>
          </property>
@@ -135,7 +135,7 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <item row="0" column="0">
-        <widget class="QCheckBox" name="customize">
+        <widget class="QCheckBox" name="customized">
          <property name="text">
           <string>Customize GDeskTunes</string>
          </property>
@@ -168,7 +168,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="style_combo"/>
+        <widget class="QComboBox" name="CSS"/>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="mini_style_label">
@@ -178,7 +178,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QComboBox" name="mini_style_combo"/>
+        <widget class="QComboBox" name="mini_CSS"/>
        </item>
       </layout>
      </widget>
@@ -192,7 +192,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="1" column="1">
-        <widget class="QCheckBox" name="auto_love">
+        <widget class="QCheckBox" name="auto_liked">
          <property name="text">
           <string>Automatically love &quot;thumbs up&quot; tracks</string>
          </property>
@@ -269,7 +269,7 @@
         </spacer>
        </item>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="scrobble">
+        <widget class="QCheckBox" name="scrobbled">
          <property name="text">
           <string>Scrobble songs to Last.fm</string>
          </property>
@@ -287,7 +287,7 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout_3">
        <item row="1" column="0">
-        <widget class="QCheckBox" name="cookies">
+        <widget class="QCheckBox" name="dont_save_cookies">
          <property name="text">
           <string>Don't save GDeskTunes cookies</string>
          </property>
@@ -342,15 +342,15 @@
   <tabstop>last_fm_user_name_text</tabstop>
   <tabstop>last_fm_password_text</tabstop>
   <tabstop>authorize</tabstop>
-  <tabstop>scrobble</tabstop>
-  <tabstop>auto_love</tabstop>
+  <tabstop>scrobbled</tabstop>
+  <tabstop>auto_liked</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>customize</tabstop>
+  <tabstop>customized</tabstop>
   <tabstop>clear</tabstop>
-  <tabstop>style_combo</tabstop>
-  <tabstop>cookies</tabstop>
-  <tabstop>mini_style_combo</tabstop>
-  <tabstop>mini_on_top</tabstop>
+  <tabstop>CSS</tabstop>
+  <tabstop>dont_save_cookies</tabstop>
+  <tabstop>mini_CSS</tabstop>
+  <tabstop>mini_player_on_top</tabstop>
  </tabstops>
  <resources>
   <include location="../gdesktunes.qrc"/>

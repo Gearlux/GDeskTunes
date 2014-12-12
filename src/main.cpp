@@ -31,6 +31,185 @@
 #include <QtCore/QDir>
 #include <QWebFrame>
 
+QSet<QString> connected;
+
+void connect(const QObject *sender, const char* signal,
+                                const QObject *receiver, const char* method,
+                                Qt::ConnectionType type = Qt::AutoConnection, bool log = true)
+{
+    QString key;
+    QTextStream stream(&key);
+
+    // FIXME: Use QMetaObject::normalized
+    stream << sender->objectName()  << "." << QString(signal).remove(QRegExp("(^[1,2]|\\s+)")) << " -> " << receiver->objectName() << "." << QString(method).remove(QRegExp("(^[1,2]|\\s+)"));
+    if (connected.contains(key))
+    {
+        qDebug() << "Not connecting: " << key;
+        return;
+    }
+    if (log)
+        qDebug() << "Connecting: " << key;
+    connected.insert(key);
+    QObject::connect(sender, signal, receiver, method, type);
+}
+
+void connect(const QObject *sender, const QMetaMethod &signal,
+                                const QObject *receiver, const QMetaMethod &method,
+                                Qt::ConnectionType type = Qt::AutoConnection, bool log = true)
+{
+    QString key;
+    QTextStream stream(&key);
+
+    // FIXME: Use QMetaObject::normalized
+    stream << sender->objectName()  << "." << QString(signal.methodSignature()).remove(QRegExp("(^[1,2]|\\s+)")) << " -> " << receiver->objectName() << "." <<QString(method.methodSignature()).remove(QRegExp("(^[1,2]|\\s+)"));
+
+    if (connected.contains(key))
+    {
+        qDebug() << "Not connecting: " << key;
+        return;
+    }
+    if (log)
+        qDebug() << "Connecting: " << key;
+    connected.insert(key);
+    QObject::connect(sender, signal, receiver, method, type);
+}
+
+void connectUI(QObject *ui, QObject *object)
+{
+    if (!ui) return;
+    if (!object) return;
+
+    const QMetaObject *mobject = object->metaObject();
+
+    const QObjectList list = ui->findChildren<QObject *>(QString());
+
+    for(int o=0; o<list.length(); ++o)
+    {
+        const QObject *ui_object = list.at(o);
+        const QMetaObject *mui = ui_object->metaObject();
+
+        QString objectName = ui_object->objectName();
+        int underscore = objectName.indexOf('_');
+        while(underscore != -1)
+        {
+            objectName.remove(underscore, 1);
+            objectName[underscore] = objectName[underscore].toUpper();
+            underscore = objectName.indexOf('_');
+        }
+
+        QString slot_method, argument;
+        int signal_index = -1;
+
+        // Not the best programming practice, but this code is more elegant than solving it with if/else
+        if (qobject_cast<const QAction*>(ui_object) != 0) goto _connect_action;
+
+        // Connect GUI elements
+        signal_index = mui->indexOfSignal("clicked()");
+        if (signal_index != -1) { slot_method = QString::null; argument = "()"; goto _connect;}
+
+        signal_index = mui->indexOfSignal("toggled(bool)");
+        if (signal_index != -1) { slot_method = "setChecked(bool)"; argument = "(bool)"; goto _connect;}
+
+        signal_index = mui->indexOfSignal("currentIndexChanged(QString)");
+        if (signal_index != -1) { slot_method = "setCurrentText(QString)"; argument = "(QString)"; goto _connect;}
+
+_connect:
+        if (signal_index != -1)
+        {
+            QString setter;
+            if (slot_method == QString::null)
+            {
+                setter = objectName + argument;
+            }
+            else
+            {
+                setter = "set" + objectName + argument;
+                setter[3] = setter[3].toUpper();
+            }
+
+            int slot_index = mobject->indexOfMethod(setter.toUtf8().constData());
+            if (slot_index != -1)
+            {
+                connect(ui_object, mui->method(signal_index), object, mobject->method(slot_index));
+            }
+        }
+
+        if (slot_method == QString::null) continue;
+
+        signal_index = mobject->indexOfSignal((objectName + argument).toUtf8().constData());
+        if (signal_index != -1)
+        {
+            int slot_index = mui->indexOfSlot(slot_method.toUtf8().constData());
+            if (slot_index != -1)
+            {
+                connect(object, mobject->method(signal_index), ui_object, mui->method(slot_index));
+            }
+        }
+        // No need to check if this is an action
+        continue;
+
+        // Connect actions
+_connect_action:
+        signal_index = mui->indexOfSignal("triggered()");
+        if (signal_index != -1)
+        {
+            QString slotMethod;
+            if (objectName.startsWith("action"))
+                slotMethod = objectName.mid(6);
+            else
+                slotMethod = objectName;
+            slotMethod[0] = slotMethod[0].toLower();
+
+            int slot_index = mobject->indexOfMethod((slotMethod + "()").toUtf8().constData());
+            if (slot_index != -1)
+            {
+                connect(ui_object, mui->method(signal_index), object, mobject->method(slot_index));
+            }
+        }
+    }
+}
+
+void connectSlotsByName(QObject *sender, QObject *receiver)
+{
+    if (!sender) return;
+    if (!receiver) return;
+
+    const QMetaObject *msender = sender->metaObject();
+    const QMetaObject *mreceiver = receiver->metaObject();
+
+    // list of all objects to look for matching signals including...
+    // all children of 'o'...
+    // and the object 'o' itself
+    // const QObjectList list = o->findChildren<QObject *>(QString()) << o;
+
+    for(int s=0; s<msender->methodCount(); ++s)
+    {
+        QMetaMethod ms = msender->method(s);
+        if (ms.methodType() != QMetaMethod::Signal) continue;
+        const QByteArray signalSignature = ms.methodSignature();
+        const char *signal = signalSignature.constData();
+
+        if (strncmp(signal,"destroyed", 9) == 0) continue;
+        if (strncmp(signal,"deleteLater", 11) == 0) continue;
+        if (strncmp(signal,"objectNameChanged", 16) == 0) continue;
+        if (strncmp(signal,"_q_reregisterTimers", 18) == 0) continue;
+
+        for(int m=0; m<mreceiver->methodCount(); ++m)
+        {
+            QMetaMethod mr = mreceiver->method(m);
+            if (mr.methodType() != QMetaMethod::Slot) continue;
+            const QByteArray slotSignature = mr.methodSignature();
+            const char *slot = slotSignature.constData();
+
+            if (strcmp(signal, slot) == 0)
+            {
+                connect(sender, ms, receiver, mr, Qt::AutoConnection, true);
+            }
+        }
+    }
+
+}
+
 /*
  * Program entry point.
  *
@@ -58,6 +237,7 @@ int main(int argc, char *argv[])
 
     // Create a single application
     Application a(argc, argv);
+    a.setObjectName("Application");
 
     if (a.isRunning())
     {
@@ -71,23 +251,29 @@ int main(int argc, char *argv[])
     else
     {
         // Create the main window and all the components it interacts with
-        qDebug() << "Creating components";
         qDebug() << "Create MainWindow";
         GDeskTunes *w = new GDeskTunes();
+        w->setObjectName("GDeskTunes");
         w->setWindowIcon(QIcon(":/icons/gdesktunes.iconset/icon_128x128.png"));
         qDebug() << "Create LastFM";
         LastFM *last_fm = new LastFM(w);
+        last_fm->setObjectName("LastFM");
         qDebug() << "Create GoogleMusicApp";
         GoogleMusicApp *app = new GoogleMusicApp(w);
+        app->setObjectName("GoogleMusicApp");
         qDebug() << "Create Settings";
         Settings *settings = new Settings(w);
+        settings->setObjectName("Settings");
         qDebug() << "Create CookeJar";
         CookieJar *jar = new CookieJar();
+        jar->setObjectName("CookieJar");
         qDebug() << "Create SystemTrayIcon";
         SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
+        trayIcon->setObjectName("SystemTrayIcon");
         trayIcon->show();
         qDebug() << "Create MiniPlayer";
-        MiniPlayer *miniplayer = new MiniPlayer();
+        MiniPlayer *miniplayer = new MiniPlayer(w);
+        miniplayer->setObjectName("MiniPlayer");
 
         w->ui->webView->setPage(app);
 
@@ -96,146 +282,76 @@ int main(int argc, char *argv[])
         MediaKeys *keys = new MediaKeys(w);
         QObject::connect(keys, SIGNAL(keyReceived(int,bool,bool)), w, SLOT(receiveMacMediaKey(int, bool, bool)));
 #endif
-        qDebug() << "Connecting components";
-        // Connect google with last.fm
-        QObject::connect(app, SIGNAL(nowPlaying(QString, QString, QString, int)), last_fm, SLOT(nowPlaying(QString,QString,QString,int)));
-        QObject::connect(app, SIGNAL(love(QString, QString, QString)), last_fm, SLOT(love(QString,QString,QString)));
-        QObject::connect(app, SIGNAL(unlove(QString, QString, QString)), last_fm, SLOT(unlove(QString,QString,QString)));
-
-        // Connect settings and last.fm
-        QObject::connect(settings, SIGNAL(login(QString, QString)), last_fm, SLOT(login(QString, QString)));
-        QObject::connect(settings, SIGNAL(logout()), last_fm, SLOT(logout()));
-        QObject::connect(settings->ui->scrobble, SIGNAL(toggled(bool)), last_fm, SLOT(setScrobbled(bool)));
-        QObject::connect(settings->ui->auto_love, SIGNAL(toggled(bool)), last_fm, SLOT(setAutoLiked(bool)));
-
-        QObject::connect(last_fm, SIGNAL(authorized(bool)), settings, SLOT(setAuthorized(bool)));
-        QObject::connect(last_fm, SIGNAL(scrobbled(bool)), settings->ui->scrobble, SLOT(setChecked(bool)));
-        QObject::connect(last_fm, SIGNAL(autoLiked(bool)), settings->ui->auto_love, SLOT(setChecked(bool)));
-        QObject::connect(last_fm, SIGNAL(lastFMPassword(QString)), settings->ui->last_fm_password_text, SLOT(setText(QString)));
-        QObject::connect(last_fm, SIGNAL(lastFMUserName(QString)), settings->ui->last_fm_user_name_text, SLOT(setText(QString)));
-
-        // Connect settings and application
-        QObject::connect(settings->ui->mini_on_top, SIGNAL(toggled(bool)), w, SLOT(setMiniPlayerOnTop(bool)) );
-        QObject::connect(settings->ui->customize, SIGNAL(toggled(bool)), w, SLOT(setCustomize(bool)) );
-        QObject::connect(settings->ui->style_combo, SIGNAL(currentIndexChanged(QString)), w, SLOT(setCSS(QString)));
-        QObject::connect(settings->ui->mini_style_combo, SIGNAL(currentIndexChanged(QString)), w, SLOT(setMiniCSS(QString)));
-        QObject::connect(w, SIGNAL(miniPlayerOnTop(bool)), settings->ui->mini_on_top, SLOT(setChecked(bool)));
-        QObject::connect(w, SIGNAL(customized(bool)), settings->ui->customize, SLOT(setChecked(bool)));
-        QObject::connect(w, SIGNAL(CSS(QString)), settings->ui->style_combo, SLOT(setCurrentText(QString)));
-        QObject::connect(w, SIGNAL(miniCSS(QString)), settings->ui->mini_style_combo, SLOT(setCurrentText(QString)));
-
-
-        QObject::connect(w, SIGNAL(keepLogo(bool)), settings->ui->logo, SLOT(setChecked(bool)));
-        QObject::connect(w, SIGNAL(keepLogo(bool)), w, SLOT(updateAppearance()));
-        QObject::connect(w, SIGNAL(navigationButtons(bool)), settings->ui->navigation_buttons, SLOT(setChecked(bool)));
-        QObject::connect(w, SIGNAL(navigationButtons(bool)), w, SLOT(updateAppearance()));
-        QObject::connect(w, SIGNAL(keepLinks(bool)), settings->ui->links, SLOT(setChecked(bool)));
-        QObject::connect(w, SIGNAL(keepLinks(bool)), w, SLOT(updateAppearance()));
-
-        QObject::connect(settings->ui->logo, SIGNAL(toggled(bool)), w, SLOT(setKeepLogo(bool)));
-        QObject::connect(settings->ui->links, SIGNAL(toggled(bool)), w, SLOT(setKeepLinks(bool)));
-        QObject::connect(settings->ui->navigation_buttons, SIGNAL(toggled(bool)), w, SLOT(setNavigationButtons(bool)));
+        // Notify changes of the google app to the application
+        connectSlotsByName(app, w);
+        connectSlotsByName(w, app);
+        connectUI(w, w);
+        connectUI(w, app);
 
         // Connect settings and jar
-        QObject::connect(jar, SIGNAL(dontSaveCookies(bool)), settings->ui->cookies, SLOT(setChecked(bool)));
-        QObject::connect(settings->ui->cookies, SIGNAL(toggled(bool)), jar, SLOT(setDontSaveCookies(bool)));
-        QObject::connect(settings->ui->clear, SIGNAL(clicked()), jar, SLOT(deleteAllCookies()));
-        QObject::connect(settings->ui->clear, SIGNAL(clicked()), w, SLOT(loadUrl()));
+        connectUI(settings, jar);
 
-        // Notify changes of the google app to the application
-        QObject::connect(app, SIGNAL(repeat(QString)), w, SLOT(setRepeat(QString)));
-        QObject::connect(app, SIGNAL(shuffle(QString)), w, SLOT(setShuffle(QString)));
-        QObject::connect(app, SIGNAL(isPlaying(bool)), w, SLOT(isPlaying(bool)));
+        // Connect settings and last.fm
+        connectSlotsByName(app, last_fm);
+        connectSlotsByName(last_fm, settings);
+        connectSlotsByName(settings, last_fm);
+        connectUI(settings, last_fm);
 
-        // Connect ui and google
-        QObject::connect(w, SIGNAL(play()), app, SLOT(play()));
-        QObject::connect(w, SIGNAL(next()), app, SLOT(next()));
-        QObject::connect(w, SIGNAL(previous()), app, SLOT(previous()));
-
-        // Connect ui to open dialog box
-        QObject::connect(w, SIGNAL(changeSettings()), settings, SLOT(activateAndRaise()));
-
-        // Connect the ui and the application
-        QObject::connect(w->ui->actionPlay, SIGNAL(triggered()), w, SIGNAL(play()));
-        QObject::connect(w->ui->actionPrevious, SIGNAL(triggered()), w, SIGNAL(previous()));
-        QObject::connect(w->ui->actionNext, SIGNAL(triggered()), w, SIGNAL(next()));
-        QObject::connect(w->ui->actionPreferences, SIGNAL(triggered()), w, SIGNAL(changeSettings()));
-
-        QObject::connect(w->ui->actionAbout, SIGNAL(triggered()), w, SLOT(about()));
-        QObject::connect(w->ui->actionSwitch_mini, SIGNAL(triggered()), w, SLOT(switchMini()));
-        QObject::connect(w->ui->actionQuit_GDeskTunes, SIGNAL(triggered()), w, SLOT(quitGDeskTunes()));
-        QObject::connect(w->ui->actionEnter_Full_Screen, SIGNAL(triggered()), w, SLOT(switchFullScreen()));
-        QObject::connect(w->ui->actionMinimize, SIGNAL(triggered()), w, SLOT(showMinimized()));
-        QObject::connect(w->ui->actionZoom, SIGNAL(triggered()), w, SLOT(zoom()));
-        QObject::connect(w->ui->actionBring_All_To_Front, SIGNAL(triggered()), w, SLOT(activateWindow()));
-        QObject::connect(w->ui->actionIncrease_Volume, SIGNAL(triggered()), app, SLOT(increaseVolume()));
-        QObject::connect(w->ui->actionDecrease_Volume, SIGNAL(triggered()), app, SLOT(decreaseVolume()));
- #ifndef Q_OS_MAC
-        QObject::connect(w->ui->actionShow_menu, SIGNAL(triggered()), w, SLOT(switchMenu()));
-#endif
-#ifndef Q_OS_WIN
-        QObject::connect(w->ui->actionClose_Window, SIGNAL(triggered()), w, SLOT(closeWindow()));
-#endif
-        QObject::connect(w->shuffle_off, SIGNAL(triggered()), app, SLOT(shuffleOff()));
-        QObject::connect(w->shuffle_on, SIGNAL(triggered()), app, SLOT(shuffleOn()));
-        QObject::connect(w->repeat_off, SIGNAL(triggered()), app, SLOT(repeatOff()));
-        QObject::connect(w->repeat_one, SIGNAL(triggered()), app, SLOT(repeatOne()));
-        QObject::connect(w->repeat_all, SIGNAL(triggered()), app, SLOT(repeatOne()));
-
-        // Connect settings and trayIcon
-        QObject::connect(settings->ui->notifications, SIGNAL(toggled(bool)), trayIcon, SLOT(setShowNotifications(bool)));
-        QObject::connect(settings->ui->tray_icon, SIGNAL(toggled(bool)), trayIcon, SLOT(setTrayIcon(bool)));
-
-        QObject::connect(trayIcon, SIGNAL(trayIcon(bool)), settings->ui->tray_icon, SLOT(setChecked(bool)));
-        QObject::connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
-        QObject::connect(trayIcon, SIGNAL(showNotifications(bool)), settings->ui->notifications, SLOT(setChecked(bool)));
-
-        QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), trayIcon, SLOT(nowPlaying(QString,QString,QString,int)));
+        // Connect trayIcon
+        connectUI(settings, trayIcon);
+        connectSlotsByName(app, trayIcon);
 
         // Connect the mini player
-        QObject::connect(trayIcon, SIGNAL(triggerMiniPlayer(QPoint&)), miniplayer, SLOT(onTriggerMiniPlayer(QPoint &)));
-        QObject::connect(app, SIGNAL(nowPlaying(QString,QString,QString,int)), miniplayer, SLOT(nowPlaying(QString,QString,QString,int)));
-        QObject::connect(app, SIGNAL(albumArt(QPixmap)), miniplayer, SLOT(albumArt(QPixmap)));
-        QObject::connect(miniplayer->ui->repeat, SIGNAL(clicked()), app, SLOT(toggleRepeat()));
-        QObject::connect(miniplayer->ui->play, SIGNAL(clicked()), app, SLOT(play()));
-        QObject::connect(miniplayer->ui->previous, SIGNAL(clicked()), app, SLOT(previous()));
-        QObject::connect(miniplayer->ui->next, SIGNAL(clicked()), app, SLOT(next()));
-        QObject::connect(miniplayer->ui->shuffle, SIGNAL(clicked()), app, SLOT(toggleShuffle()));
-        QObject::connect(app, SIGNAL(playbackTime(int,int)), miniplayer, SLOT(playbackTime(int,int)));
-
-        QObject::connect(miniplayer->ui->thumbs_up, SIGNAL(clicked()), app, SLOT(toggleThumbsUp()));
-        QObject::connect(miniplayer->ui->thumbs_down, SIGNAL(clicked()), app, SLOT(toggleThumbsDown()));
-        QObject::connect(app, SIGNAL(rating(int)), miniplayer, SLOT(rating(int)));
-        QObject::connect(app, SIGNAL(repeat(QString)), miniplayer, SLOT(setRepeat(QString)));
-        QObject::connect(app, SIGNAL(shuffle(QString)), miniplayer, SLOT(setShuffle(QString)));
-
-        QObject::connect(miniplayer, SIGNAL(showMainWindow()), w, SLOT(activateWindow()));
-
-        QObject::connect(&a, SIGNAL(applicationStateChanged(Qt::ApplicationState)), miniplayer, SLOT(applicationStateChanged(Qt::ApplicationState)));
+        connectSlotsByName(trayIcon, miniplayer);
+        connectSlotsByName(app, miniplayer);
 
         // Save status on exit
-        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
-        QObject::connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
+        connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
+        connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
+        connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
+        connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
 
         // Apply website customizations
-        QObject::connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
+        connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
+
+        // Special workflow for last_fm authorization
+        connect(last_fm, SIGNAL(lastFMPassword(QString)), settings->ui->last_fm_password_text, SLOT(setText(QString)));
+        connect(last_fm, SIGNAL(lastFMUserName(QString)), settings->ui->last_fm_user_name_text, SLOT(setText(QString)));
+
+        // Appearance needs to be updated
+        connect(w, SIGNAL(keepLinks(bool)), w, SLOT(updateAppearance()));
+        connect(w, SIGNAL(keepLogo(bool)), w, SLOT(updateAppearance()));
+        connect(w, SIGNAL(navigationButtons(bool)), w, SLOT(updateAppearance()));
+
+        // Actions that need to be performed when the clear button is clicked
+        connect(settings->ui->clear, SIGNAL(clicked()), jar, SLOT(deleteAllCookies()));
+        connect(settings->ui->clear, SIGNAL(clicked()), w, SLOT(loadUrl()));
+
+        // Connect ui to open dialog box
+        connect(w, SIGNAL(changeSettings()), settings, SLOT(activateAndRaise()));
+
+        // Special action for the window
+        connect(w->ui->actionBring_All_To_Front, SIGNAL(triggered()), w, SLOT(activateWindow()));
+
+        // Show the trayIcon when requested
+        connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
+
+        // State changes for the mini player
+        connect(trayIcon, SIGNAL(showMainWindow()), w, SLOT(activateWindow()));
+        connect(&a, SIGNAL(applicationStateChanged(Qt::ApplicationState)), miniplayer, SLOT(applicationStateChanged(Qt::ApplicationState)));
 
         qDebug() << "Starting application";
         w->load();
         last_fm->load();
         jar->load();
-#ifndef Q_OS_LINUX
         trayIcon->load();
-#endif
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
 
         a.setActivationWindow(w);
-        QObject::connect(&a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
+        connect(&a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
 
         QWebView *web_view = w->ui->webView;
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);

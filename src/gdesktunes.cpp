@@ -166,7 +166,7 @@ void GDeskTunes::setMiniPlayerOnTop(bool on_top)
 /*
  * Customizes the player.
  */
-void GDeskTunes::setCustomize(bool customize)
+void GDeskTunes::setCustomized(bool customize)
 {
     if (customize == this->customize) return;
 
@@ -317,11 +317,11 @@ void GDeskTunes::receiveMessage(const QString &msg)
     }
     if (commands.contains("--menu"))
     {
-        ui->actionShow_menu->trigger();
+        ui->actionSwitch_menu->trigger();
     }
     if (commands.contains("--fullscreen"))
     {
-        ui->actionEnter_Full_Screen->trigger();
+        ui->actionSwitch_Full_Screen->trigger();
     }
     if (commands.contains("--about"))
     {
@@ -391,7 +391,7 @@ void GDeskTunes::load()
     this->setCSS(settings.value("css", "").toString());
     this->setMiniCSS(settings.value("minicss", "Default").toString());
     setMenuVisible(!settings.value("hideMenu", false).toBool());
-    this->setCustomize(settings.value("customize", false).toBool());
+    this->setCustomized(settings.value("customize", false).toBool());
 
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
     this->setKeepLinks(settings.value("keeplinks", true).toBool());

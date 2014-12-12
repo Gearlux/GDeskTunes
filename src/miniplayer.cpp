@@ -42,7 +42,7 @@ MiniPlayer::~MiniPlayer()
     delete ui;
 }
 
-void MiniPlayer::onTriggerMiniPlayer(QPoint& pt)
+void MiniPlayer::triggerMiniPlayer(QPoint& pt)
 {
     qDebug() << "MiniPlayer::onTriggerMiniPlayer(" << pt << ")";
 
@@ -180,45 +180,45 @@ void MiniPlayer::rating(int rate)
     {
     case 1:
     case 2:
-        ui->thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_on.png"));
-        ui->thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
+        ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_on.png"));
+        ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
     break;
     case 4:
     case 5:
-        ui->thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
-        ui->thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up.png"));
+        ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
+        ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up.png"));
         break;
     default:
-        ui->thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
-        ui->thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
+        ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
+        ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
     }
 }
 
-void MiniPlayer::setRepeat(QString mode)
+void MiniPlayer::repeat(QString mode)
 {
     if (mode == "LIST_REPEAT")
     {
-        ui->repeat->setIcon(QIcon(":/icons/32x32/repeat_on.png"));
+        ui->toggle_repeat->setIcon(QIcon(":/icons/32x32/repeat_on.png"));
     }
     if (mode == "SINGLE_REPEAT")
     {
-        ui->repeat->setIcon(QIcon(":/icons/32x32/repeat_one.png"));
+        ui->toggle_repeat->setIcon(QIcon(":/icons/32x32/repeat_one.png"));
     }
     if (mode == "NO_REPEAT")
     {
-        ui->repeat->setIcon(QIcon(":/icons/32x32/repeat_off.png"));
+        ui->toggle_repeat->setIcon(QIcon(":/icons/32x32/repeat_off.png"));
     }
 }
 
-void MiniPlayer::setShuffle(QString mode)
+void MiniPlayer::shuffle(QString mode)
 {
     if (mode == "ALL_SHUFFLE")
     {
-        ui->shuffle->setIcon(QIcon(":/icons/32x32/shuffle_on.png"));
+        ui->toggle_shuffle->setIcon(QIcon(":/icons/32x32/shuffle_on.png"));
     }
     if (mode == "NO_SHUFFLE")
     {
-        ui->shuffle->setIcon(QIcon(":/icons/32x32/shuffle_off.png"));
+        ui->toggle_shuffle->setIcon(QIcon(":/icons/32x32/shuffle_off.png"));
     }
 }
 

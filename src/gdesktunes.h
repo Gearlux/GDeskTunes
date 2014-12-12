@@ -32,7 +32,7 @@ public slots:
     void show();
 
     void setMiniPlayerOnTop(bool on_top);
-    void setCustomize(bool customize);
+    void setCustomized(bool customize);
 
     void setKeepLogo(bool keep) { if (keep == keep_logo) return; keep_logo = keep; emit keepLogo(keep); }
     void setNavigationButtons(bool buttons) { if (navigation_buttons == buttons) return; navigation_buttons = buttons; emit navigationButtons(buttons); }

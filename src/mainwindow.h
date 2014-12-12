@@ -53,8 +53,8 @@ public slots:
     void quitGDeskTunes();
     void closeWindow();
 
-    void setShuffle(QString mode);
-    void setRepeat(QString mode);
+    void shuffle(QString mode);
+    void repeat(QString mode);
 
     void isPlaying(bool playing);
     void activateWindow();

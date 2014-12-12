@@ -97,7 +97,7 @@ void MainWindow::setupActions()
     // Translate
     ui->actionQuit_GDeskTunes->setText("Exit");
     ui->actionQuit_GDeskTunes->setShortcut(QKeySequence());
-    ui->actionEnter_Full_Screen->setShortcut(QKeySequence("Ctrl+Shift+F"));
+    ui->actionSwitch_Full_Screen->setShortcut(QKeySequence("Ctrl+Shift+F"));
 
     ui->menuWindow->deleteLater();
 #endif
@@ -110,11 +110,11 @@ void MainWindow::setupActions()
     addAction(ui->actionPreferences);
     addAction(ui->actionQuit_GDeskTunes);
     addAction(ui->actionSwitch_mini);
-    addAction(ui->actionEnter_Full_Screen);
-    addAction(ui->actionMinimize);
+    addAction(ui->actionSwitch_Full_Screen);
+    addAction(ui->actionShow_Minimized);
     addAction(ui->actionIncrease_Volume);
     addAction(ui->actionDecrease_Volume);
-    addAction(ui->actionShow_menu);
+    addAction(ui->actionSwitch_menu);
 #endif
 }
 
@@ -152,9 +152,11 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
 
 void MainWindow::switchMenu()
 {
+#ifndef Q_OS_MAC
     bool visible = ui->menuBar->isHidden();
     qDebug() << "MainWindow::switchMenu() visible=" << visible;
     setMenuVisible(visible);
+#endif
 }
 
 void MainWindow::setMenuVisible(bool visible)
@@ -232,19 +234,19 @@ void MainWindow::changeEvent(QEvent *event)
         {
             qDebug() << "Disable mini";
             ui->actionSwitch_mini->setEnabled(false);
-            ui->actionEnter_Full_Screen->setText("Exit Full Screen");
+            ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
         }
         else
         {
             qDebug() << "Enable mini";
-            ui->actionEnter_Full_Screen->setText("Enter Full Screen");
+            ui->actionSwitch_Full_Screen->setText("Enter Full Screen");
             ui->actionSwitch_mini->setEnabled(true);
         }
 
         ui->actionClose_Window->setDisabled(windowState() == Qt::WindowMinimized);
         ui->actionZoom->setDisabled(windowState() == Qt::WindowMinimized);
         ui->actionBring_All_To_Front->setDisabled(windowState() == Qt::WindowMinimized);
-        ui->actionMinimize->setDisabled(windowState() == Qt::WindowMinimized);
+        ui->actionShow_Minimized->setDisabled(windowState() == Qt::WindowMinimized);
 
         updateJumpList();
     }
@@ -522,14 +524,14 @@ void MainWindow::switchFullScreen()
         showFullScreen();
 }
 
-void MainWindow::setRepeat(QString mode)
+void MainWindow::repeat(QString mode)
 {
     repeat_all->setChecked(mode == "LIST_REPEAT");
     repeat_one->setChecked(mode == "SINGLE_REPEAT");
     repeat_off->setChecked(mode == "NO_REPEAT");
 }
 
-void MainWindow::setShuffle(QString mode)
+void MainWindow::shuffle(QString mode)
 {
     shuffle_on->setChecked(mode == "ALL_SHUFFLE");
     shuffle_off->setChecked(mode == "NO_SHUFFLE");

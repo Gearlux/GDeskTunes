@@ -21,14 +21,14 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-    void onTriggerMiniPlayer(QPoint& pt);
+    void triggerMiniPlayer(QPoint& pt);
     void nowPlaying(QString title, QString artist, QString album, int duration);
     void playbackTime(int current, int total);
     void rating(int rate);
     void albumArt(QPixmap pixmap);
 
-    void setRepeat(QString mode);
-    void setShuffle(QString mode);
+    void repeat(QString mode);
+    void shuffle(QString mode);
 
     void changeBackground();
     void enableBackground();

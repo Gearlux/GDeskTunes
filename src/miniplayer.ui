@@ -204,7 +204,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0" columnstretch="0,0,0">
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0" columnstretch="0,0">
          <property name="topMargin">
           <number>0</number>
          </property>
@@ -218,7 +218,7 @@
           <number>0</number>
          </property>
          <item row="2" column="0">
-          <widget class="QPushButton" name="thumbs_up">
+          <widget class="QPushButton" name="toggle_thumbs_up">
            <property name="maximumSize">
             <size>
              <width>32</width>
@@ -247,7 +247,7 @@
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QPushButton" name="thumbs_down">
+          <widget class="QPushButton" name="toggle_thumbs_down">
            <property name="maximumSize">
             <size>
              <width>32</width>
@@ -396,7 +396,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="repeat">
+          <widget class="QPushButton" name="toggle_repeat">
            <property name="maximumSize">
             <size>
              <width>32</width>
@@ -500,7 +500,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="shuffle">
+          <widget class="QPushButton" name="toggle_shuffle">
            <property name="maximumSize">
             <size>
              <width>32</width>

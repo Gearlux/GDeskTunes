@@ -39,15 +39,15 @@ Settings::Settings(GDeskTunes *parent) :
     if (!tray)
     {
         ui->tray_icon->hide();
-        ui->notifications->hide();
+        ui->show_notifications->hide();
         ui->notifications_label->hide();
     }
 
     QStringList styles = getStyles();
-    ui->style_combo->addItems(styles);
+    ui->CSS->addItems(styles);
 
     QStringList mini_styles = getStyles(QString("mini"));
-    ui->mini_style_combo->addItems(mini_styles);
+    ui->mini_CSS->addItems(mini_styles);
 }
 
 Settings::~Settings()
@@ -75,7 +75,7 @@ void Settings::authorize()
     }
 }
 
-void Settings::setAuthorized(bool authorized)
+void Settings::authorized(bool authorized)
 {
     qDebug() << "Settings::setAuthorized(" << authorized << ")";
     this->last_fm_authorized = authorized;

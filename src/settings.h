@@ -25,7 +25,7 @@ signals:
 public slots:
     void activateAndRaise();
 
-    void setAuthorized(bool authorized);
+    void authorized(bool authorize);
 
     void authorize();
 
