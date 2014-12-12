@@ -111,7 +111,8 @@ HEADERS += \
     src/systemtrayicon.h \
     src/miniplayer.h \
     src/artlabel.h \
-    src/application.h
+    src/application.h \
+    src/qutils.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -160,7 +161,8 @@ SOURCES += \
     src/systemtrayicon.cpp \
     src/miniplayer.cpp \
     src/artlabel.cpp \
-    src/application.cpp
+    src/application.cpp \
+    src/qutils.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
