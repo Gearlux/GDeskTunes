@@ -55,7 +55,7 @@ public:
     SPMediaKeyTap * keyTap;
 };
 
-MediaKeys::MediaKeys(QWidget * win, QObject *parent) :
+MediaKeys::MediaKeys(QWidget *, QObject *parent) :
 QObject(parent)
 {
     d = new MediaKeys::Private();

@@ -23,10 +23,10 @@ QString seconds_to_DHMS(quint32 duration)
 }
 
 MiniPlayer::MiniPlayer(QWidget *parent) :
-    QWidget(parent),
+    QMainWindow(parent),
     ui(new Ui::MiniPlayer),
-    large(false),
-    positioned(false)
+    positioned(false),
+    large(false)
 {
     ui->setupUi(this);
 

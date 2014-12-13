@@ -87,7 +87,7 @@ void MainWindow::setupActions()
 {
 #ifdef Q_OS_MAC
     qDebug() << "Tweaking application for mac";
-    ui->menuView->removeAction(ui->actionShow_menu);
+    ui->menuView->removeAction(ui->actionSwitch_menu);
 #endif
 #ifdef Q_OS_WIN
     qDebug() << "Tweaking application for windows";
