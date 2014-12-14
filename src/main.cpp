@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     int exit_result = 0;
 
     // Ignore ssl messages
-    qInstallMessageHandler(ignoreSSLMessages);
+    // qInstallMessageHandler(ignoreSSLMessages);
 
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
@@ -135,21 +135,27 @@ int main(int argc, char *argv[])
         State *main = new State();
         main->setObjectName("Main");
 
+        const char* show_slot = SLOT(show());
+        const char* hide_slot = SLOT(hide());
 
-        QObject::connect(main, SIGNAL(entered()), w, SLOT(show()));
+#ifdef Q_OS_WIN
+        hide_slot = SLOT(showMinimized());
+#endif
+
+        QObject::connect(main, SIGNAL(entered()), w, show_slot);
         QObject::connect(main, SIGNAL(entered()), w, SLOT(raise()));
         QObject::connect(main, SIGNAL(entered()), miniplayer, SLOT(hide()));
 
         State* background = new State();
         background->setObjectName("Background");
 
-        QObject::connect(background, SIGNAL(entered()), w, SLOT(hide()));
+        QObject::connect(background, SIGNAL(entered()), w, hide_slot);
         QObject::connect(background, SIGNAL(entered()), miniplayer, SLOT(hide()));
 
         State* mainmini = new State();
         mainmini->setObjectName("MainMini");
 
-        QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(show()));
+        QObject::connect(mainmini, SIGNAL(entered()), w, show_slot);
         QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(raise()));
         QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(show()));
         QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(raise()));
@@ -157,7 +163,7 @@ int main(int argc, char *argv[])
         State* mini = new State();
         mini->setObjectName("mini");
 
-        QObject::connect(mini, SIGNAL(entered()), w, SLOT(hide()));
+        QObject::connect(mini, SIGNAL(entered()), w, hide_slot);
         QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(show()));
         QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(raise()));
 
@@ -323,6 +329,7 @@ int main(int argc, char *argv[])
         connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
         connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
         connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
+        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
 
         // Apply website customizations
         connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));

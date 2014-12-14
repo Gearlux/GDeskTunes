@@ -98,7 +98,7 @@ void MainWindow::setupActions()
     ui->actionQuit_GDeskTunes->setShortcut(QKeySequence());
     ui->actionSwitch_Full_Screen->setShortcut(QKeySequence("Ctrl+Shift+F"));
 
-    ui->menuWindow->deleteLater();
+    // ui->menuWindow->deleteLater();
 #endif
 
 #ifndef Q_OS_MAC
@@ -172,11 +172,11 @@ void MainWindow::setMenuVisible(bool visible)
     mii.fMask = MIIM_STRING;
     if (visible)
     {
-        mii.dwTypeData = "Hide Menu Bar\tCtrl+B";
+        mii.dwTypeData = (char*)"Hide Menu Bar\tCtrl+B";
     }
     else
     {
-        mii.dwTypeData = "Show Menu Bar\tCtrl+B";
+        mii.dwTypeData = (char*)"Show Menu Bar\tCtrl+B";
     }
     ::SetMenuItemInfoA(hMenu, IDM_SHOW_MENU, false, &mii);
 #endif
@@ -662,8 +662,6 @@ void MainWindow::restore()
     qDebug() << "GDeskTunes::restore()";
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
     qDebug() << "Preferences: " << settings.fileName();
-
-    return;
 
     QString key = "geometry";
     if (settings.contains(key))

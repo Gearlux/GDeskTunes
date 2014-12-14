@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "application.h"
 
@@ -24,6 +24,7 @@ void Application::onApplicationStateChanged(Qt::ApplicationState state)
         bool just_clicked = tray_icon_time + 100 > current;
         bool with_focus = activeWindow() != 0;
         qDebug() << "Application::onApplicationStateChanged(ApplicationActive)";
+        emit applicationActivated();
 
         qDebug() << "Application::onDockClick(" << just_clicked << "," << with_focus << ")" << current << tray_icon_time;
         if (just_clicked && with_focus)
