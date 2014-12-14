@@ -33,7 +33,7 @@ public:
 signals:
     void preferences();
 
-    void close();
+    void closeSignal();
 
     void minimizeToTray(bool);
 
@@ -53,6 +53,8 @@ public slots:
     void showMac();
     void hide();
     void onHiddenState();
+
+    void closeWindow();
 
     void receiveMacMediaKey(int key, bool repeat, bool pressed);
 

@@ -533,8 +533,19 @@ void MainWindow::closeEvent(QCloseEvent *event)
     // Closing / hiding events are processed by the state machine
     if (event->spontaneous())
     {
+        // Mac issue: when the window is in full screen, a large black screen remains
+        // First show it to normal
+        if (isFullScreen())
+        {
+            qDebug() << "Full Screen";
+            showNormal();
+#ifdef Q_OS_MAC
+            hide();
+#endif
+            // QTimer::singleShot(0, this, SLOT(closeWindow()));
+        }
         event->ignore();
-        emit close();
+        emit closeSignal();
     }
     else
     {
@@ -597,4 +608,10 @@ void MainWindow::activateWindow()
 {
     qDebug() << "MainWindow::activateWindow()";
     QMainWindow::activateWindow();
+}
+
+void MainWindow::closeWindow()
+{
+    qDebug() << "MainWindow::closeWindow()";
+    emit closeSignal();
 }

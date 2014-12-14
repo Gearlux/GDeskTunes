@@ -90,6 +90,9 @@ int main(int argc, char *argv[])
     Application a(argc, argv);
     a.setObjectName("Application");
 
+    // It is possible that all windows run in the background
+    a.setQuitOnLastWindowClosed(false);
+
     if (a.isRunning())
     {
         // Get the command line arguments and remove the first parameter
@@ -180,10 +183,10 @@ int main(int argc, char *argv[])
         machine->setInitialState(main);
 
 #ifdef Q_OS_MAC
-        main->addTransition(w, SIGNAL(close()), background);
-        main_inactive->addTransition(w, SIGNAL(close()), background);
+        main->addTransition(w, SIGNAL(closeSignal()), background);
+        main_inactive->addTransition(w, SIGNAL(closeSignal()), background);
 #else
-        main->addTransition(w, SIGNAL(close()), exit_state);
+        main->addTransition(w, SIGNAL(closeSignal()), exit_state);
         QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));
 #endif
 
@@ -196,35 +199,44 @@ int main(int argc, char *argv[])
         main_inactive->addTransition(&a, SIGNAL(applicationActivated()), main);
         mainmini_inactive->addTransition(&a, SIGNAL(applicationActivated()), mainmini);
 
+        // Transitions on using Window > Zoom
         background->addTransition(w->ui->actionZoom, SIGNAL(triggered()), main);
         mini->addTransition(w->ui->actionZoom, SIGNAL(triggered()), mainmini);
 
         background->addTransition(w->ui->actionSwitch_Full_Screen, SIGNAL(triggered()), main);
+        mini->addTransition(w->ui->actionSwitch_Full_Screen, SIGNAL(triggered()), mainmini);
+
+        // Miscelaneous
         background->addTransition(w->ui->actionSwitch_mini, SIGNAL(triggered()), main);
-        background->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
         background->addTransition(w->ui->actionShow_Minimized, SIGNAL(triggered()), main);
 
-
+        // Transitions when displaying the mini player
         background->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mini);
         main->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mainmini);
         mainmini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), main);
         mini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), background);
 
+        // Transitions when switching the mini player
         main->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
         mini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), main);
         mainmini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
+        background->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
 
+        // Transitions when displaying the main window
         mini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mainmini);
         mainmini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mini);
         main->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), background);
         background->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), main);
 
+        // Transitions when closing the mini player
         mini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
         mainmini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), main);
 
-        mainmini->addTransition(w, SIGNAL(close()), mini);
-        mainmini_inactive->addTransition(w, SIGNAL(close()), mini);
+        // Transitions when closing the main window
+        mainmini->addTransition(w, SIGNAL(closeSignal()), mini);
+        mainmini_inactive->addTransition(w, SIGNAL(closeSignal()), mini);
 
+        // Clicking the tray icon, should popup or close the mini player at the tray
         main->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
         mainmini->addTransition(trayIcon, SIGNAL(triggered()), main);
         mainmini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
@@ -233,23 +245,36 @@ int main(int argc, char *argv[])
         mini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mini);
         background->addTransition(trayIcon, SIGNAL(triggered()), mini);
 
+        // FIXME: could not get this to work
+        QSignalTransition *trans = new QSignalTransition(w, SIGNAL(closeSignal()));
+        background->addTransition(trans);
+        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(hide()));
+
+        // Update GDeskTunes window status
         QObject::connect(main, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(true); });
         QObject::connect(mainmini, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(true); });
         QObject::connect(mini, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(false); });
         QObject::connect(background, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(false); });
+
+        // Update Miniplayer window status
         QObject::connect(main, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(false); });
         QObject::connect(background, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(false); });
         QObject::connect(mainmini, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(true); });
         QObject::connect(mini, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(true); });
 
+        // Update text for mini player
         QObject::connect(main, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
         QObject::connect(mainmini, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
         QObject::connect(mini, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch From MiniPlayer"); });
         QObject::connect(background, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
 
+        // Update close window menu item
         QObject::connect(background, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(false);});
-        QObject::connect(background, &State::exited, [w] { w->ui->actionClose_Window->setEnabled(true);});
+        QObject::connect(mini, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(false);});
+        QObject::connect(main, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(true);});
+        QObject::connect(mainmini, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(true);});
 
+        // Make sure that if we click the dock, the application behaves correctly
         background->addTransition(&a, SIGNAL(onDockFalseFalse()), main);
         mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
         mini_inactive->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
