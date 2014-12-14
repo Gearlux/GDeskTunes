@@ -324,6 +324,9 @@ int main(int argc, char *argv[])
         // Show the trayIcon when requested
         connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
 
+        // Use larger album art
+        connect(miniplayer->ui->album_art, SIGNAL(clicked()), miniplayer, SLOT(changeBackground()));
+
         qDebug() << "Starting application";
         w->load();
         last_fm->load();

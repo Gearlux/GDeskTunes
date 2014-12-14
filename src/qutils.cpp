@@ -8,6 +8,7 @@
 #include <QMetaMethod>
 #include <QAction>
 #include <QPushButton>
+#include <QLabel>
 
 QSet<QString> connected;
 
@@ -85,6 +86,7 @@ void connectUI(QObject *ui, QObject *object)
         // Not the best programming practice, but this code is more elegant than solving it with if/else
         if (qobject_cast<const QAction*>(ui_object) != 0) goto _connect_action;
         if (qobject_cast<const QPushButton*>(ui_object) != 0) goto _button;
+        if (qobject_cast<const QLabel*>(ui_object) != 0) goto _button;
 
         // Connect GUI elements
         signal_index = mui->indexOfSignal("toggled(bool)");
