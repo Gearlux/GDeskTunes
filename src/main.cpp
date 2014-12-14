@@ -351,6 +351,7 @@ int main(int argc, char *argv[])
 
         // Use larger album art
         connect(miniplayer->ui->album_art, SIGNAL(clicked()), miniplayer, SLOT(changeBackground()));
+        connect(miniplayer->ui->maximize, SIGNAL(clicked()), miniplayer, SLOT(changeBackground()));
 
         qDebug() << "Starting application";
         w->load();
