@@ -23,7 +23,7 @@ CocoaInitializer::CocoaInitializer()
 {
     qDebug() << "     +++ [Lib] {Platipus}: cocoa initializer";
     d = new CocoaInitializer::Private();
-//	NSApplicationLoad();
+    // NSApplicationLoad();
 	d->autoReleasePool = [[NSAutoreleasePool alloc] init];
 }
 

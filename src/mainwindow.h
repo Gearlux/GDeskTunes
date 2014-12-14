@@ -31,10 +31,11 @@ public:
     ~MainWindow();
 
 signals:
-    void play();
-    void next();
-    void previous();
-    void changeSettings();
+    void preferences();
+
+    void close();
+
+    void minimizeToTray(bool);
 
 public slots:
     virtual void switchMini() = 0;
@@ -47,18 +48,23 @@ public slots:
 
     void about();
     void show();
+    void activateWindow();
+    void raise();
+    void showMac();
+    void hide();
+    void onHiddenState();
 
     void receiveMacMediaKey(int key, bool repeat, bool pressed);
 
     void quitGDeskTunes();
-    void closeWindow();
 
     void shuffle(QString mode);
     void repeat(QString mode);
 
     void isPlaying(bool playing);
-    void activateWindow();
     void zoom();
+
+    void setMinimizeToTray(bool tray) { if (tray == minimize_to_tray) return; minimize_to_tray = tray; emit minimizeToTray(tray); }
 
 public:
     virtual bool isMini();
@@ -115,10 +121,9 @@ protected:
 
     // Properties that control the behaviour of the application
     bool hide_menu;
-private:
-    // Set when quitting the application
-    bool quitting;
+    bool minimize_to_tray;
 
+private:
     // Variables to drag the mini player without title bar
     bool do_move;
     int mouse_click_x_coordinate;

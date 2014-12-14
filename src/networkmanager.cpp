@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "networkmanager.h"
 #include <QNetworkRequest>
 #include <QtGlobal>

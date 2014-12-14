@@ -7,13 +7,15 @@
 TARGET = GDeskTunes
 TEMPLATE = app
 
-QT       += core gui webkit widgets network xml
+QT       += core gui webkit widgets network xml testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
 # Needed to deploy the userstyles and java scripts to the correct directory
 CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
+
+CONFIG += c++11
 
 linux: {
 system(thirdparty/bootstrap.sh)
@@ -59,7 +61,6 @@ ICON = g_desk_tunes.icns
 
 OBJECTIVE_SOURCES += \
     mac/cocoainit.mm \
-    mac/macutils.mm \
     mac/mediakeys.mm \
 	\
 	thirdparty/SPMediaKeyTap/SPMediaKeyTap.m \
@@ -67,7 +68,6 @@ OBJECTIVE_SOURCES += \
 
 HEADERS += \
 	mac/cocoainit.h \
-    mac/macutils.h \
     mac/mediakeys.h \
 	\
     thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor.h \
@@ -112,7 +112,8 @@ HEADERS += \
     src/miniplayer.h \
     src/artlabel.h \
     src/application.h \
-    src/qutils.h
+    src/qutils.h \
+    src/statemachine.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -162,7 +163,8 @@ SOURCES += \
     src/miniplayer.cpp \
     src/artlabel.cpp \
     src/application.cpp \
-    src/qutils.cpp
+    src/qutils.cpp \
+    src/statemachine.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \

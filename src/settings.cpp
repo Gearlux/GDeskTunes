@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "settings.h"
 #include "ui_settings.h"
 
@@ -26,8 +28,6 @@ Settings::Settings(GDeskTunes *parent) :
                    );
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    // Remove the appearance and the shortcuts tab since it is not yet implemented in Qt4
-    ui->tabWidget->removeTab(2);
     // On Windows style sheets do not work in Qt 4
 #ifdef Q_OS_WIN
     ui->tabWidget->removeTab(1);
@@ -42,6 +42,10 @@ Settings::Settings(GDeskTunes *parent) :
         ui->show_notifications->hide();
         ui->notifications_label->hide();
     }
+
+#ifdef Q_OS_MAC
+    ui->minimize_to_tray->hide();
+#endif
 
     QStringList styles = getStyles();
     ui->CSS->addItems(styles);

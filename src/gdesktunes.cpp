@@ -18,7 +18,8 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     MainWindow(parent),
     mini(false),
     css(QString::null),
-    mini_css(QString::null)
+    mini_css(QString::null),
+    customize(false)
 {
     // Setup webview and windows interaction
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
@@ -78,7 +79,7 @@ void GDeskTunes::setMini(bool toMini)
         }
         hide();
 
-        ui->actionSwitch_mini->setText("Switch from Miniplayer");
+        ui->actionSwitch_mini->setText("Switch from Compact Layout");
 
         // Apply the mini style
         QString mini_style = this->mini_css;
@@ -114,7 +115,7 @@ void GDeskTunes::setMini(bool toMini)
         hide();
         this->mini = toMini;
 
-        ui->actionSwitch_mini->setText("Switch to Miniplayer");
+        ui->actionSwitch_mini->setText("Switch to Compact Layout");
 
         setWindowFlags(normal_flags
 #ifndef Q_OS_LINUX
@@ -376,6 +377,7 @@ void GDeskTunes::save()
     settings.setValue("css", this->css);
     settings.setValue("minicss", this->mini_css);
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
+    settings.setValue("minimizeToTray", this->minimize_to_tray);
 
     settings.setValue("keeplogo", this->keep_logo);
     settings.setValue("keeplinks", this->keep_links);
@@ -396,6 +398,7 @@ void GDeskTunes::load()
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
     this->setKeepLinks(settings.value("keeplinks", true).toBool());
     this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
+    this->setMinimizeToTray(settings.value("minimizeToTray", false).toBool());
 }
 
 void GDeskTunes::restore()
@@ -476,8 +479,6 @@ void GDeskTunes::updateAppearance()
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(3) { display: none; }";
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(4) { display: none; }";
     }
-
-    qDebug() << css;
     setStyle("gdesktunes.navigation.customization", css);
 }
 

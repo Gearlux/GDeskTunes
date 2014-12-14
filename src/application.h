@@ -9,12 +9,23 @@ class Application : public QtSingleApplication
 public:
     explicit Application(int &argc, char **argv, bool GUIenabled = true);
 
-    bool event(QEvent *);
-
 signals:
+    void applicationActivated();
+    void applicationInActivated();
+    void applicationHidden();
+    void applicationSuspended();
+
+    void onDockTrueTrue();
+    void onDockTrueFalse();
+    void onDockFalseTrue();
+    void onDockFalseFalse();
 
 public slots:
+    void onApplicationStateChanged(Qt::ApplicationState state);
+    void trayIconClicked();
 
+private:
+    qint64 tray_icon_time;
 };
 
 #endif // APPLICATION_H

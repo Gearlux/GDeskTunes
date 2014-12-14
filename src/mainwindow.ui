@@ -96,7 +96,7 @@
     <addaction name="actionMiniPlayer"/>
     <addaction name="separator"/>
     <addaction name="actionSwitch_mini"/>
-    <addaction name="actionSwitch_to_MiniLayout"/>
+    <addaction name="actionSwitch_miniPlayer"/>
     <addaction name="separator"/>
     <addaction name="actionBring_All_To_Front"/>
    </widget>
@@ -219,10 +219,10 @@
      <normaloff>:/icons/8x8/1415314633_circle_close_delete.png</normaloff>:/icons/8x8/1415314633_circle_close_delete.png</iconset>
    </property>
    <property name="text">
-    <string>Switch to MiniPlayer</string>
+    <string>Switch to Compact Layout</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+M</string>
+    <string>Ctrl+Shift+C</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
@@ -304,18 +304,27 @@
    </property>
   </action>
   <action name="actionGDeskTunes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>GDeskTunes</string>
    </property>
   </action>
   <action name="actionMiniPlayer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>MiniPlayer</string>
    </property>
   </action>
-  <action name="actionSwitch_to_MiniLayout">
+  <action name="actionSwitch_miniPlayer">
    <property name="text">
-    <string>Switch to MiniLayout</string>
+    <string>Switch to MiniPlayer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+M</string>
    </property>
   </action>
  </widget>

@@ -21,7 +21,8 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-    void triggerMiniPlayer(QPoint& pt);
+    void placeMiniPlayer(QPoint& pt);
+
     void nowPlaying(QString title, QString artist, QString album, int duration);
     void playbackTime(int current, int total);
     void rating(int rate);
@@ -34,13 +35,29 @@ public slots:
     void enableBackground();
     void disableBackground();
 
-    void applicationStateChanged(Qt::ApplicationState state);
+    void activateWindow();
+    void hide();
+    void show();
+    void raise();
 
 public:
     Ui::MiniPlayer *ui;
 
 private:
-    bool positioned;
+    // This is a real hack
+    // The mini player has two positions
+    // - Invoked from the trayIcon
+    // - Invoked when calling from the menus or shortcuts
+    // We assume that when we invoke the mini player from the trayIcon
+    // The timing to show it is less then 100ms.
+    // Otherwise the userPosition is used
+    //
+    // Both points are initialized to (
+    qint64 trayIconTiming;
+    QPoint trayIconPosition;
+    qint64 userIconTiming;
+    QPoint userPosition;
+
     QPixmap album_picture;
     bool large;
 

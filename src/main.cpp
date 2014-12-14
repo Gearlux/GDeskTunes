@@ -8,9 +8,11 @@
 #include "miniplayer.h"
 #include "application.h"
 #include "qutils.h"
+#include "statemachine.h"
 
 #include "ui_mainwindow.h"
 #include "ui_settings.h"
+#include "ui_miniplayer.h"
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -31,7 +33,30 @@
 #include <QSettings>
 #include <QtCore/QDir>
 #include <QWebFrame>
+#include <QFinalState>
+#include <QHistoryState>
+#include <QSignalTransition>
+#include <QSignalMapper>
 
+void ignoreSSLMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+    case QtDebugMsg:
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        if (msg.startsWith("QSslSocket")) break;
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        abort();
+    }
+}
 
 /*
  * Program entry point.
@@ -42,6 +67,9 @@
 int main(int argc, char *argv[])
 {
     int exit_result = 0;
+
+    // Ignore ssl messages
+    qInstallMessageHandler(ignoreSSLMessages);
 
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
@@ -98,6 +126,142 @@ int main(int argc, char *argv[])
         MiniPlayer *miniplayer = new MiniPlayer(w);
         miniplayer->setObjectName("MiniPlayer");
 
+        QStateMachine*  machine = new QStateMachine();
+        machine->setObjectName("StateMachine");
+
+        State *main = new State();
+        main->setObjectName("Main");
+
+
+        QObject::connect(main, SIGNAL(entered()), w, SLOT(show()));
+        QObject::connect(main, SIGNAL(entered()), w, SLOT(raise()));
+        QObject::connect(main, SIGNAL(entered()), miniplayer, SLOT(hide()));
+
+        State* background = new State();
+        background->setObjectName("Background");
+
+        QObject::connect(background, SIGNAL(entered()), w, SLOT(hide()));
+        QObject::connect(background, SIGNAL(entered()), miniplayer, SLOT(hide()));
+
+        State* mainmini = new State();
+        mainmini->setObjectName("MainMini");
+
+        QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(show()));
+        QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(raise()));
+        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(show()));
+        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(raise()));
+
+        State* mini = new State();
+        mini->setObjectName("mini");
+
+        QObject::connect(mini, SIGNAL(entered()), w, SLOT(hide()));
+        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(show()));
+        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(raise()));
+
+        QFinalState *exit_state = new QFinalState();
+
+        State* mini_inactive = new State();
+        mini_inactive->setObjectName("miniInactive");
+
+        State* main_inactive = new State();
+        main_inactive->setObjectName("mainInactive");
+
+        State* mainmini_inactive = new State();
+        mainmini_inactive->setObjectName("mainminiInactive");
+
+        machine->addState(main);
+        machine->addState(background);
+        machine->addState(mainmini);
+        machine->addState(mini);
+        machine->addState(mini_inactive);
+        machine->addState(mainmini_inactive);
+        machine->addState(main_inactive);
+        machine->addState(exit_state);
+        machine->setInitialState(main);
+
+#ifdef Q_OS_MAC
+        main->addTransition(w, SIGNAL(close()), background);
+        main_inactive->addTransition(w, SIGNAL(close()), background);
+#else
+        main->addTransition(w, SIGNAL(close()), exit_state);
+        QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));
+#endif
+
+        // Transitions from active to inactive
+        mini->addTransition(&a, SIGNAL(applicationInActivated()), mini_inactive);
+        mainmini->addTransition(&a, SIGNAL(applicationInActivated()), mainmini_inactive);
+        main->addTransition(&a, SIGNAL(applicationInActivated()), main_inactive);
+
+        mini_inactive->addTransition(&a, SIGNAL(applicationActivated()), mini);
+        main_inactive->addTransition(&a, SIGNAL(applicationActivated()), main);
+        mainmini_inactive->addTransition(&a, SIGNAL(applicationActivated()), mainmini);
+
+        background->addTransition(w->ui->actionZoom, SIGNAL(triggered()), main);
+        mini->addTransition(w->ui->actionZoom, SIGNAL(triggered()), mainmini);
+
+        background->addTransition(w->ui->actionSwitch_Full_Screen, SIGNAL(triggered()), main);
+        background->addTransition(w->ui->actionSwitch_mini, SIGNAL(triggered()), main);
+        background->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
+        background->addTransition(w->ui->actionShow_Minimized, SIGNAL(triggered()), main);
+
+
+        background->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mini);
+        main->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mainmini);
+        mainmini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), main);
+        mini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), background);
+
+        main->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
+        mini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), main);
+        mainmini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
+
+        mini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mainmini);
+        mainmini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mini);
+        main->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), background);
+        background->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), main);
+
+        mini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
+        mainmini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), main);
+
+        mainmini->addTransition(w, SIGNAL(close()), mini);
+        mainmini_inactive->addTransition(w, SIGNAL(close()), mini);
+
+        main->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
+        mainmini->addTransition(trayIcon, SIGNAL(triggered()), main);
+        mainmini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
+        main_inactive->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
+        mini->addTransition(trayIcon, SIGNAL(triggered()), background);
+        mini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mini);
+        background->addTransition(trayIcon, SIGNAL(triggered()), mini);
+
+        QObject::connect(main, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(true); });
+        QObject::connect(mainmini, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(true); });
+        QObject::connect(mini, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(false); });
+        QObject::connect(background, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(false); });
+        QObject::connect(main, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(false); });
+        QObject::connect(background, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(false); });
+        QObject::connect(mainmini, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(true); });
+        QObject::connect(mini, &State::entered, [w] { w->ui->actionMiniPlayer->setChecked(true); });
+
+        QObject::connect(main, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
+        QObject::connect(mainmini, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
+        QObject::connect(mini, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch From MiniPlayer"); });
+        QObject::connect(background, &State::entered, [w] { w->ui->actionSwitch_miniPlayer->setText("Switch To MiniPlayer"); });
+
+        QObject::connect(background, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(false);});
+        QObject::connect(background, &State::exited, [w] { w->ui->actionClose_Window->setEnabled(true);});
+
+        background->addTransition(&a, SIGNAL(onDockFalseFalse()), main);
+        mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
+        mini_inactive->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
+        mini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mini);
+        mainmini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mainmini);
+
+        // Start the state machine
+        machine->start();
+
+        // Make sure the application receives the tray clicks
+        connect(trayIcon, SIGNAL(triggered()), &a, SLOT(trayIconClicked()));
+
         w->ui->webView->setPage(app);
 
 #ifdef Q_OS_DARWIN
@@ -152,17 +316,13 @@ int main(int argc, char *argv[])
         connect(settings->ui->clear, SIGNAL(clicked()), w, SLOT(loadUrl()));
 
         // Connect ui to open dialog box
-        connect(w, SIGNAL(changeSettings()), settings, SLOT(activateAndRaise()));
+        connect(w, SIGNAL(preferences()), settings, SLOT(activateAndRaise()));
 
         // Special action for the window
         connect(w->ui->actionBring_All_To_Front, SIGNAL(triggered()), w, SLOT(activateWindow()));
 
         // Show the trayIcon when requested
         connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
-
-        // State changes for the mini player
-        connect(trayIcon, SIGNAL(showMainWindow()), w, SLOT(activateWindow()));
-        connect(&a, SIGNAL(applicationStateChanged(Qt::ApplicationState)), miniplayer, SLOT(applicationStateChanged(Qt::ApplicationState)));
 
         qDebug() << "Starting application";
         w->load();

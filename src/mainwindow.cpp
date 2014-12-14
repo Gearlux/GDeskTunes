@@ -8,6 +8,7 @@
 #include <QtGui>
 #include <QMenu>
 #include <QtWebKit/QWebElement>
+#include <QTest>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QWebFrame>
@@ -16,7 +17,6 @@
 #endif
 
 #ifdef Q_OS_MAC
-#include "mac/macutils.h"
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 extern void qt_mac_set_dock_menu(QMenu *menu);
 #endif
@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::GDeskTunes),
     windows_offset(0,0),
-    quitting(false),
     do_move(false)
 {
     ui->setupUi(this);
@@ -201,17 +200,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
     case Qt::Key_MediaPlay:
     {
-        emit play();
+        ui->actionPlay->trigger();
     }
         break;
     case Qt::Key_MediaNext:
     {
-        emit next();
+        ui->actionNext->trigger();
     }
         break;
     case Qt::Key_MediaPrevious:
     {
-        emit previous();
+       ui->actionPrevious->trigger();
     }
         break;
     default:
@@ -367,13 +366,13 @@ void MainWindow::receiveMacMediaKey(int key, bool repeat, bool pressed)
         switch(key)
         {
         case 16:
-            emit play();
+            ui->actionPlay->trigger();
             break;
         case 19:
-            emit next();
+            ui->actionNext->trigger();
             break;
         case 20:
-            emit previous();
+            ui->actionPrevious->trigger();
             break;
         }
     }
@@ -381,6 +380,8 @@ void MainWindow::receiveMacMediaKey(int key, bool repeat, bool pressed)
 
 void MainWindow::show()
 {
+    qDebug() << "MainWindow::show()";
+
     // Compute the windows_offset if necessary
     if (windows_offset.isNull())
     {
@@ -391,6 +392,45 @@ void MainWindow::show()
     QMainWindow::show();
 }
 
+void MainWindow::raise()
+{
+    qDebug() << "MainWindow::raise()";
+    QMainWindow::raise();
+
+}
+
+void MainWindow::showMac()
+{
+
+    qDebug() << "MainWindow::showMac()";
+
+#ifdef Q_OS_MAC
+    // ::showMac();
+#endif
+
+    // QTimer::singleShot(10, this, SLOT(raise()));
+
+}
+
+void MainWindow::hide()
+{
+    qDebug() << "MainWindow::hide()";
+    QMainWindow::hide();
+}
+
+
+void MainWindow::onHiddenState()
+{
+    qDebug() << "MainWindow::onHiddenState()";
+#ifdef Q_OS_MAC
+    hide();
+#else
+    if (minimize_to_tray)
+        hide();
+    else
+        showMinimized();
+#endif
+}
 
 void MainWindow::about()
 {
@@ -487,33 +527,23 @@ void MainWindow::quitGDeskTunes()
    QCoreApplication::exit(0);
 }
 
-void MainWindow::closeWindow()
-{
-#ifdef Q_OS_MAC
-    // FIXME
-    // hideMac();
-#endif
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-#ifdef Q_OS_MAC
-    if (quitting || !event->spontaneous())
+    qDebug() << "MainWindow::closeEvent("<< event->spontaneous() << ")";
+    // Closing / hiding events are processed by the state machine
+    if (event->spontaneous())
     {
-        event->accept();
+        event->ignore();
+        emit close();
     }
     else
     {
-        // FIXME
-        // hideMac();
+#if defined(Q_OS_WIN) && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
+        // I hate it when the jumplist keeps the commands of a not running system
+        jumplist->tasks()->clear();
+#endif
         event->accept();
     }
-#else
-#if defined(Q_OS_WIN) && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
-    jumplist->tasks()->clear();
-#endif
-    event->accept();
-#endif
 }
 
 void MainWindow::switchFullScreen()
@@ -544,14 +574,6 @@ void MainWindow::isPlaying(bool playing)
     ui->actionPrevious->setEnabled(playing);
 }
 
-void MainWindow::activateWindow()
-{
-    qDebug() << "MainWindow::activateWindow()";
-    QMainWindow::activateWindow();
-    show();
-    raise();
-}
-
 void MainWindow::zoom()
 {
     if (isMaximized())
@@ -568,4 +590,11 @@ void MainWindow::zoom()
 bool MainWindow::isMini()
 {
     return false;
+}
+
+// Needed to make a slot
+void MainWindow::activateWindow()
+{
+    qDebug() << "MainWindow::activateWindow()";
+    QMainWindow::activateWindow();
 }

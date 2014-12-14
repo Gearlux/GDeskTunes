@@ -1,3 +1,5 @@
+// #define QT_NO_DEBUG_OUTPUT
+
 #include "qutils.h"
 
 #include <QSet>
@@ -5,12 +7,13 @@
 #include <QDebug>
 #include <QMetaMethod>
 #include <QAction>
+#include <QPushButton>
 
 QSet<QString> connected;
 
 void connect(const QObject *sender, const char* signal,
                                 const QObject *receiver, const char* method,
-                                Qt::ConnectionType type, bool log)
+                                Qt::ConnectionType type, bool verbose)
 {
     QString key;
     QTextStream stream(&key);
@@ -19,11 +22,11 @@ void connect(const QObject *sender, const char* signal,
     stream << sender->objectName()  << "." << QString(signal).remove(QRegExp("(^[1,2]|\\s+)")) << " -> " << receiver->objectName() << "." << QString(method).remove(QRegExp("(^[1,2]|\\s+)"));
     if (connected.contains(key))
     {
-        if (log)
+        if (verbose)
             qDebug() << "Not connecting: " << key;
         return;
     }
-    if (log)
+    if (verbose)
         qDebug() << "Connecting: " << key;
     connected.insert(key);
     QObject::connect(sender, signal, receiver, method, type);
@@ -31,7 +34,7 @@ void connect(const QObject *sender, const char* signal,
 
 void connect(const QObject *sender, const QMetaMethod &signal,
                                 const QObject *receiver, const QMetaMethod &method,
-                                Qt::ConnectionType type, bool log)
+                                Qt::ConnectionType type, bool verbose)
 {
     QString key;
     QTextStream stream(&key);
@@ -41,11 +44,11 @@ void connect(const QObject *sender, const QMetaMethod &signal,
 
     if (connected.contains(key))
     {
-        if (log)
+        if (verbose)
             qDebug() << "Not connecting: " << key;
         return;
     }
-    if (log)
+    if (verbose)
         qDebug() << "Connecting: " << key;
     connected.insert(key);
     QObject::connect(sender, signal, receiver, method, type);
@@ -55,6 +58,8 @@ void connectUI(QObject *ui, QObject *object)
 {
     if (!ui) return;
     if (!object) return;
+
+    qDebug() << "connectUI(" << ui->objectName() << ","<< object->objectName() <<")";
 
     const QMetaObject *mobject = object->metaObject();
 
@@ -79,16 +84,18 @@ void connectUI(QObject *ui, QObject *object)
 
         // Not the best programming practice, but this code is more elegant than solving it with if/else
         if (qobject_cast<const QAction*>(ui_object) != 0) goto _connect_action;
+        if (qobject_cast<const QPushButton*>(ui_object) != 0) goto _button;
 
         // Connect GUI elements
-        signal_index = mui->indexOfSignal("clicked()");
-        if (signal_index != -1) { slot_method = QString::null; argument = "()"; goto _connect;}
-
         signal_index = mui->indexOfSignal("toggled(bool)");
         if (signal_index != -1) { slot_method = "setChecked(bool)"; argument = "(bool)"; goto _connect;}
 
         signal_index = mui->indexOfSignal("currentIndexChanged(QString)");
         if (signal_index != -1) { slot_method = "setCurrentText(QString)"; argument = "(QString)"; goto _connect;}
+
+_button:
+        signal_index = mui->indexOfSignal("clicked()");
+        if (signal_index != -1) { slot_method = QString::null; argument = "()"; goto _connect;}
 
 _connect:
         if (signal_index != -1)
@@ -150,6 +157,7 @@ void connectSlotsByName(QObject *sender, QObject *receiver)
 {
     if (!sender) return;
     if (!receiver) return;
+    qDebug() << "connectSlotsByName("<< sender->objectName() <<","<< receiver->objectName() <<")";
 
     const QMetaObject *msender = sender->metaObject();
     const QMetaObject *mreceiver = receiver->metaObject();

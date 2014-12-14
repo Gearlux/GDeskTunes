@@ -25,8 +25,11 @@ QString seconds_to_DHMS(quint32 duration)
 MiniPlayer::MiniPlayer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MiniPlayer),
-    positioned(false),
-    large(false)
+    large(false),
+    trayIconTiming(0),
+    trayIconPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
+    userIconTiming(std::numeric_limits<qint64>::max()),
+    userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max())
 {
     ui->setupUi(this);
 
@@ -42,39 +45,15 @@ MiniPlayer::~MiniPlayer()
     delete ui;
 }
 
-void MiniPlayer::triggerMiniPlayer(QPoint& pt)
+void MiniPlayer::placeMiniPlayer(QPoint& pt)
 {
-    qDebug() << "MiniPlayer::onTriggerMiniPlayer(" << pt << ")";
-
-    // Check if the app is active
-    QWidget *active_window = QApplication::activeWindow();
-    QWidget *focus_widget = QApplication::focusWidget();
-
-    if (active_window)
-        qDebug() << "Active Window: " << active_window->objectName();
-    if (focus_widget)
-        qDebug() << "Focus widget: " << focus_widget->objectName();
-    qDebug() << isHidden();
-
-    if (isHidden())
-    {
-        activateWindow();
-        raise();
-        show();
-        if (!positioned)
-        {
-            // FIXME: quick hack for windows
-            int y = pt.y();
-            if (pt.y() > 100)
-                y -= height();
-            this->move(pt.x(), y);
-            positioned = true;
-        }
-    }
-    else
-    {
-        hide();
-    }
+    qDebug() << "MiniPlayer::placeMiniPlayer(" << pt << ")";
+    int y = pt.y();
+    if (pt.y() > 100)
+        y -= height();
+    trayIconPosition.setX(pt.x());
+    trayIconPosition.setY(y);
+    trayIconTiming = QDateTime::currentMSecsSinceEpoch();
 }
 
 void MiniPlayer::keyPressEvent(QKeyEvent *event)
@@ -246,18 +225,53 @@ void MiniPlayer::mouseMoveEvent(QMouseEvent *event)
 void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 {
     do_move = false;
+    userPosition.setX(event->globalX() - mouse_click_x_coordinate);
+    userPosition.setY(event->globalY() - mouse_click_y_coordinate);
+    userIconTiming = QDateTime::currentMSecsSinceEpoch();
     QWidget::mouseReleaseEvent(event);
 }
 
-void MiniPlayer::applicationStateChanged(Qt::ApplicationState state)
+void MiniPlayer::activateWindow()
 {
-    /*
-    if (state == Qt::ApplicationInactive)
-    {
-        hide();
-    }
-    */
+    qDebug() << "MiniPlayer::activateWindow()";
+    return QMainWindow::activateWindow();
 }
 
+void MiniPlayer::hide()
+{
+    qDebug() << "MiniPlayer::hide()";
+    QMainWindow::hide();
+}
 
+void MiniPlayer::raise()
+{
+    qDebug() << "MiniPlayer::raise()";
+    QMainWindow::raise();
+}
+
+void MiniPlayer::show()
+{
+    qDebug() << "MiniPlayer::show()";
+    // Check to which position we have to move the player
+    qint64 current = QDateTime::currentMSecsSinceEpoch();
+    qDebug() << current << " " << trayIconTiming << " " << userIconTiming;
+    bool savePosition = false;
+    if (current < trayIconTiming + 100)
+    {
+        // Place it on the trayIcon position
+        move(trayIconPosition.x(), trayIconPosition.y());
+    }
+    else if (current > userIconTiming)
+    {
+        move(userPosition.x(), userPosition.y());
+    }
+    else
+        savePosition = true;
+    QMainWindow::show();
+    if (savePosition)
+    {
+        userPosition = pos();
+        userIconTiming = current;
+    }
+}
 

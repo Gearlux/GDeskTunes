@@ -2,11 +2,14 @@
 #include <QDebug>
 #include <QSettings>
 #include <QApplication>
+#include <QDateTime>
 
 SystemTrayIcon::SystemTrayIcon(QObject *parent) :
     QSystemTrayIcon(parent),
-    tray_icon(false)
+    tray_icon(false),
+    last_activation(0)
 {
+    qDebug() << "SystemTrayIcon::SystemTrayIcon()";
     setIcon(QIcon(":/icons/gdesktunes.iconset/icon_16x16.png"));
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onActivated(QSystemTrayIcon::ActivationReason)));
@@ -42,9 +45,16 @@ void SystemTrayIcon::load()
 void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
     qDebug() << "SystemTrayIcon::onActivated(" << reason << ")";
+    qint64 current_activation = QDateTime::currentMSecsSinceEpoch();
+    if (current_activation < last_activation + 100)
+    {
+        current_activation = last_activation;
+        return;
+    }
+    current_activation = last_activation;
     if (reason == QSystemTrayIcon::DoubleClick)
     {
-        emit showMainWindow();
+        emit doubleClicked();
         return;
     }
     if (reason == QSystemTrayIcon::Trigger)
@@ -52,6 +62,15 @@ void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
         QRect geom = this->geometry();
         QPoint pt = geom.topLeft();
 
-        emit triggerMiniPlayer(pt);
+        emit placeMiniPlayer(pt);
+        emit triggered();
     }
+}
+
+void SystemTrayIcon::setVisible(bool visible)
+{
+    qDebug() << "SystemTrayIcon::setVisible("<< visible << ")";
+    qDebug() << receivers(SIGNAL(triggered()));
+    qDebug() << receivers(SIGNAL(activated(QSystemTrayIcon::ActivationReason)));
+    QSystemTrayIcon::setVisible(visible);
 }

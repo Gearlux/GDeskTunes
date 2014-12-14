@@ -13,8 +13,9 @@ signals:
     void trayIcon(bool);
     void showNotifications(bool);
 
-    void triggerMiniPlayer(QPoint &pt);
-    void showMainWindow();
+    void placeMiniPlayer(QPoint &pt);
+    void doubleClicked();
+    void triggered();
 
 public slots:
     void setTrayIcon(bool icon) { if (icon == tray_icon) return; tray_icon = icon; emit trayIcon(icon); }
@@ -27,9 +28,15 @@ public slots:
     void load();
     void save();
 
+    void setVisible(bool visible);
+
 private:
     bool tray_icon;
     bool show_notifications;
+
+    // Hack: toggling the tray icon on and off, seems to trigger multiple signal
+    qint64 last_activation;
+
 };
 
 #endif // SYSTEMTRAYICON_H
