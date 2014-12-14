@@ -226,29 +226,40 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    QMainWindow::changeEvent(event);
+    qDebug() << "MainWindow::changeEvent()";
     if (event->type() == QEvent::WindowStateChange)
     {
         if (windowState() == Qt::WindowFullScreen)
         {
             qDebug() << "Disable mini";
+            // saveState();
+            // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x8000|0x80000000|Qt::CustomizeWindowHint));
+            // show();
+
             ui->actionSwitch_mini->setEnabled(false);
+            ui->actionClose_Window->setEnabled(false);
             ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
         }
         else
         {
             qDebug() << "Enable mini";
+            // qDebug() << windowFlags();
+            // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
+            // restore();
+            // show();
+
             ui->actionSwitch_Full_Screen->setText("Enter Full Screen");
+            ui->actionClose_Window->setEnabled(true);
             ui->actionSwitch_mini->setEnabled(true);
         }
 
-        ui->actionClose_Window->setDisabled(windowState() == Qt::WindowMinimized);
         ui->actionZoom->setDisabled(windowState() == Qt::WindowMinimized);
         ui->actionBring_All_To_Front->setDisabled(windowState() == Qt::WindowMinimized);
         ui->actionShow_Minimized->setDisabled(windowState() == Qt::WindowMinimized);
 
         updateJumpList();
     }
+    QMainWindow::changeEvent(event);
  }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
@@ -530,19 +541,14 @@ void MainWindow::quitGDeskTunes()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "MainWindow::closeEvent("<< event->spontaneous() << ")";
+    // FIXME: actually the button needs to be disabled
+    if (isFullScreen()) {
+        event->ignore();
+        return;
+    }
     // Closing / hiding events are processed by the state machine
     if (event->spontaneous())
     {
-        // Mac issue: when the window is in full screen, a large black screen remains
-        // First show it to normal
-        if (isFullScreen())
-        {
-            qDebug() << "Full Screen";
-            // FIXME: showNormal();
-#ifdef Q_OS_MAC
-            QTimer::singleShot(100, this, SLOT(hide()));
-#endif
-        }
         event->ignore();
         emit closeSignal();
     }
@@ -556,12 +562,33 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
+void MainWindow::showFullScreen()
+{
+    qDebug() << "MainWindow::showFullScreen()";
+#ifdef Q_OS_MAC
+    // QFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000)
+    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x8000|0x80000000|Qt::CustomizeWindowHint));
+#endif
+    QMainWindow::showFullScreen();
+}
+
+void MainWindow::showNormal()
+{
+    qDebug() << "MainWindow::showNormal()";
+    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
+    QMainWindow::showNormal();
+}
+
 void MainWindow::switchFullScreen()
 {
     if (isFullScreen())
+    {
         showNormal();
+    }
     else
+    {
         showFullScreen();
+    }
 }
 
 void MainWindow::repeat(QString mode)
@@ -612,13 +639,40 @@ void MainWindow::activateWindow()
 void MainWindow::closeWindow()
 {
     qDebug() << "MainWindow::closeWindow()";
-    if (isFullScreen())
-    {
-        qDebug() << "Full Screen";
-        // FIXME: showNormal();
-#ifdef Q_OS_MAC
-            QTimer::singleShot(2000, this, SLOT(hide()));
-#endif
-    }
     emit closeSignal();
+}
+
+void MainWindow::saveState()
+{
+    qDebug() << "GDeskTunes::saveState()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+    if (isMini())
+    {
+        settings.setValue("miniGeometry", saveGeometry());
+    }
+    else
+    {
+        settings.setValue("geometry", saveGeometry());
+        settings.setValue("state", QMainWindow::saveState());
+    }
+}
+
+void MainWindow::restore()
+{
+    qDebug() << "GDeskTunes::restore()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+    qDebug() << "Preferences: " << settings.fileName();
+
+    return;
+
+    QString key = "geometry";
+    if (settings.contains(key))
+    {
+        restoreGeometry(settings.value(key).toByteArray());
+    }
+    key = "state";
+    if (settings.contains(key))
+    {
+        restoreState(settings.value(key).toByteArray());
+    }
 }

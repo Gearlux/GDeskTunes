@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "application.h"
 
 #include <QDebug>

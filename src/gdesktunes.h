@@ -28,7 +28,6 @@ public slots:
     void save();
     void load();
 
-    void saveState();
     void show();
 
     void setMiniPlayerOnTop(bool on_top);
@@ -50,7 +49,6 @@ public:
 
     bool isMini() { return this->mini; }
 
-    void restore();
     void restoreMini();
 
 private:

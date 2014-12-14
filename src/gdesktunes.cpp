@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
 
@@ -80,6 +82,7 @@ void GDeskTunes::setMini(bool toMini)
         hide();
 
         ui->actionSwitch_mini->setText("Switch from Compact Layout");
+        ui->actionSwitch_Full_Screen->setEnabled(false);
 
         // Apply the mini style
         QString mini_style = this->mini_css;
@@ -116,6 +119,7 @@ void GDeskTunes::setMini(bool toMini)
         this->mini = toMini;
 
         ui->actionSwitch_mini->setText("Switch to Compact Layout");
+        ui->actionSwitch_Full_Screen->setEnabled(true);
 
         setWindowFlags(normal_flags
 #ifndef Q_OS_LINUX
@@ -352,21 +356,6 @@ void GDeskTunes::show()
     MainWindow::show();
 }
 
-void GDeskTunes::saveState()
-{
-    qDebug() << "GDeskTunes::saveState()";
-    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
-    if (isMini())
-    {
-        settings.setValue("miniGeometry", saveGeometry());
-    }
-    else
-    {
-        settings.setValue("geometry", saveGeometry());
-        settings.setValue("state", QMainWindow::saveState());
-    }
-}
-
 void GDeskTunes::save()
 {
     qDebug() << "GDeskTunes::save()";
@@ -401,24 +390,6 @@ void GDeskTunes::load()
     this->setMinimizeToTray(settings.value("minimizeToTray", false).toBool());
 }
 
-void GDeskTunes::restore()
-{
-    qDebug() << "GDeskTunes::restore()";
-    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
-    qDebug() << "Preferences: " << settings.fileName();
-
-    QString key = "geometry";
-    if (settings.contains(key))
-    {
-        restoreGeometry(settings.value(key).toByteArray());
-    }
-    key = "state";
-    if (settings.contains(key))
-    {
-        restoreState(settings.value(key).toByteArray());
-    }
-}
-
 void GDeskTunes::restoreMini()
 {
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
@@ -440,9 +411,6 @@ void GDeskTunes::updateAppearance()
     qDebug() << "GDeskTunes::updateAppearance()";
     disableStyle("gdesktunes.navigation.customization");
 
-    qDebug() << "keep_logo: " << keep_logo;
-    qDebug() << "navigations_buttons: " << navigation_buttons;
-    qDebug() << "keep_links: " << keep_links;
     QString css;
     if (keep_logo)
     {

@@ -43,6 +43,8 @@ public slots:
     bool eventFilter(QObject *sender, QEvent *event);
 
     void switchMenu();
+    void showFullScreen();
+    void showNormal();
     void switchFullScreen();
     void setMenuVisible(bool visible);
 
@@ -67,6 +69,9 @@ public slots:
     void zoom();
 
     void setMinimizeToTray(bool tray) { if (tray == minimize_to_tray) return; minimize_to_tray = tray; emit minimizeToTray(tray); }
+
+    void saveState();
+    void restore();
 
 public:
     virtual bool isMini();
