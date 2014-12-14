@@ -1,3 +1,4 @@
+PATH=%PATH%;C:\Qt\5.4\msvc2013_opengl\bin
 del /Q GDeskTunes.zip
 rmdir /S /Q GDeskTunes
 mkdir GDeskTunes
@@ -7,4 +8,4 @@ del GDeskTunes\*.obj
 del GDeskTunes\*.cpp
 del GDeskTunes\*.moc
 windeployQt GDeskTunes\GDeskTunes.exe
-gzip -r GDeskTunes_windows.zip GDeskTunes
+zip -r GDeskTunes_windows.zip GDeskTunes
