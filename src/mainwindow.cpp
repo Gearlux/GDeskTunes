@@ -538,11 +538,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
         if (isFullScreen())
         {
             qDebug() << "Full Screen";
-            showNormal();
+            // FIXME: showNormal();
 #ifdef Q_OS_MAC
-            hide();
+            QTimer::singleShot(100, this, SLOT(hide()));
 #endif
-            // QTimer::singleShot(0, this, SLOT(closeWindow()));
         }
         event->ignore();
         emit closeSignal();
@@ -613,5 +612,13 @@ void MainWindow::activateWindow()
 void MainWindow::closeWindow()
 {
     qDebug() << "MainWindow::closeWindow()";
+    if (isFullScreen())
+    {
+        qDebug() << "Full Screen";
+        // FIXME: showNormal();
+#ifdef Q_OS_MAC
+            QTimer::singleShot(2000, this, SLOT(hide()));
+#endif
+    }
     emit closeSignal();
 }
