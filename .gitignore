@@ -1,3 +1,4 @@
+.DS_store
 *.pro*.user*
 Makefile
 Makefile.*
