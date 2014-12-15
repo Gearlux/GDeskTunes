@@ -24,8 +24,10 @@ Tested on
 Requirements
 ------------
 * [Adobe Flash Player][5]
+* [SLL eg. OpenSSL][6]
 
 [5]: http://get.adobe.com/flashplayer/
+[6]: https://www.openssl.org/
 
 License
 -------

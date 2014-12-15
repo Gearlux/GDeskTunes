@@ -8,7 +8,6 @@
 #include <QtGui>
 #include <QMenu>
 #include <QtWebKit/QWebElement>
-#include <QTest>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QWebFrame>

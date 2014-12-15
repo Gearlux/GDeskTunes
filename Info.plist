@@ -15,6 +15,6 @@
 	<key>CFBundleVersion</key>
 	<string>0.2-beta</string>
 	<key>CFBundleIdentifier</key>
-	<string>gearlux.GDeskTunes</string>
+        <string>gearlux.GDeskTunes</string>
 </dict>
 </plist>

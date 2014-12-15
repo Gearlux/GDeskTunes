@@ -7,7 +7,7 @@
 TARGET = GDeskTunes
 TEMPLATE = app
 
-QT       += core gui webkit widgets network xml testlib
+QT       += core gui webkit widgets network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
