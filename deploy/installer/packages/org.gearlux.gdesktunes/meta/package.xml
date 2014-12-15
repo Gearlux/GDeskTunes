@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>GDeskTunes</DisplayName>
+    <Description>Desktop Player for Google Play Music™</Description>
+    <Version>0.3.1</Version>
+    <ReleaseDate>2014-12-15</ReleaseDate>
+    <Name>org.gearlux.gdesktunes</Name>
+    <Licenses>
+        <License name="GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007" file="lgpl-3.0.txt" />
+		<License name="The MIT License (MIT) - Radiant Player Mac" file="mit-radiant.txt" />
+		<License name="The MIT License (MIT) - QtWaitingSpinner" file="mit-spinner.txt" />
+    </Licenses>
+	<!--
+    <Translations>
+        <Translation>de_de.qm</Translation>
+    </Translations>
+	-->
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+	<UserInterfaces>
+      <UserInterface>targetwidget.ui</UserInterface>
+    </UserInterfaces>
+</Package>
