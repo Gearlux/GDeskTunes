@@ -18,8 +18,8 @@ No affiliation with Google. Google Play is a trademark of Google Inc.
 
 Tested on
 ---------
-* Windows 7 with Qt 5.4
-* Mac OS X 10 with Qt 5.4
+* Windows 7, Windows 8 with Qt 5.4
+* Mac OS X 10.9, Mac OS X 10.10 with Qt 5.4
 
 Requirements
 ------------
