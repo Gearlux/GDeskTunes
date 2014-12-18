@@ -87,12 +87,21 @@ Component.prototype.createOperations = function()
     try {
         // call the base create operations function
         component.createOperations();
-    } catch (e) {
+
+		if (installer.value("os") === "win") {
+			component.addOperation("CreateShortcut", "@TargetDir@/GDeskTunes.exe", "@StartMenuDir@/GDeskTunes.lnk",
+				"workingDirectory=@TargetDir@");
+			component.addOperation("CreateShortcut", "@TargetDir@/uninstall.exe", "@StartMenuDir@/Uninstall.lnk",
+				"workingDirectory=@TargetDir@");
+		}
+
+	} catch (e) {
         print(e);
     }
 }
 
 // Callback when one is clicking on the button to select where to install your application
+
 Component.prototype.chooseTarget = function () {
     var widget = gui.pageWidgetByObjectName("DynamicTargetWidget");
     if (widget != null) {
@@ -120,3 +129,4 @@ Component.prototype.targetChanged = function (text) {
         widget.complete = false;
     }
 }
+

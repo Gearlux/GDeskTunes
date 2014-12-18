@@ -1,3 +1,5 @@
+// #define QT_NO_DEBUG_OUTPUT
+
 #include "googlemusicapp.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -27,8 +29,20 @@ void GoogleMusicApp::decreaseVolume()
 
 void GoogleMusicApp::playbackChanged(int mode)
 {
-    emit isPlaying(mode != 0);
-    // FIXME
+    qDebug() << "GoogleMusicApp::playbackChanged(" << mode << ")";
+    emit isPlaying(mode);
+}
+
+void GoogleMusicApp::rewindChanged(int mode)
+{
+    qDebug() << "GoogleMusicApp::rewindChanged(" << mode << ")";
+    emit rewindEnabled(mode);
+}
+
+void GoogleMusicApp::forwardChanged(int mode)
+{
+    qDebug() << "GoogleMusicApp::forwardChanged(" << mode << ")";
+    emit forwardEnabled(mode);
 }
 
 void GoogleMusicApp::ratingChanged(int rate)

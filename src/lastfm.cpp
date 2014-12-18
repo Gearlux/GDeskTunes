@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "lastfm.h"
 
 #include <QSettings>

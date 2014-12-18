@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
 
@@ -5,6 +7,7 @@
 
 #include <QKeyEvent>
 #include <QDebug>
+
 
 QString seconds_to_DHMS(quint32 duration)
 {
@@ -25,11 +28,13 @@ QString seconds_to_DHMS(quint32 duration)
 MiniPlayer::MiniPlayer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MiniPlayer),
-    large(false),
     trayIconTiming(0),
     trayIconPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     userIconTiming(std::numeric_limits<qint64>::max()),
-    userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max())
+    userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
+    large(false),
+    inverted(false),
+    style("")
 {
     ui->setupUi(this);
 
@@ -73,7 +78,13 @@ void MiniPlayer::keyPressEvent(QKeyEvent *event)
         }
     }
     default:
+        qDebug() << "Key Pressed" << event->type();
         QWidget::keyPressEvent(event);
+        if (!event->isAccepted())
+        {
+            qDebug() << "Sending";
+            emit keyPressed(event);
+        }
         break;
     }
 }
@@ -89,7 +100,7 @@ void MiniPlayer::nowPlaying(QString title, QString artist, QString album, int du
     ui->slider->setMaximum(duration);
 }
 
-void MiniPlayer::playbackTime(int current, int total)
+void MiniPlayer::playbackTime(int current, int)
 {
     ui->current->setText( seconds_to_DHMS(current / 1000));
     ui->slider->setValue(current / 1000);
@@ -142,6 +153,8 @@ void MiniPlayer::enableBackground()
     painter.end();
     palette.setBrush(QPalette::Background, QBrush(image));
     setPalette(palette);
+
+    ui->centralwidget->setStyleSheet("");
 }
 
 void MiniPlayer::disableBackground()
@@ -149,32 +162,37 @@ void MiniPlayer::disableBackground()
     QPalette palette;
     setPalette(palette);
 
-    resize(300, 166);
+    resize(384, 166);
+
+      ui->centralwidget->setStyleSheet(style);
 }
 
 void MiniPlayer::rating(int rate)
 {
-    qDebug() << "MiniPlayer::rating(" << rate << ")";
+    this->_rating = rate;
+    // qDebug() << "MiniPlayer::rating(" << rate << ")";
     switch(rate)
     {
     case 1:
     case 2:
         ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_on.png"));
-        ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
+        setIcon(ui->toggle_thumbs_up, ":/icons/32x32/thumbs_up_off");
     break;
     case 4:
     case 5:
-        ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
+        setIcon(ui->toggle_thumbs_down, ":/icons/32x32/thumbs_down_off");
         ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up.png"));
         break;
     default:
-        ui->toggle_thumbs_down->setIcon(QIcon(":/icons/32x32/thumbs_down_off.png"));
-        ui->toggle_thumbs_up->setIcon(QIcon(":/icons/32x32/thumbs_up_off.png"));
+        setIcon(ui->toggle_thumbs_down, ":/icons/32x32/thumbs_down_off");
+        setIcon(ui->toggle_thumbs_up, ":/icons/32x32/thumbs_up_off");
     }
 }
 
 void MiniPlayer::repeat(QString mode)
 {
+    this->_repeat = mode;
+
     if (mode == "LIST_REPEAT")
     {
         ui->toggle_repeat->setIcon(QIcon(":/icons/32x32/repeat_on.png"));
@@ -185,19 +203,21 @@ void MiniPlayer::repeat(QString mode)
     }
     if (mode == "NO_REPEAT")
     {
-        ui->toggle_repeat->setIcon(QIcon(":/icons/32x32/repeat_off.png"));
+        setIcon(ui->toggle_repeat, ":/icons/32x32/repeat_off");
     }
 }
 
 void MiniPlayer::shuffle(QString mode)
 {
+    this->_shuffle = mode;
+
     if (mode == "ALL_SHUFFLE")
     {
-        ui->toggle_shuffle->setIcon(QIcon(":/icons/32x32/shuffle_on.png"));
+        ui->toggle_shuffle->setIcon(QIcon(":/icons/32x32/shuffle_on"));
     }
     if (mode == "NO_SHUFFLE")
     {
-        ui->toggle_shuffle->setIcon(QIcon(":/icons/32x32/shuffle_off.png"));
+        setIcon(ui->toggle_shuffle, ":/icons/32x32/shuffle_off");
     }
 }
 
@@ -273,5 +293,100 @@ void MiniPlayer::show()
         userPosition = pos();
         userIconTiming = current;
     }
+}
+
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#include <WinUser.h>
+#endif
+
+
+void MiniPlayer::bringToFront()
+{
+#ifdef Q_OS_WIN
+    ::SetWindowPos((HWND)effectiveWinId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    ::SetWindowPos((HWND)effectiveWinId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+#endif
+
+    show();
+    raise();
+    activateWindow();
+}
+
+void MiniPlayer::setBackgroundColor(QColor color)
+{
+    qDebug() << "MiniPlayer::setBackgroundColor(" << color << ")";
+    style = QString("background: rgb(%1,%2,%3)").arg(color.red()).arg(color.green()).arg(color.blue());
+    qDebug() << style;
+
+    ui->centralwidget->setStyleSheet(style);
+    int gray = qGray(color.rgb());
+
+    invert(gray < 128);
+}
+
+void MiniPlayer::invert(bool inv)
+{
+    qDebug() << "MiniPlayer::invert(" << inv << ") inverted: " << inverted;
+    if (inverted == inv) return;
+    inverted = inv;
+
+    setIcon(ui->play, ":/icons/32x32/play");
+    setIcon(ui->previous, ":/icons/32x32/prev");
+    setIcon(ui->next, ":/icons/32x32/next");
+    setIcon(ui->closeMini, ":/icons/32x32/");
+    setIcon(ui->maximize, ":/icons/32x32/expand");
+    setIcon(ui->closeMini, ":/icons/8x8/close_delete");
+    repeat(this->_repeat);
+    shuffle(this->_shuffle);
+    rating(this->_rating);
+
+    QString text = "color: ";
+    if (inv)
+        text += "white";
+    else
+        text += "black";
+    ui->album->setStyleSheet(text);
+    ui->artist->setStyleSheet(text);
+    ui->title->setStyleSheet(text);
+}
+
+void MiniPlayer::setIcon(QAbstractButton* button, QString base)
+{
+    // qDebug() << "MiniPlayer::setIcon( " << button->objectName() << ") inverted: " << inverted;
+    if (inverted)
+    {
+        base += "_dark.png";
+    }
+    else
+        base += ".png";
+    button->setIcon(QIcon(base));
+}
+
+void MiniPlayer::isPlaying(int mode)
+{
+    ui->play->setEnabled(mode != 0);
+    if (mode == 0)
+    {
+        setIcon(ui->play, ":/icons/32x32/play");
+    }
+    if (mode == 1)
+    {
+        setIcon(ui->play, ":/icons/32x32/play");
+    }
+    if (mode == 2)
+    {
+        setIcon(ui->play, ":/icons/32x32/pause");
+    }
+}
+
+void MiniPlayer::rewindEnabled(int mode)
+{
+    ui->previous->setEnabled(mode != 0);
+}
+
+void MiniPlayer::forwardEnabled(int mode)
+{
+    ui->next->setEnabled(mode != 0);
 }
 

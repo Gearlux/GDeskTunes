@@ -18,6 +18,8 @@ signals:
     void keepLinks(bool keep);
     void CSS(QString style);
     void miniCSS(QString style);
+    void checkUpdatesStartup(bool check);
+    void backgroundColor(QColor color);
 
 public slots:
     void finishedLoad(bool ok);
@@ -36,6 +38,7 @@ public slots:
     void setKeepLogo(bool keep) { if (keep == keep_logo) return; keep_logo = keep; emit keepLogo(keep); }
     void setNavigationButtons(bool buttons) { if (navigation_buttons == buttons) return; navigation_buttons = buttons; emit navigationButtons(buttons); }
     void setKeepLinks(bool keep) { if (keep == keep_links) return; keep_links = keep; emit keepLinks(keep); }
+    void setCheckUpdatesStartup(bool set) { if (check_update_startup == set) return; check_update_startup = set; emit checkUpdatesStartup(set); }
 
     void updateAppearance();
 
@@ -70,6 +73,8 @@ private:
     bool keep_logo;
     bool keep_links;
     bool navigation_buttons;
+    bool check_update_startup;
+    bool updates_checked;
 
     Qt::WindowFlags normal_flags;
 };

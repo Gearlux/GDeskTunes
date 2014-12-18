@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
@@ -18,10 +18,12 @@
 
 GDeskTunes::GDeskTunes(QWidget* parent):
     MainWindow(parent),
-    mini(false),
     css(QString::null),
     mini_css(QString::null),
-    customize(false)
+    mini(false),
+    customize(false),
+    check_update_startup(false),
+    updates_checked(false)
 {
     // Setup webview and windows interaction
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
@@ -39,9 +41,13 @@ void GDeskTunes::setCSS(QString css)
     disableStyle(this->css);
     this->css = css;
     emit CSS(css);
-    if (this->customize && !this->isMini())
+    if (this->customize)
     {
+        if (this->mini)
+            disableStyle(this->mini_css, "mini");
         applyStyle(css);
+        if (this->mini)
+            applyStyle(this->mini_css, "mini");
     }
 }
 
@@ -57,7 +63,10 @@ void GDeskTunes::setMiniCSS(QString css)
     this->mini_css = css;
     if (isMini())
     {
-        applyStyle(css, "mini");
+        // In order to trigger the correct layout
+        // Disable the layout and then apply it again
+        setMini(false);
+        setMini(true);
     }
     qDebug() << "Sending signal miniCSS(" << css << ")";
     emit miniCSS(css);
@@ -185,6 +194,10 @@ void GDeskTunes::setCustomized(bool customize)
     else
     {
         disableStyle(css);
+
+        ui->toolBar->setStyleSheet("");
+        ui->actionSwitch_mini->setIcon(QIcon(":/icons/8x8/close_delete.png"));
+        emit backgroundColor(QColor(250,250,250));
     }
 }
 
@@ -224,7 +237,7 @@ void GDeskTunes::finishedLoad(bool ok)
  */
 void GDeskTunes::evaluateJavaScriptFile(QString filePath)
 {
-    qDebug() << "evaluateJavaScriptFile(" << filePath << ")";
+    // qDebug() << "GDeskTunes::evaluateJavaScriptFile(" << filePath << ")";
     QFile jsFile(filePath);
     jsFile.open(QFile::ReadOnly);
     QTextStream stream(&jsFile);
@@ -260,6 +273,48 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     QTextStream stream(&cssFile);
     QString css_content = stream.readAll();
     setStyle(subdir + css, css_content);
+
+    QWebElement elt = ui->webView->page()->mainFrame()->documentElement().findFirst("#main");
+
+    QString color = elt.styleProperty("background-color", QWebElement::ComputedStyle);
+    ui->toolBar->setStyleSheet("border: 0px; background: " + color);
+
+    QRegExp rx("\\d+");
+    QList<int> nums;
+    int pos = 0;
+    while((pos = rx.indexIn(color, pos)) != -1)
+    {
+        nums.append( color.mid(pos, rx.matchedLength()).toInt());
+        pos += rx.matchedLength();
+    }
+
+    int r = 0, g = 0, b = 0, a = 255;
+    if (nums.size() >= 3)
+    {
+        r = nums.at(0);
+        g = nums.at(1);
+        b = nums.at(2);
+    }
+    if (nums.size() > 3)
+        a = nums.at(3);
+
+    QColor qColor = QColor(r,g,b);
+    if (a == 0)
+        qColor = QColor(250,250,250);
+
+    int gray = qGray(qColor.rgb());
+
+    if (gray < 128)
+    {
+        ui->actionSwitch_mini->setIcon(QIcon(":/icons/8x8/close_delete_dark.png"));
+    }
+    else
+    {
+        ui->actionSwitch_mini->setIcon(QIcon(":/icons/8x8/close_delete.png"));
+    }
+
+    qDebug() << "emit backgroundColor(" << qColor << ")";
+    emit backgroundColor(qColor);
 }
 
 /*
@@ -337,6 +392,13 @@ void GDeskTunes::receiveMessage(const QString &msg)
 void GDeskTunes::show()
 {
     qDebug() << "GDeskTunes::show()";
+
+    if (this->check_update_startup && !updates_checked)
+    {
+        about(false);
+        updates_checked = true;
+    }
+
     ui->toolBar->setVisible(isMini());
 
 #ifndef Q_OS_MAC
@@ -371,6 +433,7 @@ void GDeskTunes::save()
     settings.setValue("keeplogo", this->keep_logo);
     settings.setValue("keeplinks", this->keep_links);
     settings.setValue("navigation.buttons", this->navigation_buttons);
+    settings.setValue("updates.startup", this->check_update_startup);
 }
 
 void GDeskTunes::load()
@@ -388,6 +451,8 @@ void GDeskTunes::load()
     this->setKeepLinks(settings.value("keeplinks", true).toBool());
     this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
     this->setMinimizeToTray(settings.value("minimizeToTray", false).toBool());
+
+    this->setCheckUpdatesStartup(settings.value("updates.startup", true).toBool());
 }
 
 void GDeskTunes::restoreMini()
@@ -453,4 +518,5 @@ void GDeskTunes::updateAppearance()
 void GDeskTunes::loadUrl()
 {
     ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    // ui->webView->load(QUrl("http://www.last.fm/home"));
 }

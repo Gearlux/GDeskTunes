@@ -40,13 +40,14 @@
 
 void ignoreSSLMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray localMsg = msg.toUtf8();
     switch (type) {
     case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        fprintf(stderr, "%s\n", localMsg.constData());
         break;
     case QtWarningMsg:
         if (msg.startsWith("QSslSocket")) break;
+        if (msg.startsWith("could not set SSL_CTRL_SET_TLSEXT_HOSTNAME")) break;
         fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         break;
     case QtCriticalMsg:
@@ -56,6 +57,7 @@ void ignoreSSLMessages(QtMsgType type, const QMessageLogContext &context, const 
         fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         abort();
     }
+    fflush(stderr);
 }
 
 /*
@@ -69,11 +71,11 @@ int main(int argc, char *argv[])
     int exit_result = 0;
 
     // Ignore ssl messages
-    // qInstallMessageHandler(ignoreSSLMessages);
+    qInstallMessageHandler(ignoreSSLMessages);
 
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3");
+    QApplication::setApplicationVersion("0.2");
     QApplication::setOrganizationName("GearLux");
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -126,7 +128,7 @@ int main(int argc, char *argv[])
         trayIcon->setObjectName("SystemTrayIcon");
         trayIcon->show();
         qDebug() << "Create MiniPlayer";
-        MiniPlayer *miniplayer = new MiniPlayer(w);
+        MiniPlayer *miniplayer = new MiniPlayer();
         miniplayer->setObjectName("MiniPlayer");
 
         QStateMachine*  machine = new QStateMachine();
@@ -157,15 +159,13 @@ int main(int argc, char *argv[])
 
         QObject::connect(mainmini, SIGNAL(entered()), w, show_slot);
         QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(raise()));
-        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(show()));
-        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(raise()));
+        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
 
         State* mini = new State();
         mini->setObjectName("mini");
 
         QObject::connect(mini, SIGNAL(entered()), w, hide_slot);
-        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(show()));
-        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(raise()));
+        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
 
         QFinalState *exit_state = new QFinalState();
 
@@ -239,8 +239,16 @@ int main(int argc, char *argv[])
         mainmini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), main);
 
         // Transitions when closing the main window
+#ifdef Q_OS_MAC
         mainmini->addTransition(w, SIGNAL(closeSignal()), mini);
         mainmini_inactive->addTransition(w, SIGNAL(closeSignal()), mini);
+#else
+        mainmini->addTransition(w, SIGNAL(closeSignal()), exit_state);
+        mini->addTransition(w, SIGNAL(closeSignal()), exit_state);
+        mainmini_inactive->addTransition(w, SIGNAL(closeSignal()), exit_state);
+        mini_inactive->addTransition(w, SIGNAL(closeSignal()), exit_state);
+        background->addTransition(w, SIGNAL(closeSignal()), exit_state);
+#endif
 
         // Clicking the tray icon, should popup or close the mini player at the tray
         main->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
@@ -280,6 +288,8 @@ int main(int argc, char *argv[])
         QObject::connect(main, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(true);});
         QObject::connect(mainmini, &State::entered, [w] { w->ui->actionClose_Window->setEnabled(true);});
 
+        QObject::connect(miniplayer, SIGNAL(keyPressed(QKeyEvent*)), w, SLOT(keyPressEvent(QKeyEvent*)));
+
         // Make sure that if we click the dock, the application behaves correctly
         background->addTransition(&a, SIGNAL(onDockFalseFalse()), main);
         mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
@@ -305,6 +315,7 @@ int main(int argc, char *argv[])
         connectSlotsByName(w, app);
         connectUI(w, w);
         connectUI(w, app);
+        connectUI(miniplayer, app);
 
         // Connect settings and jar
         connectUI(settings, jar);
@@ -324,12 +335,12 @@ int main(int argc, char *argv[])
         connectSlotsByName(app, miniplayer);
 
         // Save status on exit
+        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
+        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
         connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
         connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
         connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
         connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
-        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
-        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
 
         // Apply website customizations
         connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
@@ -355,10 +366,15 @@ int main(int argc, char *argv[])
 
         // Show the trayIcon when requested
         connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
+        connect(trayIcon, SIGNAL(doubleClicked()), w, SLOT(showNormal()));
+        connect(trayIcon, SIGNAL(doubleClicked()), w, SLOT(bringToFront()));
+        connect(trayIcon, SIGNAL(trayIcon(bool)), settings->ui->minimize_to_tray, SLOT(setEnabled(bool)));
 
         // Use larger album art
         connect(miniplayer->ui->album_art, SIGNAL(clicked()), miniplayer, SLOT(changeBackground()));
         connect(miniplayer->ui->maximize, SIGNAL(clicked()), miniplayer, SLOT(changeBackground()));
+
+        connect(w, SIGNAL(backgroundColor(QColor)), miniplayer, SLOT(setBackgroundColor(QColor)));
 
         qDebug() << "Starting application";
         w->load();

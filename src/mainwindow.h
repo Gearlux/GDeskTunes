@@ -48,11 +48,11 @@ public slots:
     void switchFullScreen();
     void setMenuVisible(bool visible);
 
-    void about();
+    void about(bool show = false);
     void show();
     void activateWindow();
     void raise();
-    void showMac();
+    void bringToFront();
     void hide();
     void onHiddenState();
 
@@ -65,17 +65,23 @@ public slots:
     void shuffle(QString mode);
     void repeat(QString mode);
 
-    void isPlaying(bool playing);
+    /* Called when the music is playing. 0=disabled, 1=paused, 2=playing. */
+    void isPlaying(int mode);
+    void rewindEnabled(int mode);
+    void forwardEnabled(int mode);
     void zoom();
 
+    void setTrayIcon(bool tray) { this->tray_icon = tray; }
     void setMinimizeToTray(bool tray) { if (tray == minimize_to_tray) return; minimize_to_tray = tray; emit minimizeToTray(tray); }
 
     void saveState();
     void restore();
 
+    void keyPressEvent(QKeyEvent *event);
+
 public:
     virtual bool isMini();
-    void keyPressEvent(QKeyEvent *event);
+    bool event(QEvent *event);
 
 protected:
     void keyReleaseEvent(QKeyEvent *event);
@@ -128,6 +134,7 @@ protected:
 
     // Properties that control the behaviour of the application
     bool hide_menu;
+    bool tray_icon;
     bool minimize_to_tray;
 
 private:

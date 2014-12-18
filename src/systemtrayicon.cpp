@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "systemtrayicon.h"
 #include <QDebug>
 #include <QSettings>
@@ -54,6 +56,8 @@ void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
     current_activation = last_activation;
     if (reason == QSystemTrayIcon::DoubleClick)
     {
+        // Also emit the trigger signal (at least for windows)
+        emit triggered();
         emit doubleClicked();
         return;
     }
@@ -70,7 +74,5 @@ void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
 void SystemTrayIcon::setVisible(bool visible)
 {
     qDebug() << "SystemTrayIcon::setVisible("<< visible << ")";
-    qDebug() << receivers(SIGNAL(triggered()));
-    qDebug() << receivers(SIGNAL(activated(QSystemTrayIcon::ActivationReason)));
     QSystemTrayIcon::setVisible(visible);
 }

@@ -38,9 +38,9 @@ Settings::Settings(GDeskTunes *parent) :
 
     if (!tray)
     {
+        ui->tray_group->hide();
         ui->tray_icon->hide();
         ui->show_notifications->hide();
-        ui->notifications_label->hide();
     }
 
 #ifdef Q_OS_MAC

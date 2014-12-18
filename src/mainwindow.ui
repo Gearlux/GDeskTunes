@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>GDeskTunes</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
@@ -65,7 +68,6 @@
      <string>Controls</string>
     </property>
     <addaction name="actionPlay"/>
-    <addaction name="actionStop"/>
     <addaction name="actionNext"/>
     <addaction name="actionPrevious"/>
     <addaction name="separator"/>
@@ -77,6 +79,8 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="action_About"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -125,6 +129,9 @@
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -184,6 +191,9 @@
    </property>
   </action>
   <action name="actionPlay">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Play</string>
    </property>
@@ -216,7 +226,7 @@
   <action name="actionSwitch_mini">
    <property name="icon">
     <iconset resource="../gdesktunes.qrc">
-     <normaloff>:/icons/8x8/1415314633_circle_close_delete.png</normaloff>:/icons/8x8/1415314633_circle_close_delete.png</iconset>
+     <normaloff>:/icons/8x8/close_delete_dark.png</normaloff>:/icons/8x8/close_delete_dark.png</iconset>
    </property>
    <property name="text">
     <string>Switch to Compact Layout</string>
@@ -325,6 +335,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+M</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>Check for Updates</string>
    </property>
   </action>
  </widget>

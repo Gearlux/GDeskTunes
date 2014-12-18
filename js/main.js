@@ -303,16 +303,62 @@ if (typeof window.MusicAPI === 'undefined') {
                 }
                 else {
                     // If there is a current song, then the player is paused.
+                    /*
                     if (document.querySelector('#playerSongInfo').childNodes.length) {
                         mode = MusicAPI.Playback.PAUSED;
                     }
                     else {
                         mode = MusicAPI.Playback.STOPPED;
                     }
+                    */
+                    if (target.disabled)
+                    {
+                        mode = MusicAPI.Playback.STOPPED;
+                    }
+                    else
+                    {
+                        mode = MusicAPI.Playback.PAUSED;
+                    }
                 }
 
                 window.GoogleMusicApp.playbackChanged(mode);
             }
+        });
+    });
+
+    var nextObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            var target = m.target;
+
+            var mode;
+            if (target.disabled)
+            {
+                mode = 0;
+            }
+            else
+            {
+                mode = 1;
+            }
+
+            window.GoogleMusicApp.forwardChanged(mode);
+
+        });
+    });
+
+    var previousObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            var target = m.target;
+            var mode;
+            if (target.disabled)
+            {
+                mode = 0;
+            }
+            else
+            {
+                mode = 1;
+            }
+
+            window.GoogleMusicApp.rewindChanged(mode);
         });
     });
 
@@ -345,6 +391,8 @@ if (typeof window.MusicAPI === 'undefined') {
     shuffleObserver.observe(document.querySelector('#player button[data-id="shuffle"]'), { attributes: true });
     repeatObserver.observe(document.querySelector('#player button[data-id="repeat"]'), { attributes: true });
     playbackObserver.observe(document.querySelector('#player button[data-id="play-pause"]'), { attributes: true });
+    nextObserver.observe(document.querySelector('#player button[data-id="rewind"]'), { attributes: true });
+    previousObserver.observe(document.querySelector('#player button[data-id="forward"]'), { attributes: true });
     playbackTimeObserver.observe(document.querySelector('#player #slider'), { attributes: true });
     ratingObserver.observe(document.querySelector('#player .player-rating-container'), { attributes: true, subtree: true });
 }

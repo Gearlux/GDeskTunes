@@ -63,8 +63,8 @@ OBJECTIVE_SOURCES += \
     mac/cocoainit.mm \
     mac/mediakeys.mm \
 	\
-	thirdparty/SPMediaKeyTap/SPMediaKeyTap.m \
-    thirdparty/SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.m 
+        thirdparty/SPMediaKeyTap/SPMediaKeyTap.mm \
+    thirdparty/SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.mm
 
 HEADERS += \
 	mac/cocoainit.h \
@@ -222,7 +222,8 @@ FORMS += \
     src/mainwindow.ui \
     src/settings.ui \
     src/aboutdialog.ui \
-    src/miniplayer.ui
+    src/miniplayer.ui \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
@@ -240,3 +241,12 @@ js.files = js/*
 export(js)
 
 INSTALLS += css minicss js
+
+DISTFILES += \
+    deploy/cleanup.sh \
+    deploy/installer/config/config.xml \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/installscript.qs \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/package.xml \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/lgpl-3.0.txt \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-radiant.txt \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-spinner.txt

@@ -10,13 +10,16 @@ public:
     explicit GoogleMusicApp(QObject *parent);
 
 signals:
-    void isPlaying(bool playing);
+    void isPlaying(int playing);
     void nowPlaying(QString title, QString artist, QString album, int duration);
     void albumArt(QPixmap array);
     void rating(int rating);
     void playbackTime(int current, int total);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
+
+    void forwardEnabled(int mode);
+    void rewindEnabled(int mode);
 
     void repeat(QString mode);
     void shuffle(QString mode);
@@ -31,6 +34,8 @@ public slots:
     void shuffleChanged(QString mode);
     void playbackChanged(int mode);
     void ratingChanged(int rating);
+    void rewindChanged(int mode);
+    void forwardChanged(int mode);
 
     void notifySong(QString title, QString artist, QString album, QString art, int duration);
     int getRating();

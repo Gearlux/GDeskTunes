@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GDESKTUNES=~/builds/build-GDeskTunes-Desktop_Qt_5_4_0_clang_64bit-Release
+GDESKTUNES=~/builds/build-GDeskTunes-Desktop_Qt_5_4_clang_64bit-Release
 
 rm -f GDeskTunes.dmg
 rm -rf GDeskTunes.app

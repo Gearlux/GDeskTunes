@@ -17,3 +17,5 @@ fi
 if [ ! -d "QtWaitingSpinner" ]; then
 	git clone https://github.com/snowwlex/QtWaitingSpinner.git
 fi
+mv -f SPMediaKeyTap/SPMediaKeyTap.m SPMediaKeyTap/SPMediaKeyTap.mm
+mv -f SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.m SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.mm

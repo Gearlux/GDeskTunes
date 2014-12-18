@@ -9,7 +9,6 @@ html {
 }
 
 body {
-    background: rgb(225, 225, 225) !important;
     width: 1000px;
     height: 56px;
 }
@@ -29,7 +28,6 @@ body {
 
 #player {
     position: relative !important;
-    background-color: transparent !important;
     box-shadow: none !important;
     height: 100% !important;
     border-top: 0px !important;

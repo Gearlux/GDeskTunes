@@ -15,6 +15,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
+    qDebug() << "AboutDialog::AboutDialog(" << parent << ")";
     ui->setupUi(this);
 
     setWindowFlags(Qt::Dialog
@@ -50,12 +51,9 @@ void AboutDialog::setText(QString msg, QString msg2)
 
 void AboutDialog::checkVersion(QNetworkReply *reply)
 {
-
+   bool has_updates = false;
     if (reply->error() == QNetworkReply::NoError)
     {
-        QStringList propertyNames;
-        QStringList propertyKeys;
-
         QString strReply = (QString)reply->readAll();
 
         QJsonDocument jsonResponse = QJsonDocument::fromJson(strReply.toUtf8());
@@ -75,6 +73,7 @@ void AboutDialog::checkVersion(QNetworkReply *reply)
                 else
                 {
                     setText("New version available: " + tag_name, "Download it now");
+                    has_updates = true;
                 }
            }
             else
@@ -94,6 +93,16 @@ void AboutDialog::checkVersion(QNetworkReply *reply)
 
     ui->spinner->stop();
     ui->spinner->hide();
+
+    if (!isVisible())
+    {
+        if (has_updates)
+        {
+            show();
+        }
+        else
+            close();
+    }
 }
 
 void AboutDialog::donate()

@@ -2,6 +2,7 @@
 #define MINIPLAYER_H
 
 #include <QMainWindow>
+#include <QAbstractButton>
 
 namespace Ui {
 class MiniPlayer;
@@ -19,6 +20,9 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+    void keyPressed(QKeyEvent *event);
 
 public slots:
     void placeMiniPlayer(QPoint& pt);
@@ -39,6 +43,18 @@ public slots:
     void hide();
     void show();
     void raise();
+
+    void bringToFront();
+
+    void setBackgroundColor(QColor color);
+
+    void isPlaying(int mode);
+    void rewindEnabled(int mode);
+    void forwardEnabled(int mode);
+
+private:
+    void invert(bool inv);
+    void setIcon(QAbstractButton* button, QString base);
 
 public:
     Ui::MiniPlayer *ui;
@@ -65,6 +81,13 @@ private:
     bool do_move;
     int mouse_click_x_coordinate;
     int mouse_click_y_coordinate;
+
+    // Set this when we inverted the colors
+    bool inverted;
+    QString _shuffle;
+    QString _repeat;
+    int _rating;
+    QString style;
 };
 
 #endif // MINIPLAYER_H

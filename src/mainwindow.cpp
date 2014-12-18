@@ -1,3 +1,5 @@
+#define QT_NO_DEBUG_OUTPUT
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -32,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::GDeskTunes),
     windows_offset(0,0),
+    draggable(false),
+    hide_menu(false),
+    minimize_to_tray(false),
     do_move(false)
 {
     ui->setupUi(this);
@@ -195,6 +200,7 @@ void MainWindow::setMenuVisible(bool visible)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "MainWindow::keyPressEvent(" << event << ")";
     switch(event->key())
     {
     case Qt::Key_MediaPlay:
@@ -298,9 +304,9 @@ void MainWindow::populateJumpList()
 
         fullscreen_menu = new QWinJumpListItem(QWinJumpListItem::Link);
         if (windowState() == Qt::WindowFullScreen)
-            fullscreen_menu->setTitle("Enter Full Screen");
-        else
             fullscreen_menu->setTitle("Exit Full Screen");
+        else
+            fullscreen_menu->setTitle("Enter Full Screen");
         fullscreen_menu->setIcon(QIcon(":/icons/32x32/view-fullscreen.png"));
         fullscreen_menu->setFilePath(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
         fullscreen_menu->setArguments(QStringList("--fullscreen"));
@@ -409,19 +415,6 @@ void MainWindow::raise()
 
 }
 
-void MainWindow::showMac()
-{
-
-    qDebug() << "MainWindow::showMac()";
-
-#ifdef Q_OS_MAC
-    // ::showMac();
-#endif
-
-    // QTimer::singleShot(10, this, SLOT(raise()));
-
-}
-
 void MainWindow::hide()
 {
     qDebug() << "MainWindow::hide()";
@@ -442,7 +435,7 @@ void MainWindow::onHiddenState()
 #endif
 }
 
-void MainWindow::about()
+void MainWindow::about(bool show)
 {
     QDialog *about = new AboutDialog();
     Qt::WindowFlags flags;
@@ -451,7 +444,8 @@ void MainWindow::about()
     flags |= Qt::CustomizeWindowHint;
     about->setWindowFlags(flags);
     about->setAttribute( Qt::WA_DeleteOnClose, true );
-    about->show();
+    if (show)
+        about->show();
 }
 
 void MainWindow::createThumbnailToolBar()
@@ -470,18 +464,21 @@ void MainWindow::createThumbnailToolBar()
         QWinThumbnailToolButton* playToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
         playToolButton->setToolTip(tr("Play"));
         playToolButton->setIcon(QIcon(":/icons/32x32/play.png"));
-        connect(playToolButton, SIGNAL(clicked()), this, SIGNAL(play()));
+        connect(playToolButton, SIGNAL(clicked()), ui->actionPlay, SIGNAL(triggered()));
 
         QWinThumbnailToolButton* forwardToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
         forwardToolButton->setToolTip(tr("Fast forward"));
         forwardToolButton->setIcon(QIcon(":/icons/32x32/next.png"));
-        connect(forwardToolButton, SIGNAL(clicked()), this, SIGNAL(next()));
+        connect(forwardToolButton, SIGNAL(clicked()), ui->actionNext, SIGNAL(triggered()));
 
         QWinThumbnailToolButton* backwardToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
         backwardToolButton->setToolTip(tr("Rewind"));
         backwardToolButton->setIcon(QIcon(":/icons/32x32/prev.png"));
-        connect(backwardToolButton, SIGNAL(clicked()), this, SIGNAL(previous()));
+        connect(backwardToolButton, SIGNAL(clicked()), ui->actionPrevious, SIGNAL(triggered()));
 
+        /*
+         * Keep this code, if we want to pimp the mini player more.
+         *
         QWinThumbnailToolButton* separatorButton = new QWinThumbnailToolButton(thumbnailToolBar);
         separatorButton->setEnabled(false);
 
@@ -489,13 +486,16 @@ void MainWindow::createThumbnailToolBar()
         QWinThumbnailToolButton* settingsButton = new QWinThumbnailToolButton(thumbnailToolBar);
         settingsButton->setToolTip(tr("Preferences"));
         settingsButton->setIcon(icon);
-        connect(settingsButton, SIGNAL(clicked()), this, SIGNAL(changeSettings()));
+        connect(settingsButton, SIGNAL(clicked()), ui->actionPreferences, SIGNAL(changeSettings()));
+        */
 
         thumbnailToolBar->addButton(backwardToolButton);
         thumbnailToolBar->addButton(playToolButton);
         thumbnailToolBar->addButton(forwardToolButton);
+        /*
         thumbnailToolBar->addButton(separatorButton);
         thumbnailToolBar->addButton(settingsButton);
+        */
     }
 #endif
 }
@@ -603,11 +603,25 @@ void MainWindow::shuffle(QString mode)
     shuffle_off->setChecked(mode == "NO_SHUFFLE");
 }
 
-void MainWindow::isPlaying(bool playing)
+void MainWindow::isPlaying(int mode)
 {
-    ui->actionNext->setEnabled(playing);
-    ui->actionStop->setEnabled(playing);
-    ui->actionPrevious->setEnabled(playing);
+    ui->actionPlay->setEnabled(mode != 0);
+    if (mode == 1)
+        ui->actionPlay->setText("Play");
+    else
+        ui->actionPlay->setText("Pause");
+}
+
+void MainWindow::rewindEnabled(int mode)
+{
+    qDebug() << "MainWindow::forwardEnabled(" << mode << ")";
+   ui->actionPrevious->setEnabled(mode != 0);
+}
+
+void MainWindow::forwardEnabled(int mode)
+{
+    qDebug() << "MainWindow::forwardEnabled(" << mode << ")";
+    ui->actionNext->setEnabled(mode != 0);
 }
 
 void MainWindow::zoom()
@@ -673,3 +687,36 @@ void MainWindow::restore()
         restoreState(settings.value(key).toByteArray());
     }
 }
+
+bool MainWindow::event(QEvent *event)
+{
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::WindowStateChange)
+    {
+        qDebug() << "MainWindow::event(QEvent::WindowStateChange)";
+        if (windowState() & Qt::WindowMinimized)
+        {
+            if (minimize_to_tray && tray_icon)
+            {
+                qDebug() << "Minimize to tray";
+                event->ignore();
+                hide();
+                return false;
+            }
+        }
+    }
+#endif
+    return QMainWindow::event(event);
+}
+
+void MainWindow::bringToFront()
+{
+#ifdef Q_OS_WIN
+    ::SetWindowPos((HWND)effectiveWinId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    ::SetWindowPos((HWND)effectiveWinId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+#endif
+
+    show();
+    raise();
+}
+

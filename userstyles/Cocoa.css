@@ -234,6 +234,7 @@
 }
 
 #player, .player-middle {
+    background-color: #efefef;
     background: -webkit-linear-gradient(90deg, #b5b5b5, #efefef);
     background: linear-gradient(0deg, #b5b5b5, #efefef);
     border-top: 1px solid #a0a0a0;
