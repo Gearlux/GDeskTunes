@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -121,8 +121,56 @@ void MainWindow::setupActions()
 #endif
 }
 
+bool MainWindow::checkAction(QKeyEvent *event, QAction *action)
+{
+    if (!action->isEnabled()) return false;
+
+    QKeySequence shortcut = action->shortcut();
+
+    int keyInt = event->key();
+    Qt::Key key = static_cast<Qt::Key>(keyInt);
+    if(key == Qt::Key_unknown){
+        // qDebug() << "Unknown key from a macro probably";
+        return false;
+    }
+    // the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.
+    if(key == Qt::Key_Control ||
+            key == Qt::Key_Shift ||
+            key == Qt::Key_Alt ||
+            key == Qt::Key_Meta)
+    {
+        // qDebug() << "Single click of special key: Ctrl, Shift, Alt or Meta";
+        // qDebug() << "New KeySequence:" << QKeySequence(keyInt).toString(QKeySequence::NativeText);
+        return false;
+    }
+
+    // check for a combination of user clicks
+    Qt::KeyboardModifiers modifiers = event->modifiers();
+    QString keyText = event->text();
+    // qDebug() << "Pressed Key:" << keyText;
+
+    if(modifiers & Qt::ShiftModifier)
+        keyInt += Qt::SHIFT;
+    if(modifiers & Qt::ControlModifier)
+        keyInt += Qt::CTRL;
+    if(modifiers & Qt::AltModifier)
+        keyInt += Qt::ALT;
+    if(modifiers & Qt::MetaModifier)
+        keyInt += Qt::META;
+
+    // qDebug() << "New KeySequence:" << QKeySequence(keyInt).toString(QKeySequence::NativeText);
+    if (shortcut.matches(QKeySequence(keyInt)) == QKeySequence::ExactMatch)
+    {
+        // qDebug() << "Triggering" << action->objectName();
+        action->trigger();
+        return true;
+    }
+
+    return false;
+}
+
 #if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+bool MainWindow::nativeEvent(const QByteArray &, void *message, long *result)
 {
     MSG* msg = reinterpret_cast<MSG*>(message);
     if (msg->message == WM_SYSCOMMAND)
@@ -219,8 +267,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
         break;
     default:
+
         QMainWindow::keyPressEvent(event);
         break;
+    }
+    qDebug() << "Mainwindow::keyPressEvent() ignored.";
+
+    const QList<QAction*> list = this->findChildren<QAction *>(QString());
+    for(int i=0; i<list.size(); ++i)
+    {
+        QAction* action = list.at(i);
+        if (checkAction(event, action)) break;
     }
 }
 
@@ -231,38 +288,48 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    qDebug() << "MainWindow::changeEvent()";
-    if (event->type() == QEvent::WindowStateChange)
-    {
-        if (windowState() == Qt::WindowFullScreen)
-        {
-            qDebug() << "Disable mini";
-            // saveState();
-            // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x8000|0x80000000|Qt::CustomizeWindowHint));
-            // show();
+    qDebug() << "MainWindow::changeEvent(" << event->type()  << ")";
 
-            ui->actionSwitch_mini->setEnabled(false);
-            ui->actionClose_Window->setEnabled(false);
-            ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
-        }
-        else
-        {
-            qDebug() << "Enable mini";
-            // qDebug() << windowFlags();
-            // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
-            // restore();
-            // show();
+    switch(event->type()) {
+    case QEvent::WindowStateChange: {
+         if (this->windowState() & Qt::WindowMinimized)
+         {
+             qDebug() << "emit minimized()";
+             emit minimized();
+            if (this->minimize_to_tray && this->tray_icon)
+            {
+                QTimer::singleShot(0, this, SLOT(hide()));
+                event->ignore();
+                return;
+            }
+         }
+         else
+         {
+             qDebug() << "emit normal()";
+             emit normal();
+         }
+         if (windowState() == Qt::WindowFullScreen)
+         {
+             ui->actionSwitch_mini->setEnabled(false);
+             ui->actionClose_Window->setEnabled(false);
+             ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
+         }
+         else
+         {
+             ui->actionSwitch_Full_Screen->setText("Enter Full Screen");
+             ui->actionClose_Window->setEnabled(true);
+             ui->actionSwitch_mini->setEnabled(true);
+         }
 
-            ui->actionSwitch_Full_Screen->setText("Enter Full Screen");
-            ui->actionClose_Window->setEnabled(true);
-            ui->actionSwitch_mini->setEnabled(true);
-        }
+         ui->actionZoom->setDisabled(windowState() == Qt::WindowMinimized);
+         ui->actionBring_All_To_Front->setDisabled(windowState() == Qt::WindowMinimized);
+         ui->actionShow_Minimized->setDisabled(windowState() == Qt::WindowMinimized);
 
-        ui->actionZoom->setDisabled(windowState() == Qt::WindowMinimized);
-        ui->actionBring_All_To_Front->setDisabled(windowState() == Qt::WindowMinimized);
-        ui->actionShow_Minimized->setDisabled(windowState() == Qt::WindowMinimized);
-
-        updateJumpList();
+         updateJumpList();
+         break;
+    }
+    default:
+        break;
     }
     QMainWindow::changeEvent(event);
  }
@@ -422,19 +489,6 @@ void MainWindow::hide()
 }
 
 
-void MainWindow::onHiddenState()
-{
-    qDebug() << "MainWindow::onHiddenState()";
-#ifdef Q_OS_MAC
-    hide();
-#else
-    if (minimize_to_tray)
-        hide();
-    else
-        showMinimized();
-#endif
-}
-
 void MainWindow::about(bool show)
 {
     QDialog *about = new AboutDialog();
@@ -578,6 +632,13 @@ void MainWindow::showNormal()
     QMainWindow::showNormal();
 }
 
+void MainWindow::showMinimized()
+{
+    qDebug() << "MainWindow::showMinimized()";
+    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
+    QMainWindow::showMinimized();
+}
+
 void MainWindow::switchFullScreen()
 {
     if (isFullScreen())
@@ -688,27 +749,6 @@ void MainWindow::restore()
     }
 }
 
-bool MainWindow::event(QEvent *event)
-{
-#ifdef Q_OS_WIN
-    if (event->type() == QEvent::WindowStateChange)
-    {
-        qDebug() << "MainWindow::event(QEvent::WindowStateChange)";
-        if (windowState() & Qt::WindowMinimized)
-        {
-            if (minimize_to_tray && tray_icon)
-            {
-                qDebug() << "Minimize to tray";
-                event->ignore();
-                hide();
-                return false;
-            }
-        }
-    }
-#endif
-    return QMainWindow::event(event);
-}
-
 void MainWindow::bringToFront()
 {
 #ifdef Q_OS_WIN
@@ -716,7 +756,8 @@ void MainWindow::bringToFront()
     ::SetWindowPos((HWND)effectiveWinId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 #endif
 
-    show();
+    showNormal();
     raise();
+    activateWindow();
 }
 

@@ -133,6 +133,12 @@ void Settings::keyPressEvent(QKeyEvent *event)
     }
     default:
         QDialog::keyPressEvent(event);
+        if (!event->isAccepted())
+        {
+            qDebug() << "emit keyPressed(" << event << ")";
+            emit keyPressed(new QKeyEvent(event->type(), event->key(), event->modifiers()));
+            event->ignore();
+        }
         break;
     }
 }

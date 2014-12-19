@@ -21,6 +21,7 @@ signals:
     void logout();
 
     void saveCookies(bool saveCookie);
+    void keyPressed(QKeyEvent *event);
 
 public slots:
     void activateAndRaise();

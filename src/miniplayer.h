@@ -23,6 +23,7 @@ public:
 
 signals:
     void keyPressed(QKeyEvent *event);
+    void moved();
 
 public slots:
     void placeMiniPlayer(QPoint& pt);
@@ -47,6 +48,7 @@ public slots:
     void bringToFront();
 
     void setBackgroundColor(QColor color);
+    void setMiniPlayerOnTop(bool on_top);
 
     void isPlaying(int mode);
     void rewindEnabled(int mode);
@@ -76,6 +78,8 @@ private:
 
     QPixmap album_picture;
     bool large;
+
+    bool on_top;
 
     // Variables to drag the mini player without title bar
     bool do_move;

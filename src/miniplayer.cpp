@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
@@ -73,17 +73,19 @@ void MiniPlayer::keyPressEvent(QKeyEvent *event)
         if (w != 0)
         {
             qDebug() << "MiniPlayer captures media key";
-            w->keyPressEvent(event);
+            // w->keyPressEvent(event);
+            emit keyPressed(event);
             break;
         }
     }
     default:
-        qDebug() << "Key Pressed" << event->type();
+        qDebug() << "Key Pressed" << event;
         QWidget::keyPressEvent(event);
         if (!event->isAccepted())
         {
-            qDebug() << "Sending";
-            emit keyPressed(event);
+            qDebug() << "emit keyPressed(" << event << ")";
+            emit keyPressed(new QKeyEvent(event->type(), event->key(), event->modifiers()));
+            event->ignore();
         }
         break;
     }
@@ -249,6 +251,8 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
     userPosition.setY(event->globalY() - mouse_click_y_coordinate);
     userIconTiming = QDateTime::currentMSecsSinceEpoch();
     QWidget::mouseReleaseEvent(event);
+
+    emit moved();
 }
 
 void MiniPlayer::activateWindow()
@@ -304,9 +308,16 @@ void MiniPlayer::show()
 void MiniPlayer::bringToFront()
 {
 #ifdef Q_OS_WIN
-    ::SetWindowPos((HWND)effectiveWinId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-    ::SetWindowPos((HWND)effectiveWinId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    // ::SetWindowPos((HWND)effectiveWinId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    // ::SetWindowPos((HWND)effectiveWinId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 #endif
+
+    Qt::WindowFlags flags = windowFlags();
+    if (on_top)
+        flags |= Qt::WindowStaysOnTopHint;
+    else
+        flags &= ~Qt::WindowStaysOnTopHint;
+    setWindowFlags(flags);
 
     show();
     raise();
@@ -390,3 +401,21 @@ void MiniPlayer::forwardEnabled(int mode)
     ui->next->setEnabled(mode != 0);
 }
 
+void MiniPlayer::setMiniPlayerOnTop(bool top)
+{
+    qDebug() << "MiniPlayer::setMiniPlayerOnTop(" << top << ")";
+
+    Qt::WindowFlags flags = windowFlags();
+    if (top)
+        flags |= Qt::WindowStaysOnTopHint;
+    else
+        flags &= ~Qt::WindowStaysOnTopHint;
+    setWindowFlags(flags);
+
+    this->on_top = top;
+
+    if (this->isVisible())
+    {
+        show();
+    }
+}

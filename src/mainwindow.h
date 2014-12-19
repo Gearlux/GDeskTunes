@@ -37,6 +37,9 @@ signals:
 
     void minimizeToTray(bool);
 
+    void minimized();
+    void normal();
+
 public slots:
     virtual void switchMini() = 0;
 
@@ -45,6 +48,7 @@ public slots:
     void switchMenu();
     void showFullScreen();
     void showNormal();
+    void showMinimized();
     void switchFullScreen();
     void setMenuVisible(bool visible);
 
@@ -54,7 +58,6 @@ public slots:
     void raise();
     void bringToFront();
     void hide();
-    void onHiddenState();
 
     void closeWindow();
 
@@ -78,10 +81,8 @@ public slots:
     void restore();
 
     void keyPressEvent(QKeyEvent *event);
-
 public:
     virtual bool isMini();
-    bool event(QEvent *event);
 
 protected:
     void keyReleaseEvent(QKeyEvent *event);
@@ -102,7 +103,7 @@ private:
     void createJumpList();
 
     void setupActions();
-    void checkAction(QKeyEvent *event, QAction *action);
+    bool checkAction(QKeyEvent *event, QAction *action);
 
 public:
     Ui::GDeskTunes *ui;
