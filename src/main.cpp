@@ -333,6 +333,8 @@ int main(int argc, char *argv[])
         mini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
         mini->addTransition(trayIcon, SIGNAL(triggered()), mini);
         mini->addTransition(w, SIGNAL(normal()), mainmini);
+        // LINUX
+        // main->addTransition(w, SIGNAL(minimized()), mini);
 
         // How to switch between main and maintray
         main->addTransition(trayIcon, SIGNAL(triggered()), maintray);
@@ -359,6 +361,7 @@ int main(int argc, char *argv[])
 
         // How to reach the exit_state
         main->addTransition(w, SIGNAL(closeSignal()), exit_state);
+        mainmini->addTransition(w, SIGNAL(closeSignal()), exit_state);
         background->addTransition(w, SIGNAL(closeSignal()), exit_state);
         mini->addTransition(w, SIGNAL(closeSignal()), exit_state);
         QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));

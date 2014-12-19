@@ -298,6 +298,7 @@ void MainWindow::changeEvent(QEvent *event)
              emit minimized();
             if (this->minimize_to_tray && this->tray_icon)
             {
+                qDebug() << "Hide window";
                 QTimer::singleShot(0, this, SLOT(hide()));
                 event->ignore();
                 return;
@@ -305,8 +306,12 @@ void MainWindow::changeEvent(QEvent *event)
          }
          else
          {
-             qDebug() << "emit normal()";
-             emit normal();
+             // LINUX
+             // if (windowState() != 0)
+             // {
+                qDebug() << "emit normal()" << this->windowState();
+                emit normal();
+             // }
          }
          if (windowState() == Qt::WindowFullScreen)
          {
