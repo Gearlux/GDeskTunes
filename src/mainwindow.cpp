@@ -315,20 +315,23 @@ void MainWindow::changeEvent(QEvent *event)
          }
          if (windowState() == Qt::WindowFullScreen)
          {
-             ui->actionSwitch_mini->setEnabled(false);
-             ui->actionClose_Window->setEnabled(false);
              ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
          }
          else
          {
              ui->actionSwitch_Full_Screen->setText("Enter Full Screen");
-             ui->actionClose_Window->setEnabled(true);
-             ui->actionSwitch_mini->setEnabled(true);
          }
+         bool enabled = windowState() != Qt::WindowFullScreen;
 
-         ui->actionZoom->setDisabled(windowState() == Qt::WindowMinimized);
+         ui->actionClose_Window->setEnabled(enabled);
+         ui->actionSwitch_mini->setEnabled(enabled);
+         ui->actionSwitch_miniPlayer->setEnabled(enabled);
+         ui->actionMiniPlayer->setEnabled(enabled);
+         ui->actionGDeskTunes->setEnabled(enabled);
+
          ui->actionBring_All_To_Front->setDisabled(windowState() == Qt::WindowMinimized);
-         ui->actionShow_Minimized->setDisabled(windowState() == Qt::WindowMinimized);
+         ui->actionZoom->setEnabled(enabled && windowState() != Qt::WindowMinimized);
+         ui->actionShow_Minimized->setEnabled(enabled && windowState() != Qt::WindowMinimized);
 
          updateJumpList();
          break;
@@ -496,6 +499,7 @@ void MainWindow::hide()
 
 void MainWindow::about(bool show)
 {
+    qDebug() << "MainWindow::about(" << show << ")";
     QDialog *about = new AboutDialog();
     Qt::WindowFlags flags;
     flags |= Qt::Dialog;

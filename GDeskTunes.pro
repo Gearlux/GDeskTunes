@@ -81,7 +81,7 @@ LIBS += -framework Cocoa -framework Carbon -framework CoreFoundation -framework 
 
 greaterThan(QT_MAJOR_VERSION, 4): QMAKE_MAC_SDK = macosx10.9
 
-lessThan(QT_MAJOR_VERSION, 5): {
+lessThan(QT_MAJOR_VERSION, 6): {
 
 info.path = $$DESTDIR/$${TARGET}.app/Contents
 info.files = $$QMAKE_INFO_PLIST

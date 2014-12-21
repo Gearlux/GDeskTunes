@@ -52,7 +52,7 @@ public slots:
     void switchFullScreen();
     void setMenuVisible(bool visible);
 
-    void about(bool show = false);
+    void about(bool show = true);
     void show();
     void activateWindow();
     void raise();
