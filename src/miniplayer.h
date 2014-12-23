@@ -83,6 +83,7 @@ private:
 
     // Variables to drag the mini player without title bar
     bool do_move;
+    bool has_moved;
     int mouse_click_x_coordinate;
     int mouse_click_y_coordinate;
 

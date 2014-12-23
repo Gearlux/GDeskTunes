@@ -7,12 +7,12 @@
     <x>0</x>
     <y>0</y>
     <width>336</width>
-    <height>132</height>
+    <height>130</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>384</width>
+    <width>336</width>
     <height>16777215</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(200, 200, 200, 255), stop:1 rgba(230, 230, 230, 255))</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <property name="spacing">
@@ -46,12 +46,12 @@
      <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>0</number>
+     <number>2</number>
     </property>
     <item>
      <widget class="QFrame" name="top_row">
       <property name="styleSheet">
-       <string notr="true"/>
+       <string notr="true">background: transparent</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -109,6 +109,9 @@
               <width>64</width>
               <height>64</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background: transparent</string>
             </property>
             <property name="text">
              <string/>
@@ -273,8 +276,8 @@
               <widget class="QPushButton" name="maximize">
                <property name="maximumSize">
                 <size>
-                 <width>16</width>
-                 <height>16</height>
+                 <width>12</width>
+                 <height>12</height>
                 </size>
                </property>
                <property name="text">
@@ -286,8 +289,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>8</width>
+                 <height>8</height>
                 </size>
                </property>
                <property name="flat">
@@ -299,8 +302,8 @@
               <widget class="QPushButton" name="showMain">
                <property name="maximumSize">
                 <size>
-                 <width>16</width>
-                 <height>16</height>
+                 <width>12</width>
+                 <height>12</height>
                 </size>
                </property>
                <property name="text">
@@ -312,8 +315,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>8</width>
+                 <height>8</height>
                 </size>
                </property>
                <property name="flat">
@@ -325,8 +328,8 @@
               <widget class="QPushButton" name="closeMini">
                <property name="maximumSize">
                 <size>
-                 <width>16</width>
-                 <height>16</height>
+                 <width>12</width>
+                 <height>12</height>
                 </size>
                </property>
                <property name="text">
@@ -452,7 +455,7 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true"/>
+       <string notr="true">background: transparent</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -492,6 +495,9 @@
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -663,6 +669,9 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <property name="topMargin">
            <number>0</number>
           </property>
@@ -671,6 +680,9 @@
           </property>
           <item>
            <widget class="QLabel" name="current">
+            <property name="styleSheet">
+             <string notr="true">background: orange; color: white; border-radius: 4px; border-color: orange; padding: 1px; font: 9px;</string>
+            </property>
             <property name="text">
              <string>0:00</string>
             </property>
@@ -678,6 +690,32 @@
           </item>
           <item>
            <widget class="QSlider" name="slider">
+            <property name="styleSheet">
+             <string notr="true">QSlider::groove:horizontal {
+border: 1px solid rgb(200, 200, 200);
+background: rgb(128,128,128);
+height: 4px;
+}
+
+QSlider::handle:horizontal {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+    stop:0 #eee, stop:1 #ccc);
+border: 1px solid #777;
+width: 10px;
+margin-top: -4px;
+margin-bottom: -4px;
+border-radius: 4px;
+}
+
+QSlider::sub-page:horizontal {
+background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,
+    stop: 0 rgb(255, 128, 0), stop: 1 rgb(128, 64, 0));
+}
+</string>
+            </property>
+            <property name="value">
+             <number>50</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -685,8 +723,23 @@
           </item>
           <item>
            <widget class="QLabel" name="duration">
+            <property name="styleSheet">
+             <string notr="true">background: orange; color: white; border-radius: 4px; border-color: orange; padding: 1px; font: 9px</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
             <property name="text">
              <string>0:00</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::PlainText</enum>
             </property>
            </widget>
           </item>

@@ -153,11 +153,26 @@ void MiniPlayer::enableBackground()
     QPainter painter;
     painter.begin(&image);
     painter.fillRect(image.rect(), QColor(0, 0, 0, 255));
-    painter.setOpacity(0.5);  //0.00 = 0%, 1.00 = 100% opacity.
+    painter.setOpacity(0.75);  //0.00 = 0%, 1.00 = 100% opacity.
     painter.drawPixmap(0, 0, album_picture.scaled(w, new_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     painter.end();
     palette.setBrush(QPalette::Background, QBrush(image));
     setPalette(palette);
+
+    int size = image.width() * image.height();
+    if (size != 0)
+    {
+        double global_value = 0;
+        for(int r=0; r<image.height(); ++r)
+        {
+            for(int c=0; c<image.width(); ++c)
+            {
+                global_value += qGray(image.pixel(c, r));
+            }
+        }
+        global_value /= size;
+        invert(global_value < 128);
+    }
 
     ui->centralwidget->setStyleSheet("");
     setIcon(ui->maximize, ":/icons/32x32/small_art");
@@ -168,10 +183,12 @@ void MiniPlayer::disableBackground()
     QPalette palette;
     setPalette(palette);
 
-    resize(336, 132);
+    resize(336, 130);
 
     ui->centralwidget->setStyleSheet(style);
     setIcon(ui->maximize, ":/icons/32x32/large_art");
+
+    invert(this->inverted);
 }
 
 void MiniPlayer::rating(int rate)
@@ -233,6 +250,7 @@ void MiniPlayer::mousePressEvent(QMouseEvent *event)
     mouse_click_x_coordinate = event->x();
     mouse_click_y_coordinate = event->y();
     do_move = true;
+    has_moved = false;
     event->accept();
 }
 
@@ -240,8 +258,12 @@ void MiniPlayer::mouseMoveEvent(QMouseEvent *event)
 {
     if (do_move)
     {
-        this->move(event->globalX() - mouse_click_x_coordinate, event->globalY() - mouse_click_y_coordinate);
+        int dx = event->globalX() - mouse_click_x_coordinate;
+        int dy = event->globalY() - mouse_click_y_coordinate;
+        this->move(dx, dy);
         event->accept();
+        if (dx > 2 || dy > 2)
+            has_moved = true;
     }
     else
     {
@@ -257,7 +279,8 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
     userIconTiming = QDateTime::currentMSecsSinceEpoch();
     QWidget::mouseReleaseEvent(event);
 
-    emit moved();
+    if (has_moved)
+        emit moved();
 }
 
 void MiniPlayer::activateWindow()
@@ -332,11 +355,18 @@ void MiniPlayer::bringToFront()
 void MiniPlayer::setBackgroundColor(QColor color)
 {
     qDebug() << "MiniPlayer::setBackgroundColor(" << color << ")";
-    style = QString("background: rgb(%1,%2,%3)").arg(color.red()).arg(color.green()).arg(color.blue());
+    style = QString("background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(%1, %2, %3, 255), stop:1 rgba(%4, %5, %6, 255))");
+
+    int gray = qGray(color.rgb());
+
+    int h,s,v;
+    color.getHsv(&h, &s, &v);
+
+    QColor second_color = QColor::fromHsv(h, s, v + (gray < 128 ? 20 : -20));
+    style = style.arg(second_color.red()).arg(second_color.green()).arg(second_color.blue()).arg(color.red()).arg(color.green()).arg(color.blue());
     qDebug() << style;
 
     ui->centralwidget->setStyleSheet(style);
-    int gray = qGray(color.rgb());
 
     invert(gray < 128);
 }
