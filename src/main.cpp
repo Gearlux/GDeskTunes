@@ -71,9 +71,6 @@ int main(int argc, char *argv[])
 {
     int exit_result = 0;
 
-    // Ignore ssl messages
-    qInstallMessageHandler(ignoreSSLMessages);
-
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
     QApplication::setApplicationVersion("0.3.1");
@@ -92,6 +89,14 @@ int main(int argc, char *argv[])
     // Create a single application
     Application a(argc, argv);
     a.setObjectName("Application");
+
+    bool debug = a.arguments().contains("-debug");
+    qDebug() << "Debug mode: " << debug;
+    if (debug)
+    {
+        qInstallMessageHandler(ignoreSSLMessages);
+    }
+
 
     if (!QSslSocket::supportsSsl())
     {
@@ -397,7 +402,7 @@ int main(int argc, char *argv[])
         QWebView *web_view = w->ui->webView;
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
-        web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+        web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, debug);
 
         qDebug() << "Showing application";
         w->loadUrl();
