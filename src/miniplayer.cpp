@@ -43,6 +43,9 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     flags |= Qt::FramelessWindowHint;
 
     setWindowFlags(flags);
+
+    // setStyleSheet("background:rgb(250,250,250);");
+    // setAttribute(Qt::WA_TranslucentBackground);
 }
 
 MiniPlayer::~MiniPlayer()
@@ -157,6 +160,7 @@ void MiniPlayer::enableBackground()
     setPalette(palette);
 
     ui->centralwidget->setStyleSheet("");
+    setIcon(ui->maximize, ":/icons/32x32/small_art");
 }
 
 void MiniPlayer::disableBackground()
@@ -164,9 +168,10 @@ void MiniPlayer::disableBackground()
     QPalette palette;
     setPalette(palette);
 
-    resize(384, 166);
+    resize(336, 132);
 
-      ui->centralwidget->setStyleSheet(style);
+    ui->centralwidget->setStyleSheet(style);
+    setIcon(ui->maximize, ":/icons/32x32/large_art");
 }
 
 void MiniPlayer::rating(int rate)
@@ -345,9 +350,11 @@ void MiniPlayer::invert(bool inv)
     setIcon(ui->play, ":/icons/32x32/play");
     setIcon(ui->previous, ":/icons/32x32/prev");
     setIcon(ui->next, ":/icons/32x32/next");
-    setIcon(ui->closeMini, ":/icons/32x32/");
-    setIcon(ui->maximize, ":/icons/32x32/expand");
     setIcon(ui->closeMini, ":/icons/8x8/close_delete");
+    if (large)
+        setIcon(ui->maximize, ":/icons/32x32/small_art");
+    else
+        setIcon(ui->maximize, ":/icons/32x32/large_art");
     repeat(this->_repeat);
     shuffle(this->_shuffle);
     rating(this->_rating);

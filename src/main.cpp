@@ -153,135 +153,19 @@ int main(int argc, char *argv[])
         QStateMachine*  machine = new QStateMachine();
         machine->setObjectName("StateMachine");
 
+        QFinalState *exit_state = new QFinalState();
+        machine->addState(exit_state);
+
+        State *main = new State();
+        main->setObjectName("Main");
+        machine->addState(main);
+        machine->setInitialState(main);
+
 #ifdef Q_OS_MAC
-        QFinalState *exit_state = new QFinalState();
-
-        State *main = new State();
-        main->setObjectName("Main");
-
-        const char* show_slot = SLOT(show());
-        const char* hide_slot = SLOT(hide());
-
-        QObject::connect(main, SIGNAL(entered()), w, show_slot);
-        QObject::connect(main, SIGNAL(entered()), w, SLOT(raise()));
-        QObject::connect(main, SIGNAL(entered()), miniplayer, SLOT(hide()));
-
-        State* background = new State();
-        background->setObjectName("Background");
-
-        QObject::connect(background, SIGNAL(entered()), w, hide_slot);
-        QObject::connect(background, SIGNAL(entered()), miniplayer, SLOT(hide()));
-
-        State* mainmini = new State();
-        mainmini->setObjectName("MainMini");
-
-        QObject::connect(mainmini, SIGNAL(entered()), w, show_slot);
-        QObject::connect(mainmini, SIGNAL(entered()), w, SLOT(raise()));
-        QObject::connect(mainmini, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
-
-        State* mini = new State();
-        mini->setObjectName("mini");
-
-        QObject::connect(mini, SIGNAL(entered()), w, hide_slot);
-        QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
-
-        State* mini_inactive = new State();
-        mini_inactive->setObjectName("miniInactive");
-
-        State* main_inactive = new State();
-        main_inactive->setObjectName("mainInactive");
-
-        State* mainmini_inactive = new State();
-        mainmini_inactive->setObjectName("mainminiInactive");
-
-        machine->addState(main);
-        machine->addState(background);
-        machine->addState(mainmini);
-        machine->addState(mini);
-        machine->addState(mini_inactive);
-        machine->addState(mainmini_inactive);
-        machine->addState(main_inactive);
-        machine->addState(exit_state);
-        machine->setInitialState(main);
-
-        main->addTransition(w, SIGNAL(closeSignal()), background);
-        main_inactive->addTransition(w, SIGNAL(closeSignal()), background);
-
-        // Transitions from active to inactive
-        mini->addTransition(&a, SIGNAL(applicationInActivated()), mini_inactive);
-        mainmini->addTransition(&a, SIGNAL(applicationInActivated()), mainmini_inactive);
-        main->addTransition(&a, SIGNAL(applicationInActivated()), main_inactive);
-
-        mini_inactive->addTransition(&a, SIGNAL(applicationActivated()), mini);
-        main_inactive->addTransition(&a, SIGNAL(applicationActivated()), main);
-        mainmini_inactive->addTransition(&a, SIGNAL(applicationActivated()), mainmini);
-
-        // Transitions on using Window > Zoom
-        background->addTransition(w->ui->actionZoom, SIGNAL(triggered()), main);
-        mini->addTransition(w->ui->actionZoom, SIGNAL(triggered()), mainmini);
-
-        background->addTransition(w->ui->actionSwitch_Full_Screen, SIGNAL(triggered()), main);
-        mini->addTransition(w->ui->actionSwitch_Full_Screen, SIGNAL(triggered()), mainmini);
-
-        // Miscelaneous
-        background->addTransition(w->ui->actionSwitch_mini, SIGNAL(triggered()), main);
-        background->addTransition(w->ui->actionShow_Minimized, SIGNAL(triggered()), main);
-
-        // Transitions when displaying the mini player
-        background->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mini);
-        main->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), mainmini);
-        mainmini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), main);
-        mini->addTransition(w->ui->actionMiniPlayer, SIGNAL(triggered()), background);
-
-        // Transitions when switching the mini player
-        main->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
-        mini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), main);
-        mainmini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
-        background->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
-
-        // Transitions when displaying the main window
-        mini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mainmini);
-        mainmini->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), mini);
-        main->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), background);
-        background->addTransition(w->ui->actionGDeskTunes, SIGNAL(triggered()), main);
-
-        // Transitions when closing the mini player
-        mini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
-        mainmini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), main);
-
-        // Transitions when closing the main window
-        mainmini->addTransition(w, SIGNAL(closeSignal()), mini);
-        mainmini_inactive->addTransition(w, SIGNAL(closeSignal()), mini);
-
-        // Clicking the tray icon, should popup or close the mini player at the tray
-        main->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
-        mainmini->addTransition(trayIcon, SIGNAL(triggered()), main);
-        mainmini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
-        main_inactive->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
-        mini->addTransition(trayIcon, SIGNAL(triggered()), background);
-        mini_inactive->addTransition(trayIcon, SIGNAL(triggered()), mini);
-        background->addTransition(trayIcon, SIGNAL(triggered()), mini);
-
-        // FIXME: could not get this to work
-        QSignalTransition *trans = new QSignalTransition(w, SIGNAL(closeSignal()));
-        background->addTransition(trans);
-        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(hide()));
-
-        // Make sure that if we click the dock, the application behaves correctly
-        background->addTransition(&a, SIGNAL(onDockFalseFalse()), main);
-        mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
-        mini_inactive->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
-        mini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mini);
-        mainmini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mainmini);
-
+        const char *hide_main_window = SLOT(hide());
 #else
-        QFinalState *exit_state = new QFinalState();
-        machine->addState(exit_state);
-
-        State *main = new State();
-        main->setObjectName("Main");
-        machine->addState(main);
-        machine->setInitialState(main);
+        const char *hide_main_window = SLOT(showMinimized())
+#endif
 
         // What to do when the background state is reached
         QObject::connect(main, SIGNAL(entered()), w, SLOT(bringToFront()));
@@ -292,12 +176,13 @@ int main(int argc, char *argv[])
         machine->addState(maintray);
 
         QObject::connect(maintray, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
+        QObject::connect(maintray, SIGNAL(entered()), w, SLOT(bringToFront()));
 
         State *mini = new State();
         mini->setObjectName("mini");
         machine->addState(mini);
 
-        QObject::connect(mini, SIGNAL(entered()), w, SLOT(showMinimized()));
+        QObject::connect(mini, SIGNAL(entered()), w, hide_main_window);
         QObject::connect(mini, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
 
         State *background = new State();
@@ -306,13 +191,13 @@ int main(int argc, char *argv[])
 
         // What to do when the background state is reached
         QObject::connect(background, SIGNAL(entered()), miniplayer, SLOT(hide()));
-        QObject::connect(background, SIGNAL(entered()), w, SLOT(showMinimized()));
+        QObject::connect(background, SIGNAL(entered()), w, hide_main_window);
 
         State *tray = new State();
         tray->setObjectName("tray");
         machine->addState(tray);
 
-        QObject::connect(tray, SIGNAL(entered()), w, SLOT(showMinimized()));
+        QObject::connect(tray, SIGNAL(entered()), w, hide_main_window);
         QObject::connect(tray, SIGNAL(entered()), miniplayer, SLOT(bringToFront()));
 
         State* mainmini = new State();
@@ -331,6 +216,7 @@ int main(int argc, char *argv[])
         main->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
         mini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), main);
         mini->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
+        mini->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
         mini->addTransition(trayIcon, SIGNAL(triggered()), mini);
         mini->addTransition(w, SIGNAL(normal()), mainmini);
         // LINUX
@@ -340,12 +226,15 @@ int main(int argc, char *argv[])
         main->addTransition(trayIcon, SIGNAL(triggered()), maintray);
         maintray->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), main);
         maintray->addTransition(&a, SIGNAL(applicationInActivated()), main);
+        maintray->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
+        maintray->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
 
         // How to switch betwen background and tray
         background->addTransition(trayIcon, SIGNAL(triggered()), tray);
         tray->addTransition(miniplayer->ui->closeMini, SIGNAL(clicked()), background);
         tray->addTransition(&a, SIGNAL(applicationInActivated()), background);
         tray->addTransition(w, SIGNAL(normal()), maintray);
+        tray->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
 
         tray->addTransition(miniplayer, SIGNAL(moved()), mini);
         maintray->addTransition(miniplayer, SIGNAL(moved()), mainmini);
@@ -358,16 +247,33 @@ int main(int argc, char *argv[])
         mainmini->addTransition(w, SIGNAL(minimized()), mini);
         mainmini->addTransition(trayIcon, SIGNAL(triggered()), mainmini);
         mainmini->addTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()), mini);
+        mainmini->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
+        mainmini->addTransition(miniplayer->ui->showMain, SIGNAL(clicked()), main);
 
         // How to reach the exit_state
+#ifdef Q_OS_MAC
+        main->addTransition(w, SIGNAL(closeSignal()), background);
+        mainmini->addTransition(w, SIGNAL(closeSignal()), mini);
+        maintray->addTransition(w, SIGNAL(closeSignal()), tray);
+        mini->addTransition(w, SIGNAL(closeSignal()), background);
+
+        // Make sure that if we click the dock, the application behaves correctly
+        background->addTransition(&a, SIGNAL(onDockFalseFalse()), main);
+        mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
+        tray->addTransition(&a, SIGNAL(onDockFalseTrue()), maintray);
+#else
         main->addTransition(w, SIGNAL(closeSignal()), exit_state);
         mainmini->addTransition(w, SIGNAL(closeSignal()), exit_state);
         background->addTransition(w, SIGNAL(closeSignal()), exit_state);
         mini->addTransition(w, SIGNAL(closeSignal()), exit_state);
+#endif
         QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));
 
+        // mini->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
+        // mini_inactive->addTransition(&a, SIGNAL(onDockFalseTrue()), mainmini);
+        // mini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mini);
+        // mainmini_inactive->addTransition(&a, SIGNAL(onDockFalseFalse()), mainmini);
 
-#endif
 
         // Update GDeskTunes window status
         QObject::connect(main, &State::entered, [w] { w->ui->actionGDeskTunes->setChecked(true); });

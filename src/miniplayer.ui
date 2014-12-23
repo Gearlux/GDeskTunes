@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>166</height>
+    <width>336</width>
+    <height>132</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -25,6 +25,9 @@
      <width>384</width>
      <height>16777215</height>
     </size>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
@@ -47,6 +50,9 @@
     </property>
     <item>
      <widget class="QFrame" name="top_row">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -71,6 +77,9 @@
        </property>
        <item>
         <widget class="QFrame" name="now_playing">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -91,14 +100,14 @@
            <widget class="ArtLabel" name="album_art">
             <property name="minimumSize">
              <size>
-              <width>88</width>
-              <height>88</height>
+              <width>64</width>
+              <height>64</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>1024</width>
-              <height>1024</height>
+              <width>64</width>
+              <height>64</height>
              </size>
             </property>
             <property name="text">
@@ -126,6 +135,9 @@
               <width>16777215</width>
               <height>88</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -205,13 +217,25 @@
            <height>138</height>
           </size>
          </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::NoContextMenu</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0" columnstretch="0,0">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
           <property name="topMargin">
            <number>0</number>
           </property>
@@ -221,16 +245,118 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="2" column="0">
+          <item>
+           <widget class="QWidget" name="controls" native="true">
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="maximize">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../gdesktunes.qrc">
+                 <normaloff>:/icons/32x32/large_art.png</normaloff>:/icons/32x32/large_art.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>12</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="showMain">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../gdesktunes.qrc">
+                 <normaloff>:/icons/32x32/main_window.png</normaloff>:/icons/32x32/main_window.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>12</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="closeMini">
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../gdesktunes.qrc">
+                 <normaloff>:/icons/8x8/close_delete.png</normaloff>:/icons/8x8/close_delete.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="toggle_thumbs_up">
             <property name="maximumSize">
              <size>
               <width>32</width>
               <height>32</height>
              </size>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
              <string/>
@@ -253,13 +379,16 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item>
            <widget class="QPushButton" name="toggle_thumbs_down">
             <property name="maximumSize">
              <size>
               <width>32</width>
               <height>32</height>
              </size>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
             </property>
             <property name="text">
              <string/>
@@ -273,40 +402,6 @@
               <width>32</width>
               <height>32</height>
              </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="maximize">
-            <property name="maximumSize">
-             <size>
-              <width>25</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../gdesktunes.qrc">
-              <normaloff>:/icons/32x32/expand.png</normaloff>:/icons/32x32/expand.png</iconset>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="closeMini">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../gdesktunes.qrc">
-              <normaloff>:/icons/8x8/close_delete.png</normaloff>:/icons/8x8/close_delete.png</iconset>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -356,6 +451,9 @@
         <height>1024</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -380,6 +478,15 @@
        </property>
        <item>
         <widget class="QFrame" name="button_frame">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -546,6 +653,9 @@
        </item>
        <item>
         <widget class="QFrame" name="timing_frame">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>

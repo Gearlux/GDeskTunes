@@ -44,7 +44,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
@@ -80,6 +80,7 @@
      <string>Help</string>
     </property>
     <addaction name="action_About"/>
+    <addaction name="actionCheck_Flash_Player"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
@@ -343,6 +344,11 @@
   <action name="action_About">
    <property name="text">
     <string>Check for Updates</string>
+   </property>
+  </action>
+  <action name="actionCheck_Flash_Player">
+   <property name="text">
+    <string>Check Flash Player</string>
    </property>
   </action>
  </widget>

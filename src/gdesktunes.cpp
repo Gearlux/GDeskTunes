@@ -3,6 +3,8 @@
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
 
+#include "flashdialog.h"
+
 #include <QDir>
 #include <QDirIterator>
 #include <QWebFrame>
@@ -515,8 +517,14 @@ void GDeskTunes::updateAppearance()
     setStyle("gdesktunes.navigation.customization", css);
 }
 
+void GDeskTunes::checkFlashPlayer()
+{
+    FlashDialog *dlg = new FlashDialog(this);
+    dlg->exec();
+}
+
 void GDeskTunes::loadUrl()
 {
-    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    // ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
 }

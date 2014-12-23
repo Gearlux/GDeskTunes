@@ -46,6 +46,7 @@ public slots:
     void setMiniCSS(QString css);
 
     void loadUrl();
+    void checkFlashPlayer();
 
 public:
     void setMini(bool toMini);

@@ -47,5 +47,12 @@
         <file>icons/32x32/thumbs_up_off_dark.png</file>
         <file>icons/8x8/close_delete.png</file>
         <file>icons/8x8/close_delete_dark.png</file>
+        <file>icons/32x32/large_art.png</file>
+        <file>icons/32x32/main_window.png</file>
+        <file>icons/32x32/mini_window.png</file>
+        <file>icons/32x32/small_art.png</file>
+        <file>icons/32x32/large_art_dark.png</file>
+        <file>icons/32x32/small_art_dark.png</file>
+        <file>resources/flash.css</file>
     </qresource>
 </RCC>

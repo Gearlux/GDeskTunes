@@ -113,7 +113,8 @@ HEADERS += \
     src/artlabel.h \
     src/application.h \
     src/qutils.h \
-    src/statemachine.h
+    src/statemachine.h \
+    src/flashdialog.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -164,7 +165,8 @@ SOURCES += \
     src/artlabel.cpp \
     src/application.cpp \
     src/qutils.cpp \
-    src/statemachine.cpp
+    src/statemachine.cpp \
+    src/flashdialog.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -223,7 +225,8 @@ FORMS += \
     src/settings.ui \
     src/aboutdialog.ui \
     src/miniplayer.ui \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui \
+    src/flashdialog.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
@@ -249,4 +252,5 @@ DISTFILES += \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/package.xml \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/lgpl-3.0.txt \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-radiant.txt \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-spinner.txt
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-spinner.txt \
+    resources/flash.css
