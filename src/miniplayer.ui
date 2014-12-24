@@ -279,32 +279,6 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="maximize">
-               <property name="maximumSize">
-                <size>
-                 <width>12</width>
-                 <height>12</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../gdesktunes.qrc">
-                 <normaloff>:/icons/32x32/large_art.png</normaloff>:/icons/32x32/large_art.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>8</width>
-                 <height>8</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QPushButton" name="showMain">
                <property name="maximumSize">
                 <size>

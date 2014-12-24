@@ -9,12 +9,22 @@ class ArtLabel : public QLabel
 public:
     explicit ArtLabel(QWidget *parent = 0);
 
-    void mouseDoubleClickEvent(QMouseEvent * event);
+    void mousePressEvent(QMouseEvent * event);
 
 signals:
     void clicked();
 
 public slots:
+
+public:
+    bool event(QEvent *e);
+    void setPixmap(const QPixmap &);
+
+    void setLarge(bool l) { this->large = l; }
+
+private:
+    QPixmap current_pixmap;
+    bool large;
 
 };
 

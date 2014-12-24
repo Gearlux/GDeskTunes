@@ -260,6 +260,7 @@ void MiniPlayer::resize(int w, int h)
 void MiniPlayer::enableBackground()
 {
     qDebug() << "MiniPlayer::enableBackground()";
+    ui->album_art->setLarge(true);
     if (album_picture.width() == 0) return;
     QPalette palette;
     int w = width();
@@ -303,11 +304,11 @@ void MiniPlayer::enableBackground()
     }
 
     ui->centralwidget->setStyleSheet("");
-    setIcon(ui->maximize, ":/icons/32x32/small_art");
 }
 
 void MiniPlayer::disableBackground()
 {
+    ui->album_art->setLarge(false);
     QPalette palette;
     setPalette(palette);
 
@@ -317,7 +318,6 @@ void MiniPlayer::disableBackground()
     resize(336, 130);
 
     ui->centralwidget->setStyleSheet(style);
-    setIcon(ui->maximize, ":/icons/32x32/large_art");
 
     invert(gray < 128);
 }
@@ -515,10 +515,6 @@ void MiniPlayer::invert(bool inv)
     setIcon(ui->previous, ":/icons/32x32/prev");
     setIcon(ui->next, ":/icons/32x32/next");
     setIcon(ui->closeMini, ":/icons/8x8/close_delete");
-    if (large)
-        setIcon(ui->maximize, ":/icons/32x32/small_art");
-    else
-        setIcon(ui->maximize, ":/icons/32x32/large_art");
     repeat(this->_repeat);
     shuffle(this->_shuffle);
     rating(this->_rating);
