@@ -132,7 +132,10 @@ void MiniPlayer::changeBackground()
     if (large)
         enableBackground();
     else
+    {
         disableBackground();
+        invert(inverted);
+    }
 }
 
 void MiniPlayer::enableBackground()
