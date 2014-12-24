@@ -17,13 +17,17 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     qDebug() << "AboutDialog::AboutDialog(" << parent << ")";
     ui->setupUi(this);
-
+#ifdef Q_OS_LINUX
+    qDebug() << "Linux";
+    setWindowFlags(Qt::Tool);
+#else
     setWindowFlags(Qt::Dialog
                    | Qt::WindowCloseButtonHint
 #if QT_VERSION < QT_VERSION_CHECK(5,4,0)
                    | Qt::CustomizeWindowHint
 #endif
                    );
+#endif
 
     ui->version->setText("Version " + QApplication::applicationVersion());
 

@@ -1,4 +1,4 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -501,11 +501,6 @@ void MainWindow::about(bool show)
 {
     qDebug() << "MainWindow::about(" << show << ")";
     QDialog *about = new AboutDialog();
-    Qt::WindowFlags flags;
-    flags |= Qt::Dialog;
-    flags |= Qt::WindowCloseButtonHint;
-    flags |= Qt::CustomizeWindowHint;
-    about->setWindowFlags(flags);
     about->setAttribute( Qt::WA_DeleteOnClose, true );
     if (show)
         about->show();

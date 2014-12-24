@@ -37,6 +37,7 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     inverted(false),
     style(""),
     corner(0),
+    gray(255),
     slider_moving(false)
 {
     ui->setupUi(this);
