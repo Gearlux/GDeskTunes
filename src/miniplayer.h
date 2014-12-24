@@ -16,6 +16,7 @@ public:
     explicit MiniPlayer(QWidget *parent = 0);
     ~MiniPlayer();
 
+    bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -58,12 +59,13 @@ public slots:
     void determineCorner(QScreen *screen);
     void resize(int w, int h);
 
-    void on_slider_actionTriggered(int);
     void on_slider_sliderPressed();
     void on_slider_sliderReleased();
+    void on_slider_valueChanged(int);
 
 private:
     void invert(bool inv);
+    void showElements(bool visible);
     void setIcon(QAbstractButton* button, QString base);
 
 public:

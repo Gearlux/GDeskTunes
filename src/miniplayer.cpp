@@ -38,7 +38,9 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     style(""),
     corner(0),
     gray(255),
-    slider_moving(false)
+    slider_moving(false),
+    do_move(false),
+    has_moved(false)
 {
     ui->setupUi(this);
 
@@ -48,8 +50,7 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
 
     setWindowFlags(flags);
 
-    // setStyleSheet("background:rgb(250,250,250);");
-    // setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_Hover);
 }
 
 MiniPlayer::~MiniPlayer()
@@ -144,10 +145,16 @@ void MiniPlayer::playbackTime(int current, int)
 {
     if (!slider_moving)
     {
-        ui->current->setText( seconds_to_DHMS(current / 1000));
+        // ui->current->setText( seconds_to_DHMS(current / 1000));
         ui->slider->setValue(current / 1000);
     }
 }
+
+void MiniPlayer::on_slider_valueChanged(int s)
+{
+    ui->current->setText( seconds_to_DHMS(s));
+}
+
 
 void MiniPlayer::albumArt(QPixmap pixmap)
 {
@@ -261,8 +268,8 @@ void MiniPlayer::resize(int w, int h)
 void MiniPlayer::enableBackground()
 {
     qDebug() << "MiniPlayer::enableBackground()";
-    ui->album_art->setLarge(true);
     if (album_picture.width() == 0) return;
+    ui->album_art->setLarge(true);
     QPalette palette;
     int w = width();
 
@@ -413,6 +420,7 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 
     if (has_moved)
     {
+        has_moved = false;
         corner = 0;
         emit moved();
     }
@@ -588,12 +596,6 @@ void MiniPlayer::setMiniPlayerOnTop(bool top)
     }
 }
 
-void MiniPlayer::on_slider_actionTriggered(int v)
-{
-    qDebug() << "MiniPlayer::on_slider_actionTriggered(" << v << ")";
-    // emit changePlaybackTime(v * 1000);
-}
-
 void MiniPlayer::on_slider_sliderPressed()
 {
     slider_moving = true;
@@ -605,4 +607,23 @@ void MiniPlayer::on_slider_sliderReleased()
     int value = ui->slider->value();
     emit changePlaybackTime(value * 1000);
     slider_moving = false;
+}
+
+bool MiniPlayer::event(QEvent *event)
+{
+    if (event->type() == QEvent::HoverLeave)
+    {
+        showElements(false | !large);
+    }
+    if (event->type() == QEvent::HoverEnter)
+    {
+        showElements(true);
+    }
+    return QMainWindow::event(event);
+}
+
+void MiniPlayer::showElements(bool visible)
+{
+    ui->control_frame->setVisible(visible);
+    ui->top_row->setVisible(visible);
 }

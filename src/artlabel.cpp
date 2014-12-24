@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QPainter>
 #include <QIcon>
+#include <QMouseEvent>
 
 ArtLabel::ArtLabel(QWidget *parent) :
     QLabel(parent),
@@ -11,9 +12,10 @@ ArtLabel::ArtLabel(QWidget *parent) :
     setAttribute(Qt::WA_Hover);
 }
 
-void ArtLabel::mousePressEvent(QMouseEvent *)
+void ArtLabel::mousePressEvent(QMouseEvent *event)
 {
     emit clicked();
+    event->accept();
 }
 
 void ArtLabel::setPixmap(const QPixmap &pm)

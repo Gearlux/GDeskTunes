@@ -21,24 +21,6 @@ if (typeof window.GMNavigation === 'undefined') {
     
     //if (buttonsEnabled)
     //{
-        /*
-        if (keepLogo)
-        {
-            // Keep the Google Play logo.
-            logoContainer.parentNode.style.cssText = '';
-            logoContainer.parentNode.style.width = '310px';
-        }
-        else
-        {
-            // Remove the children of the container.
-            while (logoContainer.firstChild) {
-                logoContainer.removeChild(logoContainer.firstChild);
-            }
-            
-            // Remove the width constraints of the parent element.
-            logoContainer.parentNode.style.cssText = '';
-        }
-        */
         
         // Create back and forward buttons.
         var backButton = document.createElement('button');
