@@ -116,6 +116,12 @@
             <property name="text">
              <string/>
             </property>
+            <property name="pixmap">
+             <pixmap resource="../gdesktunes.qrc">:/icons/gdesktunes.iconset/icon_128x128.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>

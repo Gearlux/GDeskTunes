@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_MAC
         const char *hide_main_window = SLOT(hide());
 #else
-        const char *hide_main_window = SLOT(showMinimized())
+        const char *hide_main_window = SLOT(showMinimized());
 #endif
 
         // What to do when the background state is reached
