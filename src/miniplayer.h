@@ -97,6 +97,7 @@ private:
 
     // Set this when we inverted the colors
     bool inverted;
+    int gray;
     QString _shuffle;
     QString _repeat;
     int _rating;

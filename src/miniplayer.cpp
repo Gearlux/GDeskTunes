@@ -36,7 +36,8 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     large(false),
     inverted(false),
     style(""),
-    corner(0)
+    corner(0),
+    slider_moving(false)
 {
     ui->setupUi(this);
 
@@ -170,7 +171,6 @@ void MiniPlayer::changeBackground()
     else
     {
         disableBackground();
-        invert(inverted);
     }
 }
 
@@ -319,7 +319,7 @@ void MiniPlayer::disableBackground()
     ui->centralwidget->setStyleSheet(style);
     setIcon(ui->maximize, ":/icons/32x32/large_art");
 
-    invert(this->inverted);
+    invert(gray < 128);
 }
 
 void MiniPlayer::rating(int rate)
@@ -491,7 +491,7 @@ void MiniPlayer::setBackgroundColor(QColor color)
     qDebug() << "MiniPlayer::setBackgroundColor(" << color << ")";
     style = QString("background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(%1, %2, %3, 255), stop:1 rgba(%4, %5, %6, 255))");
 
-    int gray = qGray(color.rgb());
+    gray = qGray(color.rgb());
 
     int h,s,v;
     color.getHsv(&h, &s, &v);
