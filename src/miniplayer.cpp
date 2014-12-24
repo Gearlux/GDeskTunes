@@ -7,6 +7,7 @@
 
 #include <QKeyEvent>
 #include <QDebug>
+#include <QScreen>
 
 
 QString seconds_to_DHMS(quint32 duration)
@@ -34,7 +35,8 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     large(false),
     inverted(false),
-    style("")
+    style(""),
+    corner(0)
 {
     ui->setupUi(this);
 
@@ -53,13 +55,44 @@ MiniPlayer::~MiniPlayer()
     delete ui;
 }
 
+QScreen* getScreen(QPoint &pt)
+{
+    QCoreApplication *app = QCoreApplication::instance();
+
+    QApplication *gui = dynamic_cast<QApplication*>(app);
+    if ( gui == 0)
+        return 0;
+
+    QList<QScreen *> screens = gui->screens();
+    for(int s=0; s<screens.size(); ++s)
+    {
+        QRect screen_rect = screens.at(s)->geometry();
+        if (screen_rect.contains(pt))
+            return screens.at(s);
+    }
+
+    return 0;
+}
+
 void MiniPlayer::placeMiniPlayer(QPoint& pt)
 {
     qDebug() << "MiniPlayer::placeMiniPlayer(" << pt << ")";
+
+    int x = pt.x();
     int y = pt.y();
-    if (pt.y() > 100)
-        y -= height();
-    trayIconPosition.setX(pt.x());
+    QScreen *screen = getScreen(pt);
+    if (screen == 0)
+    {
+        if (pt.y() > 100)
+            y -= height();
+    }
+    else
+    {
+        x = qMin(x, screen->availableGeometry().topRight().x() - width());
+        y = qMin(y, screen->availableGeometry().bottomLeft().y() - height());
+    }
+
+    trayIconPosition.setX(x);
     trayIconPosition.setY(y);
     trayIconTiming = QDateTime::currentMSecsSinceEpoch();
 }
@@ -107,8 +140,11 @@ void MiniPlayer::nowPlaying(QString title, QString artist, QString album, int du
 
 void MiniPlayer::playbackTime(int current, int)
 {
-    ui->current->setText( seconds_to_DHMS(current / 1000));
-    ui->slider->setValue(current / 1000);
+    if (!slider_moving)
+    {
+        ui->current->setText( seconds_to_DHMS(current / 1000));
+        ui->slider->setValue(current / 1000);
+    }
 }
 
 void MiniPlayer::albumArt(QPixmap pixmap)
@@ -138,6 +174,89 @@ void MiniPlayer::changeBackground()
     }
 }
 
+QScreen* getBestScreen(QWidget *widget)
+{
+    QCoreApplication *app = QCoreApplication::instance();
+
+    QApplication *gui = dynamic_cast<QApplication*>(app);
+    if ( gui == 0)
+        return 0;
+
+    QScreen *best_screen = 0;
+    int largest_overlap = 0;
+    QRect rect = widget->geometry();
+
+    QList<QScreen *> screens = gui->screens();
+    for(int s=0; s<screens.size(); ++s)
+    {
+        QRect screen_rect = screens.at(s)->geometry();
+
+        QRect overlap = screen_rect.intersected(rect);
+        int area = overlap.width() * overlap.height();
+        if (area > largest_overlap)
+        {
+            largest_overlap = area;
+            best_screen = screens.at(s);
+        }
+    }
+
+    return best_screen;
+}
+
+void MiniPlayer::determineCorner(QScreen *screen)
+{
+    corner = 1;
+
+    QRect screen_rect = screen->geometry();
+    QSize half_size = screen->size() / 2;
+    QPoint position = pos();
+
+    QRect rect1(screen_rect.topLeft(), half_size);
+    if (rect1.contains(position))
+    {
+        corner = 1;
+        return;
+    }
+    QRect rect2(rect1.topRight(), half_size);
+    if (rect2.contains(position))
+    {
+        corner = 2;
+        return;
+    }
+    QRect rect4(rect1.bottomLeft(), half_size);
+    if (rect4.contains(position))
+    {
+        corner = 4;
+        return;
+    }
+    corner = 3;
+}
+
+void MiniPlayer::resize(int w, int h)
+{
+    QPoint topleft = pos();
+    QSize current_size = size();
+    QMainWindow::resize(w, h);
+    switch(corner)
+    {
+    case 2:
+        QMainWindow::resize(w, h);
+        move(topleft.x() + current_size.width() - w, topleft.y());
+        break;
+    case 3:
+        move(topleft.x() + current_size.width() - w, topleft.y() + current_size.height() - h);
+        QMainWindow::resize(w, h);
+        break;
+    case 4:
+        move(topleft.x(), topleft.y() + current_size.height() - h);
+        break;
+    case 1:
+    default:
+        // Nothing to do
+        break;
+    }
+}
+
 void MiniPlayer::enableBackground()
 {
     qDebug() << "MiniPlayer::enableBackground()";
@@ -148,6 +267,12 @@ void MiniPlayer::enableBackground()
     // Adjust height according to the scale factor for the width;
     float factor = w / (float)album_picture.width() ;
     int new_h = (int)(album_picture.height() * factor);
+
+    if (corner == 0)
+    {
+        QScreen *screen = getBestScreen(this);
+        determineCorner(screen);
+    }
 
     qDebug() << w << "  " << new_h << " " << factor;
     resize(w, new_h);
@@ -185,6 +310,9 @@ void MiniPlayer::disableBackground()
 {
     QPalette palette;
     setPalette(palette);
+
+    if (corner == 0)
+        determineCorner(getBestScreen(this));
 
     resize(336, 130);
 
@@ -283,7 +411,10 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
     QWidget::mouseReleaseEvent(event);
 
     if (has_moved)
+    {
+        corner = 0;
         emit moved();
+    }
 }
 
 void MiniPlayer::activateWindow()
@@ -458,4 +589,23 @@ void MiniPlayer::setMiniPlayerOnTop(bool top)
     {
         show();
     }
+}
+
+void MiniPlayer::on_slider_actionTriggered(int v)
+{
+    qDebug() << "MiniPlayer::on_slider_actionTriggered(" << v << ")";
+    // emit changePlaybackTime(v * 1000);
+}
+
+void MiniPlayer::on_slider_sliderPressed()
+{
+    slider_moving = true;
+}
+
+void MiniPlayer::on_slider_sliderReleased()
+{
+    qDebug() << "MiniPlayer::on_slider_sliderReleased()";
+    int value = ui->slider->value();
+    emit changePlaybackTime(value * 1000);
+    slider_moving = false;
 }

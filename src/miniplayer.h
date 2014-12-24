@@ -24,6 +24,7 @@ public:
 signals:
     void keyPressed(QKeyEvent *event);
     void moved();
+    void changePlaybackTime(int ms);
 
 public slots:
     void placeMiniPlayer(QPoint& pt);
@@ -53,6 +54,13 @@ public slots:
     void isPlaying(int mode);
     void rewindEnabled(int mode);
     void forwardEnabled(int mode);
+
+    void determineCorner(QScreen *screen);
+    void resize(int w, int h);
+
+    void on_slider_actionTriggered(int);
+    void on_slider_sliderPressed();
+    void on_slider_sliderReleased();
 
 private:
     void invert(bool inv);
@@ -93,6 +101,13 @@ private:
     QString _repeat;
     int _rating;
     QString style;
+
+    // Corner (1 is topleft, 2 is topright, ..., 0: undefined)
+    int corner;
+
+    // Only the last update should be triggered
+    bool slider_moving;
+
 };
 
 #endif // MINIPLAYER_H

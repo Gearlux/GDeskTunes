@@ -220,5 +220,10 @@ int GoogleMusicApp::getRating()
     return mainFrame()->evaluateJavaScript("MusicAPI.Rating.getRating()").toInt();
 }
 
+void GoogleMusicApp::changePlaybackTime(int ms)
+{
+    qDebug() << "GoogleMusicApp::changePlaybackTime(" << ms << ")";
+    mainFrame()->evaluateJavaScript(QString("MusicAPI.Playback.setPlaybackTime(%1)").arg(ms));
+}
 
 

@@ -695,7 +695,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="slider">
+           <widget class="Slider" name="slider">
             <property name="styleSheet">
              <string notr="true">QSlider::groove:horizontal {
 border: 1px solid rgb(200, 200, 200);
@@ -766,6 +766,11 @@ background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,
    <slots>
     <signal>clicked()</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>Slider</class>
+   <extends>QSlider</extends>
+   <header>slider.h</header>
   </customwidget>
  </customwidgets>
  <resources>

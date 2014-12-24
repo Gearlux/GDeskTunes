@@ -57,6 +57,8 @@ public slots:
     void toggleThumbsUp();
     void toggleThumbsDown();
 
+    void changePlaybackTime(int ms);
+
     void play();
     void next();
     void previous();

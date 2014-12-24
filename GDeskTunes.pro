@@ -114,7 +114,8 @@ HEADERS += \
     src/application.h \
     src/qutils.h \
     src/statemachine.h \
-    src/flashdialog.h
+    src/flashdialog.h \
+    src/slider.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -166,7 +167,8 @@ SOURCES += \
     src/application.cpp \
     src/qutils.cpp \
     src/statemachine.cpp \
-    src/flashdialog.cpp
+    src/flashdialog.cpp \
+    src/slider.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -253,4 +255,5 @@ DISTFILES += \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/lgpl-3.0.txt \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-radiant.txt \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-spinner.txt \
-    resources/flash.css
+    resources/flash.css \
+    js/mouse.js
