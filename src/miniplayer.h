@@ -16,16 +16,30 @@ public:
     explicit MiniPlayer(QWidget *parent = 0);
     ~MiniPlayer();
 
+public:
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
     bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void changeEvent(QEvent *);
 
 signals:
     void keyPressed(QKeyEvent *event);
     void moved();
     void changePlaybackTime(int ms);
+
+    void stateMaximized();
+    void stateMinimized();
+    void stateActivated();
+    void stateFullscreen();
+    void stateNone();
+    void hidden();
+    void shown();
+    void windowActivated();
+    void windowDeactivated();
 
 public slots:
     void placeMiniPlayer(QPoint& pt);

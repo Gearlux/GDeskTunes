@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -89,11 +89,11 @@ MainWindow::~MainWindow()
 void MainWindow::setupActions()
 {
 #ifdef Q_OS_MAC
-    qDebug() << "Tweaking application for mac";
+    // qDebug() << "Tweaking application for mac";
     ui->menuView->removeAction(ui->actionSwitch_menu);
 #endif
 #ifdef Q_OS_WIN
-    qDebug() << "Tweaking application for windows";
+    // qDebug() << "Tweaking application for windows";
     ui->menuView->addSeparator();
     ui->menuView->addAction(ui->actionSwitch_mini);
 
@@ -205,14 +205,14 @@ void MainWindow::switchMenu()
 {
 #ifndef Q_OS_MAC
     bool visible = ui->menuBar->isHidden();
-    qDebug() << "MainWindow::switchMenu() visible=" << visible;
+    // qDebug() << "MainWindow::switchMenu() visible=" << visible;
     setMenuVisible(visible);
 #endif
 }
 
 void MainWindow::setMenuVisible(bool visible)
 {
-    qDebug() << "MainWindow::setMenuVisible(" << visible << ")";
+    // qDebug() << "MainWindow::setMenuVisible(" << visible << ")";
     ui->menuBar->setVisible(visible);
     this->hide_menu = !visible;
 #ifdef Q_OS_WIN
@@ -248,7 +248,7 @@ void MainWindow::setMenuVisible(bool visible)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << "MainWindow::keyPressEvent(" << event << ")";
+    // qDebug() << "MainWindow::keyPressEvent(" << event << ")";
     switch(event->key())
     {
     case Qt::Key_MediaPlay:
@@ -271,7 +271,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         QMainWindow::keyPressEvent(event);
         break;
     }
-    qDebug() << "Mainwindow::keyPressEvent() ignored.";
+    // qDebug() << "Mainwindow::keyPressEvent() ignored.";
 
     const QList<QAction*> list = this->findChildren<QAction *>(QString());
     for(int i=0; i<list.size(); ++i)
@@ -286,16 +286,44 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
    QMainWindow::keyReleaseEvent(event);
 }
 
+void MainWindow::hideEvent(QHideEvent *event)
+{
+    qDebug() << "emit MainWindow::hidden()";
+    emit hidden();
+    QMainWindow::hideEvent(event);
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    qDebug() << "emit MainWindow::shown()";
+    emit shown();
+    QMainWindow::showEvent(event);
+}
+
 void MainWindow::changeEvent(QEvent *event)
 {
     qDebug() << "MainWindow::changeEvent(" << event->type()  << ")";
 
     switch(event->type()) {
-    case QEvent::WindowStateChange: {
+    case QEvent::WindowStateChange:
+    {
+        if (this->windowState() & Qt::WindowMaximized)
+        {
+            qDebug() << "emit MainWindow::stateMaximized()";
+            emit stateMaximized();
+        }
+        if (this->windowState() == Qt::WindowNoState)
+        {
+            qDebug() << "emit MainWindow::stateNone()";
+            emit stateNone();
+        }
+        if (this->windowState() & Qt::WindowActive)
+        {
+            qDebug() << "emit MainWindow::stateActive()";
+            emit stateActivated();
+        }
          if (this->windowState() & Qt::WindowMinimized)
          {
-             qDebug() << "emit minimized()";
-             emit minimized();
             if (this->minimize_to_tray && this->tray_icon)
             {
                 qDebug() << "Hide window";
@@ -303,19 +331,14 @@ void MainWindow::changeEvent(QEvent *event)
                 event->ignore();
                 return;
             }
+            qDebug() << "emit MainWindow::stateMinimized()";
+            emit stateMinimized();
          }
-         else
-         {
-             // LINUX
-             // if (windowState() != 0)
-             // {
-                qDebug() << "emit normal()" << this->windowState();
-                emit normal();
-             // }
-         }
-         if (windowState() == Qt::WindowFullScreen)
+         if (windowState() & Qt::WindowFullScreen)
          {
              ui->actionSwitch_Full_Screen->setText("Exit Full Screen");
+             qDebug() << "emit MainWindow::stateFullscreen()";
+             emit stateFullscreen();
          }
          else
          {
@@ -336,6 +359,18 @@ void MainWindow::changeEvent(QEvent *event)
          updateJumpList();
          break;
     }
+    case QEvent::ActivationChange:
+        if (isActiveWindow())
+        {
+            qDebug() << "emit MainWindow::windowActivated()";
+            emit windowActivated();
+        }
+        else
+        {
+            qDebug() << "emit MainWindow::windowDeactivated()";
+            emit windowDeactivated();
+        }
+        break;
     default:
         break;
     }
@@ -345,10 +380,6 @@ void MainWindow::changeEvent(QEvent *event)
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
     qDebug() << "eventFilter: " << object << " " << event;
-    if (event->type() == QEvent::KeyPress)
-    {
-        qDebug() << object;
-    }
     return QMainWindow::eventFilter(object, event);
 }
 
@@ -471,13 +502,13 @@ void MainWindow::receiveMacMediaKey(int key, bool repeat, bool pressed)
 
 void MainWindow::show()
 {
-    qDebug() << "MainWindow::show()";
+    // qDebug() << "MainWindow::show()";
 
     // Compute the windows_offset if necessary
     if (windows_offset.isNull())
     {
         windows_offset = geometry().topLeft() - frameGeometry().topLeft();
-        qDebug() << "windows offset" << windows_offset;
+        // qDebug() << "windows offset" << windows_offset;
     }
 
     QMainWindow::show();
@@ -598,11 +629,13 @@ void MainWindow::quitGDeskTunes()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "MainWindow::closeEvent("<< event->spontaneous() << ")";
-    // FIXME: actually the button needs to be disabled
+#ifdef Q_OS_MAC
+    // FIXME MAC: actually the button needs to be disabled
     if (isFullScreen()) {
         event->ignore();
         return;
     }
+#endif
     // Closing / hiding events are processed by the state machine
     if (event->spontaneous())
     {
@@ -722,7 +755,7 @@ void MainWindow::closeWindow()
 
 void MainWindow::saveState()
 {
-    qDebug() << "GDeskTunes::saveState()";
+    // qDebug() << "GDeskTunes::saveState()";
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
     if (isMini())
     {
@@ -737,7 +770,7 @@ void MainWindow::saveState()
 
 void MainWindow::restore()
 {
-    qDebug() << "GDeskTunes::restore()";
+    // qDebug() << "GDeskTunes::restore()";
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
     qDebug() << "Preferences: " << settings.fileName();
 

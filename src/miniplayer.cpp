@@ -34,13 +34,13 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     userIconTiming(std::numeric_limits<qint64>::max()),
     userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     large(false),
+    do_move(false),
+    has_moved(false),
     inverted(false),
+    gray(255),
     style(""),
     corner(0),
-    gray(255),
-    slider_moving(false),
-    do_move(false),
-    has_moved(false)
+    slider_moving(false)
 {
     ui->setupUi(this);
 
@@ -209,6 +209,59 @@ QScreen* getBestScreen(QWidget *widget)
     }
 
     return best_screen;
+}
+
+void MiniPlayer::changeEvent(QEvent *event)
+{
+    qDebug() << "MiniPlayer::changeEvent(" << event->type()  << ")";
+
+    switch(event->type()) {
+    case QEvent::WindowStateChange:
+    {
+        if (this->windowState() & Qt::WindowMaximized)
+        {
+            qDebug() << "emit MiniPlayer::stateMaximized()";
+            emit stateMaximized();
+        }
+        if (this->windowState() == Qt::WindowNoState)
+        {
+            qDebug() << "emit MiniPlayer::stateNone()";
+            emit stateNone();
+        }
+        if (this->windowState() & Qt::WindowActive)
+        {
+            qDebug() << "emit MiniPlayer::stateActive()";
+            emit stateActivated();
+        }
+         if (this->windowState() & Qt::WindowMinimized)
+         {
+            qDebug() << "emit MiniPlayer::stateMinimized()";
+            emit stateMinimized();
+         }
+         if (windowState() & Qt::WindowFullScreen)
+         {
+             qDebug() << "emit MiniPlayer::stateFullscreen()";
+             emit stateFullscreen();
+         }
+         break;
+    }
+    case QEvent::ActivationChange:
+        if (isActiveWindow())
+        {
+            qDebug() << "emit MiniPlayer::windowActivated()";
+            emit windowActivated();
+        }
+        else
+        {
+            qDebug() << "emit MiniPlayer::windowDeactivated()";
+            emit windowDeactivated();
+        }
+        break;
+    default:
+        break;
+    }
+    QMainWindow::changeEvent(event);
+
 }
 
 void MiniPlayer::determineCorner(QScreen *screen)
@@ -425,6 +478,21 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
         emit moved();
     }
 }
+
+void MiniPlayer::showEvent(QShowEvent *event)
+{
+    qDebug() << "emit MiniPlayer::shown()";
+    emit shown();
+    QMainWindow::showEvent(event);
+}
+
+void MiniPlayer::hideEvent(QHideEvent *event)
+{
+    qDebug() << "emit MiniPlayer::hidden()";
+    emit hidden();
+    QMainWindow::hideEvent(event);
+}
+
 
 void MiniPlayer::activateWindow()
 {

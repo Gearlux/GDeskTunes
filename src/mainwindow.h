@@ -37,8 +37,15 @@ signals:
 
     void minimizeToTray(bool);
 
-    void minimized();
-    void normal();
+    void stateMaximized();
+    void stateMinimized();
+    void stateActivated();
+    void stateFullscreen();
+    void stateNone();
+    void hidden();
+    void shown();
+    void windowActivated();
+    void windowDeactivated();
 
 public slots:
     virtual void switchMini() = 0;
@@ -91,6 +98,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void changeEvent(QEvent *event);
     void closeEvent(QCloseEvent *event);
+    void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
 
 #if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);

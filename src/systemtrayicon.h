@@ -2,12 +2,15 @@
 #define SYSTEMTRAYICON_H
 
 #include <QSystemTrayIcon>
+#include <QMenu>
+
+#include "mainwindow.h"
 
 class SystemTrayIcon : public QSystemTrayIcon
 {
     Q_OBJECT
 public:
-    explicit SystemTrayIcon(QObject *parent = 0);
+    explicit SystemTrayIcon(MainWindow *parent = 0);
 
 signals:
     void trayIcon(bool);
@@ -36,6 +39,9 @@ private:
 
     // Hack: toggling the tray icon on and off, seems to trigger multiple signal
     qint64 last_activation;
+
+    // Holder for the menu
+    QMenu *menu;
 
 };
 

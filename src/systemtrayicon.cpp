@@ -1,12 +1,14 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "systemtrayicon.h"
+#include "ui_mainwindow.h"
+
 #include <QDebug>
 #include <QSettings>
 #include <QApplication>
 #include <QDateTime>
 
-SystemTrayIcon::SystemTrayIcon(QObject *parent) :
+SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
     QSystemTrayIcon(parent),
     tray_icon(false),
     last_activation(0)
@@ -15,6 +17,14 @@ SystemTrayIcon::SystemTrayIcon(QObject *parent) :
     setIcon(QIcon(":/icons/gdesktunes.iconset/icon_16x16.png"));
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onActivated(QSystemTrayIcon::ActivationReason)));
+
+    menu = new QMenu(parent);
+    menu->addAction(parent->ui->actionPreferences);
+
+#ifndef Q_OS_MAC
+    // Bug in Qt (5.4?), left click also triggers context menu
+    setContextMenu(menu);
+#endif
 }
 
 void SystemTrayIcon::nowPlaying(QString title, QString artist, QString album, int duration)

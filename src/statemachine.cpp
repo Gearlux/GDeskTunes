@@ -12,7 +12,14 @@ State::State(ChildMode childMode, QState *parent) :
 
 void State::onEntry(QEvent *)
 {
-    qDebug() << "Entering state: " << objectName();
+    QState* parent = dynamic_cast<QState*>( parentState() );
+    QString name = objectName();
+    while ( parent != 0 )
+    {
+        name = parent->objectName() + "->" + name;
+        parent = dynamic_cast<QState*>( parent->parentState() );
+    }
+    qDebug() << "Entering state: " << name;
 }
 
 StateMachine::StateMachine()
