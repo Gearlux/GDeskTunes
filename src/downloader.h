@@ -2,17 +2,19 @@
 #define DOWNLOADER_H
 
 #include <QObject>
+#include <QNetworkReply>
 
 class Downloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit Downloader(QObject *parent = 0);
+    explicit Downloader(QWidget *parent = 0);
     ~Downloader();
 
 signals:
 
 public slots:
+    void onUnsupportedContent(QNetworkReply * reply);
 };
 
 #endif // DOWNLOADER_H

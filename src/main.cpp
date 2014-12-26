@@ -9,6 +9,7 @@
 #include "application.h"
 #include "qutils.h"
 #include "statemachine.h"
+#include "downloader.h"
 
 #include "ui_mainwindow.h"
 #include "ui_settings.h"
@@ -154,6 +155,9 @@ int main(int argc, char *argv[])
         qDebug() << "Create MiniPlayer";
         MiniPlayer *miniplayer = new MiniPlayer();
         miniplayer->setObjectName("MiniPlayer");
+
+        Downloader *downloader = new Downloader(w);
+        downloader->setObjectName("Downloader");
 
         QStateMachine*  machine = new QStateMachine();
         machine->setObjectName("StateMachine");
@@ -403,6 +407,9 @@ int main(int argc, char *argv[])
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
         web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, debug);
+        web_view->page()->setForwardUnsupportedContent(true);
+
+        connect(web_view->page(), SIGNAL(unsupportedContent(QNetworkReply*)), downloader, SLOT(onUnsupportedContent(QNetworkReply*)));
 
         qDebug() << "Showing application";
         w->loadUrl();

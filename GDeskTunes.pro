@@ -115,7 +115,8 @@ HEADERS += \
     src/qutils.h \
     src/statemachine.h \
     src/flashdialog.h \
-    src/slider.h
+    src/slider.h \
+    src/downloader.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -168,7 +169,8 @@ SOURCES += \
     src/qutils.cpp \
     src/statemachine.cpp \
     src/flashdialog.cpp \
-    src/slider.cpp
+    src/slider.cpp \
+    src/downloader.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
