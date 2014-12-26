@@ -1,0 +1,22 @@
+DONATIONS NEEDED!  If you are a business you should be contributing regular donations.  If you are a generous individual, consider regular donations.  Most people simply take and run - leaving me to foot the bill.  That's not nice.  Some businesses even drop their customers onto me to provide direct support to the customer (ahem, PayPal).  That's just evil.  Even if you can't afford a small, one time donation of $10, at least drop a line saying how much you appreciate the effort put into this project (and, optionally, what you use OpenSSL for).  Lots of complaints and few compliments is discouraging.
+
+
+LEGAL NOTICE:  This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+
+
+WIN32 OPENSSL INSTALLATION LICENSE AGREEMENT
+
+This Win32 OpenSSL Installation License Agreement ("WOILA") is a legal agreement between you (either an individual or business) and the Win32 OpenSSL Installation Group ("WOIG").  By downloading, installing, and using any portion of the software contained within the Win32 OpenSSL Installation ("WOI"), you agree to the following terms and conditions except in states where any specific term or condition does not apply.  If you do not agree with the terms and conditions of this WOILA, then do not download, install, or use this WOI.  In order to install and use this WOI, you must also agree to the OpenSSL License Agreement ("OLA").  If you do not agree with the terms and conditions of the OLA, then you also do not agree with the terms and conditions of this WOILA.
+
+
+WIN32 OPENSSL INSTALLATION LICENSE
+
+You agree that the default OpenSSL compile-time options meet your local and state cryptography laws, rules, and regulations.
+
+You agree that the default OpenSSL compile-time options meet your local and state cryptography patent laws, rules, and regulations.
+
+
+NO WARRANTY
+The WOI is provided "as is" without warranty of any kind, either expressed or implied, including, but not limited to, the imlied warranties of merchantability and fitness for a particular purpose.
+
+In no event is the WOIG to be held liable for damages as the result of downloading, modifying, installing, using, copying, or distributing the WOI.

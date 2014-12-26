@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Visual C++ Redistributable Packages for Visual Studio 2013</DisplayName>
+    <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications that are built by using Visual Studio 2013.</Description>
+    <Version>12.0.21005</Version>
+    <ReleaseDate>2013-12-10</ReleaseDate>
+    <Name>com.microsoft.vcredist_2013</Name>
+    <Licenses>
+        <License name="MICROSOFT SOFTWARE LICENSE TERMS (2013)" file="License_2013.txt" />
+    </Licenses>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+</Package>

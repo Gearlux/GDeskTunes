@@ -53,7 +53,7 @@ function Component()
     component.loaded.connect(this, my_componentLoaded);
     installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
     installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
-    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
+    installer.setDefaultPageVisible(QInstaller.ComponentSelection, true);
     // installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
     // installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
     // installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
@@ -90,8 +90,6 @@ Component.prototype.createOperations = function()
 
 		if (installer.value("os") === "win") {
 			component.addOperation("CreateShortcut", "@TargetDir@/GDeskTunes.exe", "@StartMenuDir@/GDeskTunes.lnk",
-				"workingDirectory=@TargetDir@");
-			component.addOperation("CreateShortcut", "@TargetDir@/uninstall.exe", "@StartMenuDir@/Uninstall.lnk",
 				"workingDirectory=@TargetDir@");
 		}
 
