@@ -18,11 +18,18 @@ SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onActivated(QSystemTrayIcon::ActivationReason)));
 
-    menu = new QMenu(parent);
-    menu->addAction(parent->ui->actionPreferences);
-
 #ifndef Q_OS_MAC
     // Bug in Qt (5.4?), left click also triggers context menu
+    menu = new QMenu(parent);
+    menu->addAction(parent->ui->actionPreferences);
+    menu->addAction(parent->ui->actionAbout);
+    menu->addSeparator();
+    menu->addAction(parent->ui->actionPlay);
+    menu->addAction(parent->ui->actionPrevious);
+    menu->addAction(parent->ui->actionNext);
+    menu->addSeparator();
+    menu->addAction(parent->ui->actionQuit_GDeskTunes);
+
     setContextMenu(menu);
 #endif
 }
