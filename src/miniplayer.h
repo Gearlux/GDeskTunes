@@ -58,6 +58,7 @@ public slots:
 
     void activateWindow();
     void hide();
+    void hideTray();
     void show();
     void raise();
 
@@ -100,6 +101,7 @@ private:
     qint64 userIconTiming;
     QPoint userPosition;
     bool is_tray;
+    qint64 inactiveTiming;
 
     QPixmap album_picture;
     bool large;

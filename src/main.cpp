@@ -239,7 +239,11 @@ int main(int argc, char *argv[])
         mini->addTransition(trans);
         QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
 #endif
-
+#ifdef Q_OS_WIN
+        trans = new QSignalTransition(miniplayer, SIGNAL(windowDeactivated()));
+        miniplayer_visible->addTransition(trans);
+        QObject::connect(trans, SIGNAL(triggered()), miniplayer, SLOT(hideTray()));
+#endif
         // How to switch between background and main
         trans = new QSignalTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()));
         main->addTransition(trans);
