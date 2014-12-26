@@ -631,25 +631,21 @@ void MainWindow::closeEvent(QCloseEvent *event)
     qDebug() << "MainWindow::closeEvent("<< event->spontaneous() << ")";
 #ifdef Q_OS_MAC
     // FIXME MAC: actually the button needs to be disabled
-    if (isFullScreen()) {
+    if (isFullScreen())
+    {
         event->ignore();
         return;
     }
-#endif
-    // Closing / hiding events are processed by the state machine
-    if (event->spontaneous())
-    {
-        event->ignore();
-        emit closeSignal();
-    }
-    else
-    {
-#if defined(Q_OS_WIN) && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
+    event->ignore();
+    hide();
+#else
+    #if defined(Q_OS_WIN) && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
         // I hate it when the jumplist keeps the commands of a not running system
         jumplist->tasks()->clear();
+    #endif
+    event->accept();
 #endif
-        event->accept();
-    }
+
 }
 
 void MainWindow::showFullScreen()
@@ -750,7 +746,7 @@ void MainWindow::activateWindow()
 void MainWindow::closeWindow()
 {
     qDebug() << "MainWindow::closeWindow()";
-    emit closeSignal();
+    close();
 }
 
 void MainWindow::saveState()
@@ -797,4 +793,22 @@ void MainWindow::bringToFront()
     raise();
     activateWindow();
 }
+
+void MainWindow::on_actionGDeskTunes_triggered()
+{
+    qDebug() << "MainWindow::on_actionGDeskTunes_triggered()";
+    qDebug() << isVisible() << isMinimized();
+    if (isVisible() && !isMinimized())
+    {
+        hide();
+    }
+    else
+    {
+        if (isMinimized())
+            showNormal();
+        else
+            show();
+    }
+}
+
 

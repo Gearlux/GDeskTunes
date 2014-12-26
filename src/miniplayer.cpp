@@ -33,6 +33,7 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     trayIconPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     userIconTiming(std::numeric_limits<qint64>::max()),
     userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
+    is_tray(false),
     large(false),
     do_move(false),
     has_moved(false),
@@ -98,6 +99,15 @@ void MiniPlayer::placeMiniPlayer(QPoint& pt)
     trayIconPosition.setX(x);
     trayIconPosition.setY(y);
     trayIconTiming = QDateTime::currentMSecsSinceEpoch();
+
+    if (on_top && isVisible())
+        hide();
+    else
+    {
+        show();
+        raise();
+        activateWindow();
+    }
 }
 
 void MiniPlayer::keyPressEvent(QKeyEvent *event)
@@ -253,6 +263,11 @@ void MiniPlayer::changeEvent(QEvent *event)
         }
         else
         {
+            if (is_tray)
+            {
+                // Tray has changed mode
+                hide();
+            }
             qDebug() << "emit MiniPlayer::windowDeactivated()";
             emit windowDeactivated();
         }
@@ -473,6 +488,7 @@ void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 
     if (has_moved)
     {
+        is_tray = false;
         has_moved = false;
         corner = 0;
         emit moved();
@@ -523,10 +539,12 @@ void MiniPlayer::show()
     {
         // Place it on the trayIcon position
         move(trayIconPosition.x(), trayIconPosition.y());
+        is_tray = true;
     }
     else if (current > userIconTiming)
     {
         move(userPosition.x(), userPosition.y());
+        is_tray = false;
     }
     else
         savePosition = true;

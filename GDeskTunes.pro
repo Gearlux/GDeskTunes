@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
-CONFIG += c++11
+# CONFIG += c++11
 
 linux: {
 system(thirdparty/bootstrap.sh)

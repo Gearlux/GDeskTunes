@@ -88,6 +88,8 @@ public slots:
     void restore();
 
     void keyPressEvent(QKeyEvent *event);
+
+    void on_actionGDeskTunes_triggered();
 public:
     virtual bool isMini();
 

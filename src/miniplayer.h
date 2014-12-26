@@ -99,6 +99,7 @@ private:
     QPoint trayIconPosition;
     qint64 userIconTiming;
     QPoint userPosition;
+    bool is_tray;
 
     QPixmap album_picture;
     bool large;
