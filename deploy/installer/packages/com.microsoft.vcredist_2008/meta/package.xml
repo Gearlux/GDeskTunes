@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Microsoft Visual C++ 2008 Redistributable Package (x86)</DisplayName>
+    <Description>The Microsoft Visual C++ 2008 Redistributable Package (x86) installs runtime components of Visual C++ Libraries required to run applications developed with Visual C++ on a computer that does not have Visual C++ 2008 installed.</Description>
+    <Version>2008</Version>
+    <ReleaseDate>2007-11-29</ReleaseDate>
+    <Name>com.microsoft.vcredist_2008</Name>
+    <Licenses>
+        <License name="MICROSOFT SOFTWARE LICENSE TERMS (2008)" file="License_2008.txt" />
+    </Licenses>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+</Package>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Adobe Flash Player</DisplayName>
+    <Description>This scripts opens the webpage which downloads the correct Adobe Flash Player.</Description>
+    <Version>1.0</Version>
+    <ReleaseDate>2014-12-26</ReleaseDate>
+    <Name>com.adobe.flashplayer</Name>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+</Package>

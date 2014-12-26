@@ -115,7 +115,8 @@ HEADERS += \
     src/qutils.h \
     src/statemachine.h \
     src/flashdialog.h \
-    src/slider.h
+    src/slider.h \
+    src/downloader.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -168,7 +169,8 @@ SOURCES += \
     src/qutils.cpp \
     src/statemachine.cpp \
     src/flashdialog.cpp \
-    src/slider.cpp
+    src/slider.cpp \
+    src/downloader.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -256,4 +258,15 @@ DISTFILES += \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-radiant.txt \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/mit-spinner.txt \
     resources/flash.css \
-    js/mouse.js
+    js/mouse.js \
+    deploy/installer/packages/com.microsoft.vcredist/meta/installscript.qs \
+    deploy/installer/packages/com.microsoft.vcredist/meta/package.xml \
+    deploy/installer/packages/com.microsoft.vcredist_2008/meta/installscript.qs \
+    deploy/installer/packages/com.microsoft.vcredist_2008/meta/package.xml \
+    deploy/installer/packages/com.microsoft.vcredist_2008/meta/License_2008.txt \
+    deploy/installer/packages/com.microsoft.vcredist_2013/meta/installscript.qs \
+    deploy/installer/packages/com.microsoft.vcredist_2013/meta/package.xml \
+    deploy/installer/packages/com.microsoft.vcredist_2013/meta/License_2013.txt \
+    deploy/installer/packages/com.slproweb.openssl/meta/installscript.qs \
+    deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
+    deploy/installer/packages/com.slproweb.openssl/meta/License.txt

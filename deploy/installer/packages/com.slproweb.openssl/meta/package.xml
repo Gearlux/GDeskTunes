@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Win32 OpenSSL v1.0.1j Light</DisplayName>
+    <Description>Installs the most commonly used essentials of Win32 OpenSSL v1.0.1j (Recommended for brave users by the creators of OpenSSL). Note that this is a default build of OpenSSL and is subject to local and state laws. More information can be found in the legal agreement of the installation.</Description>
+    <Version>1.0.1</Version>
+    <Name>com.slproweb.openssl</Name>
+    <ReleaseDate>2014-10-15</ReleaseDate>
+    <Dependencies>com.microsoft.vcredist_2008</Dependencies>
+    <Licenses>
+        <License name="Win32 OpenSSL License Agreement" file="License.txt" />
+    </Licenses>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+</Package>
