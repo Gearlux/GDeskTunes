@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QApplication>
 #include <QDateTime>
+#include <QTimer>
 
 SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
     QSystemTrayIcon(parent),
@@ -74,7 +75,13 @@ void SystemTrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
     if (reason == QSystemTrayIcon::DoubleClick)
     {
         // Also emit the trigger signal (at least for windows)
+#ifndef Q_OS_LINUX
         emit triggered();
+#else
+        QRect geom = this->geometry();
+        QPoint pt = geom.topLeft();
+        emit placeMiniPlayer(pt);
+#endif
         emit doubleClicked();
         return;
     }
