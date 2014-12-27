@@ -244,6 +244,12 @@ void MainWindow::setMenuVisible(bool visible)
             show_hide_menu->setTitle("Show Menu Bar");
     }
 #endif
+#ifdef Q_OS_LINUX
+    if (visible)
+        ui->actionSwitch_menu->setText("Hide Menu Bar");
+    else
+        ui->actionSwitch_menu->setText("Show Menu Bar");
+#endif
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
