@@ -265,7 +265,11 @@ int main(int argc, char *argv[])
 
         trans = new QSignalTransition(miniplayer->ui->showMain, SIGNAL(clicked()));
         mainwindow_hidden->addTransition(trans);
+#ifdef Q_OS_LINUX
+        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(showNormal()));
+#else
         QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
+#endif
 
         trans = new QSignalTransition(miniplayer->ui->showMain, SIGNAL(clicked()));
         mainwindow_visible->addTransition(trans);
