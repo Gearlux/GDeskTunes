@@ -643,6 +643,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         // I hate it when the jumplist keeps the commands of a not running system
         jumplist->tasks()->clear();
     #endif
+    emit closeSignal();
     event->accept();
 #endif
 
