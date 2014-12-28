@@ -1,9 +1,7 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
-
-#include "flashdialog.h"
 
 #include <QDir>
 #include <QDirIterator>
@@ -212,6 +210,11 @@ void GDeskTunes::finishedLoad(bool ok)
 {
     qDebug() << "GDeskTunes::finishedLoad(" << ok << ")";
     if (!ok)
+        return;
+
+    QUrl url = ui->webView->url();
+    // No customization of anything that is not google
+    if (url.host() != "play.google.com")
         return;
 
 #ifdef Q_OS_MAC
@@ -529,12 +532,21 @@ void GDeskTunes::updateAppearance()
 
 void GDeskTunes::checkFlashPlayer()
 {
-    FlashDialog *dlg = new FlashDialog(this);
-    dlg->exec();
+    if (ui->actionCheck_Flash_Player->isChecked())
+    {
+        if (isMini())
+            setMini(false);
+
+        ui->webView->load(QUrl("http://helpx.adobe.com/flash-player.html"));
+    }
+    else
+    {
+        ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    }
 }
 
 void GDeskTunes::loadUrl()
 {
-    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    // ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
 }

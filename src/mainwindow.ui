@@ -347,6 +347,9 @@
    </property>
   </action>
   <action name="actionCheck_Flash_Player">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Check Flash Player</string>
    </property>

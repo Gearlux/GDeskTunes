@@ -114,7 +114,6 @@ HEADERS += \
     src/application.h \
     src/qutils.h \
     src/statemachine.h \
-    src/flashdialog.h \
     src/slider.h \
     src/downloader.h \
     src/webview.h
@@ -169,7 +168,6 @@ SOURCES += \
     src/application.cpp \
     src/qutils.cpp \
     src/statemachine.cpp \
-    src/flashdialog.cpp \
     src/slider.cpp \
     src/downloader.cpp \
     src/webview.cpp
@@ -231,8 +229,7 @@ FORMS += \
     src/settings.ui \
     src/aboutdialog.ui \
     src/miniplayer.ui \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui \
-    src/flashdialog.ui
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles

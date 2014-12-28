@@ -30,7 +30,8 @@
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true">background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(200, 200, 200, 255), stop:1 rgba(230, 230, 230, 255));</string>
+    <string notr="true">background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(200, 200, 200, 255), stop:1 rgba(230, 230, 230, 255));
+</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <property name="spacing">
@@ -287,7 +288,7 @@
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
                </property>
                <property name="text">
                 <string/>
@@ -316,7 +317,7 @@
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
                </property>
                <property name="text">
                 <string/>
@@ -348,7 +349,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
             </property>
             <property name="text">
              <string/>
@@ -383,7 +384,7 @@
              <enum>Qt::NoContextMenu</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
             </property>
             <property name="text">
              <string/>
@@ -447,7 +448,8 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">background: transparent</string>
+       <string notr="true">background: transparent
+</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -515,11 +517,14 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
             </property>
             <property name="text">
              <string/>
@@ -550,6 +555,9 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -578,6 +586,9 @@
               <width>32</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
             </property>
             <property name="text">
              <string/>
@@ -608,6 +619,9 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -635,7 +649,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
             </property>
             <property name="text">
              <string/>

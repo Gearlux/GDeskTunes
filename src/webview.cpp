@@ -5,6 +5,7 @@
 
 WebView::WebView(QWidget *parent) :
     QWebView(parent),
+    draggable(false),
     move(false)
 {
 }
