@@ -501,10 +501,19 @@ void GDeskTunes::updateAppearance()
 
         css += "#gm-back { background-image: url(http://radiant-player-mac/images/arrow-left.png); }";
         css += "#gm-forward { background-image: url(http://radiant-player-mac/images/arrow-right.png); }";
+
+        css += "#compactButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
+        css += "#compactButton:hover { opacity: 0.6; }";
+
+        css += "#miniButton { width: 12px; height: 12px; padding-right: 4px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#miniButton:hover { opacity: 0.6; }";
+
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child { padding-right: 4px; }";
     }
     else
     {
         css += " .gm-nav-button { display: none; }";
+        css += "#miniButton { display: none; }";
     }
     if (!keep_links)
     {
@@ -525,6 +534,6 @@ void GDeskTunes::checkFlashPlayer()
 
 void GDeskTunes::loadUrl()
 {
-    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    // ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
 }

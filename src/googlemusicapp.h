@@ -24,6 +24,9 @@ signals:
     void repeat(QString mode);
     void shuffle(QString mode);
 
+    void switchToMiniPlayer();
+    void switchToCompactPlayer();
+
 public slots:
     void increaseVolume();
     void decreaseVolume();
@@ -62,6 +65,9 @@ public slots:
     void play();
     void next();
     void previous();
+
+    void on_miniButton_clicked();
+    void on_compactButton_clicked();
 
 private slots:
     void onDownloaded(QByteArray &data);

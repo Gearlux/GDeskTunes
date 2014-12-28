@@ -269,4 +269,5 @@ DISTFILES += \
     deploy/installer/packages/com.microsoft.vcredist_2013/meta/License_2013.txt \
     deploy/installer/packages/com.slproweb.openssl/meta/installscript.qs \
     deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
-    deploy/installer/packages/com.slproweb.openssl/meta/License.txt
+    deploy/installer/packages/com.slproweb.openssl/meta/License.txt \
+    js/switchmini.js

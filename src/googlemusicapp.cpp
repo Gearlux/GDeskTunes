@@ -226,4 +226,16 @@ void GoogleMusicApp::changePlaybackTime(int ms)
     mainFrame()->evaluateJavaScript(QString("MusicAPI.Playback.setPlaybackTime(%1)").arg(ms));
 }
 
+void GoogleMusicApp::on_miniButton_clicked()
+{
+    qDebug() << "GoogleMusicApp::on_miniButton_clicked()";
+    emit switchToMiniPlayer();
+}
+
+void GoogleMusicApp::on_compactButton_clicked()
+{
+    qDebug() << "GoogleMusicApp::on_compactButton_clicked()";
+    emit switchToCompactPlayer();
+}
+
 

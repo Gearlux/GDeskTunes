@@ -244,6 +244,10 @@ int main(int argc, char *argv[])
         miniplayer_visible->addTransition(trans);
         QObject::connect(trans, SIGNAL(triggered()), miniplayer, SLOT(hideTray()));
 #endif
+        // Connect the UI from the web to the ui, so we only have to implement this once
+        QObject::connect(app, SIGNAL(switchToMiniPlayer()), w->ui->actionSwitch_miniPlayer, SLOT(trigger()));
+        QObject::connect(app, SIGNAL(switchToCompactPlayer()), w->ui->actionSwitch_mini, SLOT(trigger()));
+
         // How to switch between background and main
         trans = new QSignalTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()));
         main->addTransition(trans);

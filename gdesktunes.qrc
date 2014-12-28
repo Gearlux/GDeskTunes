@@ -57,5 +57,7 @@
         <file>icons/gdesktunes.iconset/icon_32x32.png</file>
         <file>icons/64x64/large_art.png</file>
         <file>icons/64x64/small_art.png</file>
+        <file>radiant-player-mac/images/miniplayer.png</file>
+        <file>radiant-player-mac/images/compactplayer.png</file>
     </qresource>
 </RCC>
