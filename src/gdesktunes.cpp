@@ -1,4 +1,4 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
@@ -547,6 +547,6 @@ void GDeskTunes::checkFlashPlayer()
 
 void GDeskTunes::loadUrl()
 {
-    // ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
 }

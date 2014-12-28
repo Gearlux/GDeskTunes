@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
@@ -35,6 +35,7 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     is_tray(false),
     inactiveTiming(0),
+    background_image(0),
     large(false),
     do_move(false),
     has_moved(false),
@@ -42,7 +43,9 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     gray(255),
     style(""),
     corner(0),
-    slider_moving(false)
+    slider_moving(false),
+    play_mode(0),
+    opacity(1.0f)
 {
     ui->setupUi(this);
 
@@ -57,6 +60,7 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
 
 MiniPlayer::~MiniPlayer()
 {
+    delete background_image;
     delete ui;
 }
 
@@ -105,7 +109,7 @@ void MiniPlayer::placeMiniPlayer(QPoint& pt)
     if (inactiveTiming + 250 > trayIconTiming)
         return;
 
-    if (isVisible())
+    if (isVisible() && is_tray)
         hide();
     else
     {
@@ -181,7 +185,7 @@ void MiniPlayer::albumArt(QPixmap pixmap)
 
     if (large)
     {
-        enableBackground();
+        enableBackground(opacity);
     }
 }
 
@@ -340,7 +344,7 @@ void MiniPlayer::resize(int w, int h)
     }
 }
 
-void MiniPlayer::enableBackground()
+void MiniPlayer::enableBackground(float opacity)
 {
     qDebug() << "MiniPlayer::enableBackground()";
     if (album_picture.width() == 0) return;
@@ -361,25 +365,25 @@ void MiniPlayer::enableBackground()
     qDebug() << w << "  " << new_h << " " << factor;
     resize(w, new_h);
 
-    QImage image(w, new_h, QImage::Format_ARGB32);
+    background_image = new QImage(w, new_h, QImage::Format_ARGB32);
     QPainter painter;
-    painter.begin(&image);
-    painter.fillRect(image.rect(), QColor(0, 0, 0, 255));
-    painter.setOpacity(0.75);  //0.00 = 0%, 1.00 = 100% opacity.
+    painter.begin(background_image);
+    painter.fillRect(background_image->rect(), QColor(0, 0, 0, 255));
+    painter.setOpacity(qMin(1.0f, opacity));  //0.00 = 0%, 1.00 = 100% opacity.
     painter.drawPixmap(0, 0, album_picture.scaled(w, new_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     painter.end();
-    palette.setBrush(QPalette::Background, QBrush(image));
+    palette.setBrush(QPalette::Background, QBrush(*background_image));
     setPalette(palette);
 
-    int size = image.width() * image.height();
+    int size = background_image->width() * background_image->height();
     if (size != 0)
     {
         double global_value = 0;
-        for(int r=0; r<image.height(); ++r)
+        for(int r=0; r<background_image->height(); ++r)
         {
-            for(int c=0; c<image.width(); ++c)
+            for(int c=0; c<background_image->width(); ++c)
             {
-                global_value += qGray(image.pixel(c, r));
+                global_value += qGray(background_image->pixel(c, r));
             }
         }
         global_value /= size;
@@ -387,6 +391,7 @@ void MiniPlayer::enableBackground()
     }
 
     ui->centralwidget->setStyleSheet("");
+    this->opacity = opacity;
 }
 
 void MiniPlayer::disableBackground()
@@ -394,6 +399,8 @@ void MiniPlayer::disableBackground()
     ui->album_art->setLarge(false);
     QPalette palette;
     setPalette(palette);
+    delete background_image;
+    background_image = 0;
 
     if (corner == 0)
         determineCorner(getBestScreen(this));
@@ -612,18 +619,20 @@ void MiniPlayer::setBackgroundColor(QColor color)
     style = style.arg(second_color.red()).arg(second_color.green()).arg(second_color.blue()).arg(color.red()).arg(color.green()).arg(color.blue());
     qDebug() << style;
 
-    ui->centralwidget->setStyleSheet(style);
+    if (!large)
+    {
+        ui->centralwidget->setStyleSheet(style);
 
-    invert(gray < 128);
+        invert(gray < 128);
+    }
 }
 
 void MiniPlayer::invert(bool inv)
 {
     qDebug() << "MiniPlayer::invert(" << inv << ") inverted: " << inverted;
-    if (inverted == inv) return;
     inverted = inv;
 
-    setIcon(ui->play, ":/icons/32x32/play");
+    isPlaying(play_mode);
     setIcon(ui->previous, ":/icons/32x32/prev");
     setIcon(ui->next, ":/icons/32x32/next");
     setIcon(ui->closeMini, ":/icons/8x8/close_delete");
@@ -636,15 +645,64 @@ void MiniPlayer::invert(bool inv)
         text += "white";
     else
         text += "black";
-    ui->album->setStyleSheet(text);
-    ui->artist->setStyleSheet(text);
-    ui->title->setStyleSheet(text);
+    setStyle(ui->album, text);
+    setStyle(ui->artist, text);
+    setStyle(ui->title, text);
+}
+
+void MiniPlayer::setStyle(QLabel *label, const QString &text)
+{
+    // qDebug() << "MiniPlayer::setStyle("<< label->objectName() << "," << text << ")";
+
+    QString final_style = text;
+
+    if (background_image != 0)
+    {
+        // Adjust the background according to the pixels rendered
+        QSize size = label->size();
+        QPoint pt = this->mapFromGlobal(label->mapToGlobal(QPoint(0,0)));
+        double global_value = 0;
+        for(int r=0; r<size.height(); ++r)
+        {
+            for(int c=0; c<size.width(); ++c)
+            {
+                global_value += qGray(background_image->pixel(pt.x() + c, pt.y() + r));
+            }
+        }
+        global_value /= (size.height() * size.width());
+        bool inv = global_value < 128;
+        if (inv)
+        {
+            final_style = "color: white";
+        }
+        else
+            final_style = "color: black";
+    }
+    label->setStyleSheet(final_style);
+
 }
 
 void MiniPlayer::setIcon(QAbstractButton* button, QString base)
 {
-    // qDebug() << "MiniPlayer::setIcon( " << button->objectName() << ") inverted: " << inverted;
-    if (inverted)
+    // qDebug() << "MiniPlayer::setIcon( " << button->objectName() << ","<< base << ") inverted: " << inverted << " background_image: "<< background_image;
+    bool inv = inverted;
+    if (background_image != 0)
+    {
+        // Adjust the background according to the pixels rendered
+        QSize size = button->size();
+        QPoint pt = this->mapFromGlobal(button->mapToGlobal(QPoint(0,0)));
+        double global_value = 0;
+        for(int r=0; r<size.height(); ++r)
+        {
+            for(int c=0; c<size.width(); ++c)
+            {
+                global_value += qGray(background_image->pixel(pt.x() + c, pt.y() + r));
+            }
+        }
+        global_value /= (size.height() * size.width());
+        inv = global_value < 128;
+    }
+    if (inv)
     {
         base += "_dark.png";
     }
@@ -668,6 +726,7 @@ void MiniPlayer::isPlaying(int mode)
     {
         setIcon(ui->play, ":/icons/32x32/pause");
     }
+    play_mode = mode;
 }
 
 void MiniPlayer::rewindEnabled(int mode)
@@ -716,10 +775,16 @@ bool MiniPlayer::event(QEvent *event)
 {
     if (event->type() == QEvent::HoverLeave)
     {
-        showElements(false | !large);
+        bool show = !large;
+        showElements(show);
+        if (large)
+            enableBackground(1.5);
+
     }
     if (event->type() == QEvent::HoverEnter)
     {
+        if (large)
+            enableBackground();
         showElements(true);
     }
     return QMainWindow::event(event);
@@ -728,5 +793,7 @@ bool MiniPlayer::event(QEvent *event)
 void MiniPlayer::showElements(bool visible)
 {
     ui->control_frame->setVisible(visible);
-    ui->top_row->setVisible(visible);
+    // ui->top_row->setVisible(visible);
+    ui->thumbs_frame->setVisible(visible);
+    ui->album_art->setVisible(visible);
 }
