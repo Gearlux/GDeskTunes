@@ -47,6 +47,8 @@ signals:
     void windowActivated();
     void windowDeactivated();
 
+    void isDraggable(bool);
+
 public slots:
     virtual void switchMini() = 0;
 

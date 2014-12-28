@@ -116,7 +116,8 @@ HEADERS += \
     src/statemachine.h \
     src/flashdialog.h \
     src/slider.h \
-    src/downloader.h
+    src/downloader.h \
+    src/webview.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -170,7 +171,8 @@ SOURCES += \
     src/statemachine.cpp \
     src/flashdialog.cpp \
     src/slider.cpp \
-    src/downloader.cpp
+    src/downloader.cpp \
+    src/webview.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \

@@ -34,7 +34,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QWebView" name="webView"/>
+     <widget class="WebView" name="webView" native="true"/>
     </item>
    </layout>
   </widget>
@@ -354,9 +354,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QWebView</class>
+   <class>WebView</class>
    <extends>QWidget</extends>
-   <header>QtWebKitWidgets/QWebView</header>
+   <header>webview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

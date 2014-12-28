@@ -393,6 +393,7 @@ int main(int argc, char *argv[])
         connect(w, SIGNAL(miniPlayerOnTop(bool)), miniplayer, SLOT(setMiniPlayerOnTop(bool)));
 
         connect(miniplayer->ui->closeMini, SIGNAL(clicked(bool)), miniplayer, SLOT(hide()));
+        connect(w, SIGNAL(isDraggable(bool)), w->ui->webView, SLOT(setDraggable(bool)));
 
         qDebug() << "Starting application";
         w->load();

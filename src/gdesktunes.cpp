@@ -81,6 +81,7 @@ void GDeskTunes::setMini(bool toMini)
 {
     qDebug() << "GDeskTunes::setMini(" << toMini << ")";
     this->draggable = toMini;
+    emit isDraggable(this->draggable);
 
     if (toMini)
     {
@@ -534,6 +535,6 @@ void GDeskTunes::checkFlashPlayer()
 
 void GDeskTunes::loadUrl()
 {
-    // ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
 }
