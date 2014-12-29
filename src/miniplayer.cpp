@@ -564,6 +564,10 @@ void MiniPlayer::show()
         // Place it on the trayIcon position
         move(trayIconPosition.x(), trayIconPosition.y());
         is_tray = true;
+        // Adjust background and elements
+        if (large)
+            enableBackground();
+        showElements(true);
     }
     else if (current > userIconTiming)
     {

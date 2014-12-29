@@ -1,6 +1,8 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
+#include "googlemusicapp.h"
+
 #ifdef USE_WEBKIT
 #include <QWebView>
 #else

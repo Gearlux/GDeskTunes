@@ -16,7 +16,11 @@ GoogleMusicApp::GoogleMusicApp(QObject *parent) :
     QWebEnginePage(parent)
 #endif
 {
+#ifdef USE_WEBKIT
     QObject::connect(mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addWindowObjects()));
+#else
+    qWarning() << "No feedback from google to the application";
+#endif
 }
 
 void GoogleMusicApp::increaseVolume()
@@ -182,8 +186,12 @@ void GoogleMusicApp::loadFinished(bool status)
 
 void GoogleMusicApp::addWindowObjects()
 {
+#ifdef USE_WEBKIT
     qDebug() << "GoogleMusicApp::addWindowObjects()";
     mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", this);
+#else
+    qWarning() << "Do this with some polling mechanism";
+#endif
 }
 
 void GoogleMusicApp::play()
