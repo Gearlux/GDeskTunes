@@ -386,7 +386,6 @@ int main(int argc, char *argv[])
 
         // Show the trayIcon when requested
         connect(trayIcon, SIGNAL(trayIcon(bool)), trayIcon, SLOT(setVisible(bool)));
-        connect(trayIcon, SIGNAL(doubleClicked()), w, SLOT(showNormal()));
         connect(trayIcon, SIGNAL(doubleClicked()), w, SLOT(bringToFront()));
         connect(trayIcon, SIGNAL(trayIcon(bool)), settings->ui->minimize_to_tray, SLOT(setEnabled(bool)));
 
