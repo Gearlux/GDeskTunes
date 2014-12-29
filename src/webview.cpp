@@ -4,7 +4,11 @@
 #include <QWebElement>
 
 WebView::WebView(QWidget *parent) :
+#ifdef USE_WEBKIT
     QWebView(parent),
+#else
+    QWebEngineView(parent),
+#endif
     draggable(false),
     move(false)
 {
@@ -12,6 +16,7 @@ WebView::WebView(QWidget *parent) :
 
 void WebView::mousePressEvent(QMouseEvent *event)
 {
+#ifdef USE_WEBKIT
     if (draggable)
     {
         bool process = true;
@@ -66,10 +71,14 @@ void WebView::mousePressEvent(QMouseEvent *event)
         }
     }
     QWebView::mousePressEvent(event);
+#else
+    QWebEngineView::mousePressEvent(event);
+#endif
 }
 
 void WebView::mouseMoveEvent(QMouseEvent *event)
 {
+#ifdef USE_WEBKIT
     if (draggable)
     {
         if (move)
@@ -87,12 +96,19 @@ void WebView::mouseMoveEvent(QMouseEvent *event)
         }
     }
     QWebView::mouseMoveEvent(event);
+#else
+    QWebEngineView::mouseMoveEvent(event);
+#endif
 }
 
 void WebView::mouseReleaseEvent(QMouseEvent *event)
 {
+#ifdef USE_WEBKIT
     move = false;
     QWebView::mouseReleaseEvent(event);
+#else
+    QWebEngineView::mouseReleaseEvent(event);
+#endif
 }
 
 void WebView::setDraggable(bool drag)

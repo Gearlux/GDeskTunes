@@ -1,15 +1,24 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
+#ifdef USE_WEBKIT
 #include <QWebView>
+#else
+#include <QWebEngineView>
+#endif
 
-class WebView : public QWebView
+class WebView :
+#ifdef USE_WEBKIT
+        public QWebView
+#else
+        public QWebEngineView
+#endif
 {
     Q_OBJECT
 
 public:
     WebView(QWidget* parent);
-    ~WebView() {};
+    ~WebView() {}
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
