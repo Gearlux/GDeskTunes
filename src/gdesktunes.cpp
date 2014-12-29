@@ -3,7 +3,7 @@
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
 
-#include "flashdialog.h"
+#include "googlemusicapp.h"
 
 #include <QDir>
 #include <QDirIterator>
@@ -81,6 +81,7 @@ void GDeskTunes::setMini(bool toMini)
 {
     qDebug() << "GDeskTunes::setMini(" << toMini << ")";
     this->draggable = toMini;
+    emit isDraggable(this->draggable);
 
     if (toMini)
     {
@@ -101,11 +102,9 @@ void GDeskTunes::setMini(bool toMini)
         applyStyle(mini_style, "mini");
 
         // Find the body element which must contain the width and height of the mini player
-        QWebElement elt = ui->webView->page()->mainFrame()->documentElement().findFirst("body");
-        QString width = elt.styleProperty("width", QWebElement::ComputedStyle);
-        QString height = elt.styleProperty("height", QWebElement::ComputedStyle);
-        int w = width.replace("px", "").toInt(0);
-        int h = height.replace("px", "").toInt(0);
+        GoogleMusicApp* app = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
+        int w = app->getBodyWidth();
+        int h = app->getBodyHeight();
 
         // Apply window flags
         setWindowFlags(miniPlayerFlags());
@@ -213,6 +212,11 @@ void GDeskTunes::finishedLoad(bool ok)
     if (!ok)
         return;
 
+    QUrl url = ui->webView->url();
+    // No customization of anything that is not google
+    if (url.host() != "play.google.com")
+        return;
+
 #ifdef Q_OS_MAC
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/js");
 #else
@@ -243,7 +247,8 @@ void GDeskTunes::evaluateJavaScriptFile(QString filePath)
     QFile jsFile(filePath);
     jsFile.open(QFile::ReadOnly);
     QTextStream stream(&jsFile);
-    ui->webView->page()->mainFrame()->evaluateJavaScript(stream.readAll());
+    GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
+    page->evaluateJavaScript(stream.readAll());
     jsFile.close();
 }
 
@@ -258,7 +263,8 @@ void GDeskTunes::setStyle(QString name, QString css_content)
     qDebug() << "GDeskTunes::setStyle(" << name << "," << css_content.left(100) << ")";
 
     QString script = QString("Styles.applyStyle(\"%2\",\"%1\");").arg(css_content, name);
-    ui->webView->page()->mainFrame()->evaluateJavaScript(script);
+    GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
+    page->evaluateJavaScript(script);
 }
 
 /*
@@ -276,33 +282,11 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     QString css_content = stream.readAll();
     setStyle(subdir + css, css_content);
 
-    QWebElement elt = ui->webView->page()->mainFrame()->documentElement().findFirst("#main");
+    GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
+    QColor qColor = page->getBackgroundColor();
 
-    QString color = elt.styleProperty("background-color", QWebElement::ComputedStyle);
+    QString color = QString("rgb(") + qColor.red() + "," + qColor.green() + "," + qColor.blue() + ")";
     ui->toolBar->setStyleSheet("border: 0px; background: " + color);
-
-    QRegExp rx("\\d+");
-    QList<int> nums;
-    int pos = 0;
-    while((pos = rx.indexIn(color, pos)) != -1)
-    {
-        nums.append( color.mid(pos, rx.matchedLength()).toInt());
-        pos += rx.matchedLength();
-    }
-
-    int r = 0, g = 0, b = 0, a = 255;
-    if (nums.size() >= 3)
-    {
-        r = nums.at(0);
-        g = nums.at(1);
-        b = nums.at(2);
-    }
-    if (nums.size() > 3)
-        a = nums.at(3);
-
-    QColor qColor = QColor(r,g,b);
-    if (a == 0)
-        qColor = QColor(250,250,250);
 
     int gray = qGray(qColor.rgb());
 
@@ -325,7 +309,8 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
 void GDeskTunes::disableStyle(QString css, QString subdir)
 {
     // ui->webView->page()->mainFrame()->evaluateJavaScript(QString("Styles.disableStyle(\"%2%1\")").arg(css, subdir));
-    ui->webView->page()->mainFrame()->evaluateJavaScript(QString("Styles.removeStyle(\"%2%1\")").arg(css, subdir));
+    GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
+    page->evaluateJavaScript(QString("Styles.removeStyle(\"%2%1\")").arg(css, subdir));
 }
 
 /*
@@ -501,10 +486,19 @@ void GDeskTunes::updateAppearance()
 
         css += "#gm-back { background-image: url(http://radiant-player-mac/images/arrow-left.png); }";
         css += "#gm-forward { background-image: url(http://radiant-player-mac/images/arrow-right.png); }";
+
+        css += "#compactButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
+        css += "#compactButton:hover { opacity: 0.6; }";
+
+        css += "#miniButton { width: 12px; height: 12px; padding-right: 4px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#miniButton:hover { opacity: 0.6; }";
+
+        css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child { padding-right: 4px; }";
     }
     else
     {
         css += " .gm-nav-button { display: none; }";
+        css += "#miniButton { display: none; }";
     }
     if (!keep_links)
     {
@@ -519,8 +513,17 @@ void GDeskTunes::updateAppearance()
 
 void GDeskTunes::checkFlashPlayer()
 {
-    FlashDialog *dlg = new FlashDialog(this);
-    dlg->exec();
+    if (ui->actionCheck_Flash_Player->isChecked())
+    {
+        if (isMini())
+            setMini(false);
+
+        ui->webView->load(QUrl("http://helpx.adobe.com/flash-player.html"));
+    }
+    else
+    {
+        ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    }
 }
 
 void GDeskTunes::loadUrl()

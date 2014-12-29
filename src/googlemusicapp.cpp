@@ -1,4 +1,4 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "googlemusicapp.h"
 #include "mainwindow.h"
@@ -10,21 +10,29 @@
 #include <QDebug>
 
 GoogleMusicApp::GoogleMusicApp(QObject *parent) :
+#ifdef USE_WEBKIT
     QWebPage(parent)
+#else
+    QWebEnginePage(parent)
+#endif
 {
+#ifdef USE_WEBKIT
     QObject::connect(mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addWindowObjects()));
+#else
+    qWarning() << "No feedback from google to the application";
+#endif
 }
 
 void GoogleMusicApp::increaseVolume()
 {
     qDebug() << "increaseVolume";
-    mainFrame()->evaluateJavaScript("MusicAPI.Volume.increaseVolume(10);");
+    evaluateJavaScript("MusicAPI.Volume.increaseVolume(10);");
 }
 
 void GoogleMusicApp::decreaseVolume()
 {
     qDebug() << "decreaseVolume";
-    mainFrame()->evaluateJavaScript("MusicAPI.Volume.decreaseVolume(10);");
+    evaluateJavaScript("MusicAPI.Volume.decreaseVolume(10);");
 }
 
 void GoogleMusicApp::playbackChanged(int mode)
@@ -90,49 +98,49 @@ void GoogleMusicApp::shuffleChanged(QString mode)
 
 QString GoogleMusicApp::getShuffle()
 {
-    return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getShuffle()").toString();
+    return evaluateJavaScript("MusicAPI.Playback.getShuffle()").toString();
 }
 
 void GoogleMusicApp::toggleShuffle()
 {
     qDebug() << "GoogleMusicApp::toggleShuffle()";
-    mainFrame()->evaluateJavaScript("MusicAPI.Playback.toggleShuffle()");
+    evaluateJavaScript("MusicAPI.Playback.toggleShuffle()");
 }
 
 void GoogleMusicApp::shuffleOff()
 {
-   mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeShuffle('NO_SHUFFLE')");
+   evaluateJavaScript("MusicAPI.Playback.changeShuffle('NO_SHUFFLE')");
 }
 
 void GoogleMusicApp::shuffleOn()
 {
-   mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeShuffle('ALL_SHUFFLE')");
+   evaluateJavaScript("MusicAPI.Playback.changeShuffle('ALL_SHUFFLE')");
 }
 
 QString GoogleMusicApp::getRepeat()
 {
-    return mainFrame()->evaluateJavaScript("MusicAPI.Playback.getRepeat()").toString();
+    return evaluateJavaScript("MusicAPI.Playback.getRepeat()").toString();
 }
 
 void GoogleMusicApp::toggleRepeat()
 {
     qDebug() << "GoogleMusicApp::toggleRepeat()";
-    mainFrame()->evaluateJavaScript("MusicAPI.Playback.toggleRepeat()");
+    evaluateJavaScript("MusicAPI.Playback.toggleRepeat()");
 }
 
 void GoogleMusicApp::repeatOff()
 {
-    mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('NO_REPEAT')");
+    evaluateJavaScript("MusicAPI.Playback.changeRepeat('NO_REPEAT')");
 }
 
 void GoogleMusicApp::repeatAll()
 {
-    mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('LIST_REPEAT')");
+    evaluateJavaScript("MusicAPI.Playback.changeRepeat('LIST_REPEAT')");
 }
 
 void GoogleMusicApp::repeatOne()
 {
-    mainFrame()->evaluateJavaScript("MusicAPI.Playback.changeRepeat('SINGLE_REPEAT')");
+    evaluateJavaScript("MusicAPI.Playback.changeRepeat('SINGLE_REPEAT')");
 }
 
 void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QString art, int duration)
@@ -178,52 +186,144 @@ void GoogleMusicApp::loadFinished(bool status)
 
 void GoogleMusicApp::addWindowObjects()
 {
+#ifdef USE_WEBKIT
     qDebug() << "GoogleMusicApp::addWindowObjects()";
     mainFrame()->addToJavaScriptWindowObject("GoogleMusicApp", this);
+#else
+    qWarning() << "Do this with some polling mechanism";
+#endif
 }
 
 void GoogleMusicApp::play()
 {
     qDebug() << "GoogleMusicApp::play()";
-    QWebElement elt = mainFrame()->findFirstElement("*[data-id='play-pause']");
-    elt.evaluateJavaScript("this.click();");
+    evaluateJavaScript("MusicAPI.Playback.playPause()");
+    // QWebElement elt = mainFrame()->findFirstElement("*[data-id='play-pause']");
+    // elt.evaluateJavaScript("this.click();");
 }
 
 void GoogleMusicApp::next()
 {
     qDebug() << "GoogleMusicApp::next()";
-    QWebElement elt = mainFrame()->findFirstElement("*[data-id='forward']");
-    elt.evaluateJavaScript("this.click();");
+    //QWebElement elt = mainFrame()->findFirstElement("*[data-id='forward']");
+    //elt.evaluateJavaScript("this.click();");
+    evaluateJavaScript("MusicAPI.Playback.forward()");
 }
 
 void GoogleMusicApp::previous()
 {
     qDebug() << "GoogleMusicApp::previous()";
-    QWebElement elt = mainFrame()->findFirstElement("*[data-id='rewind']");
-    elt.evaluateJavaScript("this.click();");
+    // QWebElement elt = mainFrame()->findFirstElement("*[data-id='rewind']");
+    // elt.evaluateJavaScript("this.click();");
+    evaluateJavaScript("MusicAPI.Playback.rewind()");
+
 }
 
 void GoogleMusicApp::toggleThumbsUp()
 {
     qDebug() << "GoogleMusicApp::toggleThumbsUp()";
-    mainFrame()->evaluateJavaScript("MusicAPI.Rating.toggleThumbsUp()");
+    evaluateJavaScript("MusicAPI.Rating.toggleThumbsUp()");
 }
 
 void GoogleMusicApp::toggleThumbsDown()
 {
     qDebug() << "GoogleMusicApp::toggleThumbsDown()";
-    mainFrame()->evaluateJavaScript("MusicAPI.Rating.toggleThumbsDown()");
+    evaluateJavaScript("MusicAPI.Rating.toggleThumbsDown()");
 }
 
 int GoogleMusicApp::getRating()
 {
-    return mainFrame()->evaluateJavaScript("MusicAPI.Rating.getRating()").toInt();
+    return evaluateJavaScript("MusicAPI.Rating.getRating()").toInt();
 }
 
 void GoogleMusicApp::changePlaybackTime(int ms)
 {
     qDebug() << "GoogleMusicApp::changePlaybackTime(" << ms << ")";
-    mainFrame()->evaluateJavaScript(QString("MusicAPI.Playback.setPlaybackTime(%1)").arg(ms));
+    evaluateJavaScript(QString("MusicAPI.Playback.setPlaybackTime(%1)").arg(ms));
 }
 
+void GoogleMusicApp::on_miniButton_clicked()
+{
+    qDebug() << "GoogleMusicApp::on_miniButton_clicked()";
+    emit switchToMiniPlayer();
+}
+
+void GoogleMusicApp::on_compactButton_clicked()
+{
+    qDebug() << "GoogleMusicApp::on_compactButton_clicked()";
+    emit switchToCompactPlayer();
+}
+
+int GoogleMusicApp::getBodyWidth()
+{
+#ifdef USE_WEBKIT
+    QWebElement elt = mainFrame()->documentElement().findFirst("body");
+    QString width = elt.styleProperty("width", QWebElement::ComputedStyle);
+    int w = width.replace("px", "").toInt(0);
+    return w;
+#else
+    qWarning() << "Not implemented: GoogleMusicApp::getBodyWidth()";
+    return 150;
+#endif
+}
+
+int GoogleMusicApp::getBodyHeight()
+{
+#ifdef USE_WEBKIT
+    QWebElement elt = mainFrame()->documentElement().findFirst("body");
+    QString height = elt.styleProperty("height", QWebElement::ComputedStyle);
+    int h = height.replace("px", "").toInt(0);
+    return h;
+#else
+    qWarning() << "Not implemented: GoogleMusicApp::getBodyHeight()";
+    return 150;
+#endif
+}
+
+QVariant GoogleMusicApp::evaluateJavaScript(const QString &script)
+{
+#ifdef USE_WEBKIT
+    return mainFrame()->evaluateJavaScript(script);
+#else
+    QVariant result;
+    runJavaScript(script, [](const QVariant &result) { qDebug() << result; });
+    return result;
+#endif
+}
+
+QColor GoogleMusicApp::getBackgroundColor()
+{
+#ifdef USE_WEBKIT
+    QWebElement elt = mainFrame()->documentElement().findFirst("#main");
+
+    QString color = elt.styleProperty("background-color", QWebElement::ComputedStyle);
+#else
+    QString color("rgb(250,250,250)");
+#endif
+
+    QRegExp rx("\\d+");
+    QList<int> nums;
+    int pos = 0;
+    while((pos = rx.indexIn(color, pos)) != -1)
+    {
+        nums.append( color.mid(pos, rx.matchedLength()).toInt());
+        pos += rx.matchedLength();
+    }
+
+    int r = 0, g = 0, b = 0, a = 255;
+    if (nums.size() >= 3)
+    {
+        r = nums.at(0);
+        g = nums.at(1);
+        b = nums.at(2);
+    }
+    if (nums.size() > 3)
+        a = nums.at(3);
+
+    QColor qColor = QColor(r,g,b);
+    if (a == 0)
+        qColor = QColor(250,250,250);
+
+    return qColor;
+}
 

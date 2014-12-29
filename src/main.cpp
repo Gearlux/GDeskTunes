@@ -29,16 +29,21 @@
 
 #include <QApplication>
 #include <QtNetwork/QNetworkCookie>
-#include <QNetworkAccessManager>
 #include <QtCore/QDebug>
 #include <QSettings>
 #include <QtCore/QDir>
-#include <QWebFrame>
 #include <QFinalState>
 #include <QHistoryState>
 #include <QSignalTransition>
 #include <QSignalMapper>
 #include <QMessageBox>
+
+#ifdef USE_WEBKIT
+#include <QWebFrame>
+#include <QNetworkAccessManager>
+#else
+#include <QWebEngineSettings>
+#endif
 
 void ignoreSSLMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -74,7 +79,7 @@ int main(int argc, char *argv[])
 
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3.2");
+    QApplication::setApplicationVersion("0.3.3");
     QApplication::setOrganizationName("GearLux");
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -244,6 +249,10 @@ int main(int argc, char *argv[])
         miniplayer_visible->addTransition(trans);
         QObject::connect(trans, SIGNAL(triggered()), miniplayer, SLOT(hideTray()));
 #endif
+        // Connect the UI from the web to the ui, so we only have to implement this once
+        QObject::connect(app, SIGNAL(switchToMiniPlayer()), w->ui->actionSwitch_miniPlayer, SLOT(trigger()));
+        QObject::connect(app, SIGNAL(switchToCompactPlayer()), w->ui->actionSwitch_mini, SLOT(trigger()));
+
         // How to switch between background and main
         trans = new QSignalTransition(w->ui->actionSwitch_miniPlayer, SIGNAL(triggered()));
         main->addTransition(trans);
@@ -389,6 +398,7 @@ int main(int argc, char *argv[])
         connect(w, SIGNAL(miniPlayerOnTop(bool)), miniplayer, SLOT(setMiniPlayerOnTop(bool)));
 
         connect(miniplayer->ui->closeMini, SIGNAL(clicked(bool)), miniplayer, SLOT(hide()));
+        connect(w, SIGNAL(isDraggable(bool)), w->ui->webView, SLOT(setDraggable(bool)));
 
         qDebug() << "Starting application";
         w->load();
@@ -402,12 +412,19 @@ int main(int argc, char *argv[])
         a.setActivationWindow(w);
         connect(&a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
 
-        QWebView *web_view = w->ui->webView;
+        WebView *web_view = w->ui->webView;
+#ifdef USE_WEBKIT
         web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
         web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, debug);
         web_view->page()->setForwardUnsupportedContent(true);
+#else
+        // Here we need to set stuff to enable plugins and other things
+        // On Mac, this is not supported
 
+        // QWebEngineSettings *web_settings = QWebEngineSettings::globalSettings();
+        // web_settings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+#endif
         connect(web_view->page(), SIGNAL(unsupportedContent(QNetworkReply*)), downloader, SLOT(onUnsupportedContent(QNetworkReply*)));
 
         qDebug() << "Showing application";

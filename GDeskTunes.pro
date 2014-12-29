@@ -15,6 +15,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 CONFIG(release, release|debug): DESTDIR = $$OUT_PWD/release
 CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 
+# WebEngine implementation
+#
+# QT += webengine webenginewidgets
 # CONFIG += c++11
 
 linux: {
@@ -114,9 +117,9 @@ HEADERS += \
     src/application.h \
     src/qutils.h \
     src/statemachine.h \
-    src/flashdialog.h \
     src/slider.h \
-    src/downloader.h
+    src/downloader.h \
+    src/webview.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -168,9 +171,9 @@ SOURCES += \
     src/application.cpp \
     src/qutils.cpp \
     src/statemachine.cpp \
-    src/flashdialog.cpp \
     src/slider.cpp \
-    src/downloader.cpp
+    src/downloader.cpp \
+    src/webview.cpp
 SOURCES += \
     thirdparty/liblastfm/src/Album.cpp \
     thirdparty/liblastfm/src/Artist.cpp \
@@ -229,9 +232,7 @@ FORMS += \
     src/settings.ui \
     src/aboutdialog.ui \
     src/miniplayer.ui \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui \
-    src/flashdialog.ui \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/desktop.ui
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
@@ -271,4 +272,5 @@ DISTFILES += \
     deploy/installer/packages/com.slproweb.openssl/meta/installscript.qs \
     deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
     deploy/installer/packages/com.slproweb.openssl/meta/License.txt \
-    deploy/installer/packages/org.gearlux.gdesktunes/meta/shortcut.bat
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/shortcut.bat \
+    js/switchmini.js

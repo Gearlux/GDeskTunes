@@ -1,9 +1,20 @@
 #ifndef GOOGLEMUSICAPP_H
 #define GOOGLEMUSICAPP_H
 
-#include <QWebPage>
+#define USE_WEBKIT
 
-class GoogleMusicApp : public QWebPage
+#ifdef USE_WEBKIT
+#include <QWebPage>
+#else
+#include <QWebEnginePage>
+#endif
+
+class GoogleMusicApp :
+#ifdef USE_WEBKIT
+        public QWebPage
+#else
+        public QWebEnginePage
+#endif
 {
     Q_OBJECT
 public:
@@ -23,6 +34,9 @@ signals:
 
     void repeat(QString mode);
     void shuffle(QString mode);
+
+    void switchToMiniPlayer();
+    void switchToCompactPlayer();
 
 public slots:
     void increaseVolume();
@@ -62,6 +76,15 @@ public slots:
     void play();
     void next();
     void previous();
+
+    void on_miniButton_clicked();
+    void on_compactButton_clicked();
+
+public:
+    int getBodyWidth();
+    int getBodyHeight();
+    QVariant evaluateJavaScript(const QString &script);
+    QColor getBackgroundColor();
 
 private slots:
     void onDownloaded(QByteArray &data);

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QAbstractButton>
+#include <QLabel>
 
 namespace Ui {
 class MiniPlayer;
@@ -53,7 +54,7 @@ public slots:
     void shuffle(QString mode);
 
     void changeBackground();
-    void enableBackground();
+    void enableBackground(float opacity = 0.5);
     void disableBackground();
 
     void activateWindow();
@@ -82,6 +83,7 @@ private:
     void invert(bool inv);
     void showElements(bool visible);
     void setIcon(QAbstractButton* button, QString base);
+    void setStyle(QLabel *label, const QString &text);
 
 public:
     Ui::MiniPlayer *ui;
@@ -104,6 +106,7 @@ private:
     qint64 inactiveTiming;
 
     QPixmap album_picture;
+    QImage *background_image;
     bool large;
 
     bool on_top;
@@ -127,6 +130,9 @@ private:
 
     // Only the last update should be triggered
     bool slider_moving;
+
+    int play_mode;
+    float opacity;
 
 };
 
