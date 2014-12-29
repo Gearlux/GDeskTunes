@@ -64,16 +64,22 @@ my_componentLoaded = function()
 {
 	// don't show when updating / de-installing
 	if (installer.isInstaller()) {
-		if (installer.addWizardPage(component, "TargetWidget", QInstaller.TargetDirectory)) {
-			var widget = gui.pageWidgetByObjectName("DynamicTargetWidget");
-			if (widget != null) {
-				widget.targetDirectory.textChanged.connect(this, Component.prototype.targetChanged);
-				widget.targetChooser.clicked.connect(this, Component.prototype.chooseTarget);
+        if (installer.addWizardPage(component, "TargetWidget", QInstaller.TargetDirectory)) {
+            var widget = gui.pageWidgetByObjectName("DynamicTargetWidget");
+            if (widget != null) {
+                widget.targetDirectory.textChanged.connect(this, Component.prototype.targetChanged);
+                widget.targetChooser.clicked.connect(this, Component.prototype.chooseTarget);
 
-				widget.windowTitle = "Installation Folder";
-				widget.targetDirectory.text = Dir.toNativeSparator(installer.value("TargetDir"));
-			}
-		}
+                widget.windowTitle = "Installation Folder";
+                // Hack for QtIFW 1.4.0
+                // 1.4.0 is needed because two shortcuts crash from 1.5.0
+                // var userProfile = installer.environmentVariable("ProgramFiles");
+                // installer.setValue("ProgramFiles", userProfile + "\\GDeskTunes");
+                widget.targetDirectory.text = Dir.toNativeSparator(installer.value("TargetDir"));
+
+                widget.labelWarning.visible = false;
+            }
+        }
 	}
 }
 Component.prototype.isDefault = function()
@@ -91,7 +97,14 @@ Component.prototype.createOperations = function()
 		if (installer.value("os") === "win") {
 			component.addOperation("CreateShortcut", "@TargetDir@/GDeskTunes.exe", "@StartMenuDir@/GDeskTunes.lnk",
 				"workingDirectory=@TargetDir@");
-		}
+            if (component.userInterface( "TargetWidget" ).desktopShortcut.checked)
+            {
+                // IFW crashses on the second shortcut
+                // We will have to do it this way
+                component.addOperation("CreateShortcut", "@TargetDir@/GDeskTunes.exe", "@DesktopDir@/GDeskTunes.lnk", "workingDirectory=@TargetDir@");
+                // component.addOperation("Execute", "cmd", "/c" , "shortcut.bat", "\"@TargetDir@\\GDeskTunes.exe\"", "\"@DesktopDir@\\GDeskTunes.lnk\"", "workingDirectory=@TargetDir@");
+            }
+        }
 
 	} catch (e) {
         print(e);

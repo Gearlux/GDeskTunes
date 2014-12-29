@@ -230,7 +230,8 @@ FORMS += \
     src/aboutdialog.ui \
     src/miniplayer.ui \
     deploy/installer/packages/org.gearlux.gdesktunes/meta/targetwidget.ui \
-    src/flashdialog.ui
+    src/flashdialog.ui \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/desktop.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
@@ -269,4 +270,5 @@ DISTFILES += \
     deploy/installer/packages/com.microsoft.vcredist_2013/meta/License_2013.txt \
     deploy/installer/packages/com.slproweb.openssl/meta/installscript.qs \
     deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
-    deploy/installer/packages/com.slproweb.openssl/meta/License.txt
+    deploy/installer/packages/com.slproweb.openssl/meta/License.txt \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/shortcut.bat

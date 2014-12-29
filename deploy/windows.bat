@@ -16,7 +16,9 @@ del GDeskTunes\*.moc
 windeployQt GDeskTunes\GDeskTunes.exe
 REM zip -r GDeskTunes_windows.zip GDeskTunes
 xcopy /S /Y GDeskTunes\* installer\packages\org.gearlux.gdesktunes\data
+xcopy /Y installer\packages\org.gearlux.gdesktunes\meta\shortcut.bat installer\packages\org.gearlux.gdesktunes\data
 REM type nul >> installer\packages\org.gearlux.gdesktunes\data\Uninstall.exe
 del /Q GDeskTunesInstaller.exe
 C:\Qt\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
+REM C:\Qt\QtIFW-1.4.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
 REM E:\Source\Qt\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe

@@ -4,7 +4,7 @@
     <Version>0.3</Version>
     <Title>GDeskTunes Installer</Title>
     <Publisher>Gearlux</Publisher>
-	<ProductUrl>http://gearlux.github.io/GDeskTunes/</ProductUrl>
+    <ProductUrl>http://gearlux.github.io/GDeskTunes/</ProductUrl>
     <StartMenuDir>GDeskTunes</StartMenuDir>
 	<!--
 	<Logo>logo.png</Logo>
@@ -12,4 +12,5 @@
 	-->
     <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
     <TargetDir>@ApplicationsDir@/GDeskTunes</TargetDir>
+    <RunProgram>@TargetDir@/GDeskTunes.exe</RunProgram>
 </Installer>
