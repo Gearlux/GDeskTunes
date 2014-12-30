@@ -1,28 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>InstallationWidget</class>
+ <class>TargetWidget</class>
  <widget class="QWidget" name="TargetWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>309</width>
+    <height>131</height>
+   </rect>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Please specify the folder where GDeskTunes will be installed.</string>
-       </property>
-      </widget>
-    </item>
-    <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLineEdit" name="targetDirectory"/>
-       </item>
-       <item>
-        <widget class="QToolButton" name="targetChooser"/>
-       </item>
-      </layout>
-    </item>
-    <item>
-      <widget class="QLabel" name="labelOverwrite"/>
-    </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Please specify the folder where GDeskTunes will be installed.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="targetDirectory"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="targetChooser"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelOverwrite"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="desktopShortcut">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Create Desktop Shortcut </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelWarning">
+     <property name="styleSheet">
+      <string notr="true">color: red</string>
+     </property>
+     <property name="text">
+      <string>You must have enough privileges, otherwise the installer crashes.</string>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
-</widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>desktopShortcut</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelWarning</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>117</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -273,6 +273,7 @@ DISTFILES += \
     deploy/installer/packages/com.slproweb.openssl/meta/installscript.qs \
     deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
     deploy/installer/packages/com.slproweb.openssl/meta/License.txt \
+    deploy/installer/packages/org.gearlux.gdesktunes/meta/shortcut.bat \
     js/switchmini.js
 
 OBJECTIVE_SOURCES += \

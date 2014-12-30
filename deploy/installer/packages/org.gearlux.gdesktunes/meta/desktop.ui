@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InstallationWidget</class>
+ <widget class="QWidget" name="DesktopWidget">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="desktopShortcut">
+     <property name="text">
+      <string>Create Desktop Shortcut</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="launchGDeskTunes">
+     <property name="text">
+      <string>Run GDeskTunes after installation</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+</ui>
