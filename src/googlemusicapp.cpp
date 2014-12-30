@@ -157,7 +157,7 @@ void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QS
 
     current_rating = -1;
 
-    emit nowPlaying(title, artist, album, duration);
+    emit nowPlaying(title, artist, album, art, duration);
 
     int rate = getRating();
     emit rating(rate);

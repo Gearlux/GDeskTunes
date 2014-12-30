@@ -399,6 +399,7 @@ int main(int argc, char *argv[])
 
         connect(miniplayer->ui->closeMini, SIGNAL(clicked(bool)), miniplayer, SLOT(hide()));
         connect(w, SIGNAL(isDraggable(bool)), w->ui->webView, SLOT(setDraggable(bool)));
+        connect(trayIcon, SIGNAL(next()), app, SLOT(next()));
 
         qDebug() << "Starting application";
         w->load();
@@ -414,9 +415,11 @@ int main(int argc, char *argv[])
 
         WebView *web_view = w->ui->webView;
 #ifdef USE_WEBKIT
-        web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->setNetworkAccessManager(manager);
+        web_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
         web_view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, debug);
+        web_view->page()->settings()->setAttribute(QWebSettings::NotificationsEnabled, true);
+        web_view->page()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
         web_view->page()->setForwardUnsupportedContent(true);
 #else
         // Here we need to set stuff to enable plugins and other things

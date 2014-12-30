@@ -45,6 +45,9 @@ Settings::Settings(GDeskTunes *parent) :
 
 #ifdef Q_OS_MAC
     ui->minimize_to_tray->hide();
+#else
+   ui->album_art_notifications->hide();
+   ui->iTunes_notifications->hide();
 #endif
 
     QStringList styles = getStyles();

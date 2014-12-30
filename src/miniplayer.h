@@ -45,7 +45,7 @@ signals:
 public slots:
     void placeMiniPlayer(QPoint& pt);
 
-    void nowPlaying(QString title, QString artist, QString album, int duration);
+    void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
     void playbackTime(int current, int total);
     void rating(int rate);
     void albumArt(QPixmap pixmap);

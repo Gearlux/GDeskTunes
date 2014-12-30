@@ -18,7 +18,7 @@ CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
 # WebEngine implementation
 #
 # QT += webengine webenginewidgets
-# CONFIG += c++11
+CONFIG += c++11
 
 linux: {
 system(thirdparty/bootstrap.sh)
@@ -65,14 +65,14 @@ ICON = g_desk_tunes.icns
 OBJECTIVE_SOURCES += \
     mac/cocoainit.mm \
     mac/mediakeys.mm \
-	\
-        thirdparty/SPMediaKeyTap/SPMediaKeyTap.mm \
+    \
+    thirdparty/SPMediaKeyTap/SPMediaKeyTap.mm \
     thirdparty/SPMediaKeyTap/SPInvocationGrabbing/NSObject+SPInvocationGrabbing.mm
 
 HEADERS += \
-	mac/cocoainit.h \
+    mac/cocoainit.h \
     mac/mediakeys.h \
-	\
+    \
     thirdparty/liblastfm/src/mac/MNetworkConnectionMonitor.h \
     thirdparty/liblastfm/src/mac/ProxyDict.h
 	
@@ -119,7 +119,8 @@ HEADERS += \
     src/statemachine.h \
     src/slider.h \
     src/downloader.h \
-    src/webview.h
+    src/webview.h \
+    mac/notificationcenter.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \
@@ -273,3 +274,6 @@ DISTFILES += \
     deploy/installer/packages/com.slproweb.openssl/meta/package.xml \
     deploy/installer/packages/com.slproweb.openssl/meta/License.txt \
     js/switchmini.js
+
+OBJECTIVE_SOURCES += \
+    mac/notificationcenter.mm

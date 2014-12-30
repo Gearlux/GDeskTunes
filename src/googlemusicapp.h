@@ -22,7 +22,7 @@ public:
 
 signals:
     void isPlaying(int playing);
-    void nowPlaying(QString title, QString artist, QString album, int duration);
+    void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
     void albumArt(QPixmap array);
     void rating(int rating);
     void playbackTime(int current, int total);

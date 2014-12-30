@@ -32,7 +32,7 @@ public slots:
     void login(QString username, QString password);
     void logout();
 
-    void nowPlaying(QString title, QString artist, QString album, int duration);
+    void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
 

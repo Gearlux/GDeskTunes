@@ -11,6 +11,8 @@
 
 SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
     QSystemTrayIcon(parent),
+    use_album_art(false),
+    itunes_like(false),
     tray_icon(false),
     last_activation(0)
 {
@@ -32,14 +34,24 @@ SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
     menu->addAction(parent->ui->actionQuit_GDeskTunes);
 
     setContextMenu(menu);
+#else
+    mac_center = new MacNotificationCenter();
+    QObject::connect(mac_center, SIGNAL(next()), this, SIGNAL(next()));
 #endif
 }
 
-void SystemTrayIcon::nowPlaying(QString title, QString artist, QString album, int duration)
+void SystemTrayIcon::nowPlaying(QString title, QString artist, QString album, QString art, int duration)
 {
     qDebug() << "SystemTrayIcon::nowPlaying(" << title << "," << artist << "," << album << "," << duration << ")";
     if (show_notifications)
+    {
+#ifdef Q_OS_MAC
+        mac_center->showMessage(title, artist + " (" + album + ")", art, itunes_like, use_album_art);
+#else
+        Q_UNUSED(art);
         showMessage(title, artist + " (" + album + ")", QSystemTrayIcon::MessageIcon(NoIcon), 1000);
+#endif
+    }
 }
 
 void SystemTrayIcon::save()
@@ -49,6 +61,8 @@ void SystemTrayIcon::save()
 
     settings.setValue("show_notifications", this->show_notifications);
     settings.setValue("tray_icon", this->tray_icon);
+    settings.setValue("album_art_notifications", this->use_album_art);
+    settings.setValue("itunes_notifications", this->itunes_like);
 }
 
 void SystemTrayIcon::load()
@@ -58,6 +72,8 @@ void SystemTrayIcon::load()
 
     this->setTrayIcon(settings.value("tray_icon", false).toBool());
     this->setShowNotifications(settings.value("show_notifications", true).toBool());
+    this->setAlbumArtNotifications(settings.value("album_art_notifications", true).toBool());
+    this->setITunesNotifications(settings.value("itunes_notifications", true).toBool());
 
     emit trayIcon(this->tray_icon);
 }

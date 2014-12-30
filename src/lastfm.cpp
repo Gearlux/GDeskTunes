@@ -87,11 +87,11 @@ void LastFM::logout()
     emit authorized(false);
 }
 
-void LastFM::nowPlaying(QString title, QString artist, QString album, int duration)
+void LastFM::nowPlaying(QString title, QString artist, QString album, QString art, int duration)
 {
     if (isAuthorized() && scrobble)
     {
-        qDebug() << "LastFM::nowPlaying(" << title << "," << artist << "," << album << "," << duration << ")";
+        qDebug() << "LastFM::nowPlaying(" << title << "," << artist << "," << album << "," << art << "," << duration << ")";
         if (current_track.duration() != -1)
         {
             unsigned int playtime = current_track.timestamp().secsTo(QDateTime::currentDateTime());

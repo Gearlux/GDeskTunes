@@ -149,7 +149,7 @@ void MiniPlayer::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void MiniPlayer::nowPlaying(QString title, QString artist, QString album, int duration)
+void MiniPlayer::nowPlaying(QString title, QString artist, QString album, QString, int duration)
 {
     qDebug() << "MiniPlayer::nowPlaying(" << title << "," << artist << "," << album << "," << duration << ")";
     ui->title->setText(title);
