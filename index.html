@@ -7,12 +7,14 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" type="text/css" href="slick/slick.css" media="screen" />
     <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
+
   <body>
     <div class="wrapper">
       <header>
@@ -20,45 +22,137 @@
         <p class="header">Desktop Player for Google Play Music™</p>
 
         <ul>
+          <li class="download"><a class="buttons" href="https://github.com/Gearlux/GDeskTunes/releases/download/v0.3.3/GDeskTunesInstaller.exe">Windows</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/Gearlux/GDeskTunes/releases/download/v0.3.3/GDeskTunesInstaller.dmg">Mac</a></li>
+          <!--
           <li class="download"><a class="buttons" href="https://github.com/Gearlux/GDeskTunes/zipball/master">Download ZIP</a></li>
           <li class="download"><a class="buttons" href="https://github.com/Gearlux/GDeskTunes/tarball/master">Download TAR</a></li>
+           -->
           <li><a class="buttons github" href="https://github.com/Gearlux/GDeskTunes">View On GitHub</a></li>
         </ul>
+        <!-- Section for PayPal Script -->
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+        </form>
 
         <p class="header">This project is maintained by <a class="header name" href="https://github.com/Gearlux">Gearlux</a></p>
-
-
       </header>
+        
+      <!- Slick code -->
+      <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+      <script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+      <script type="text/javascript" src="slick/slick.min.js"></script>
+        
       <section>
         <h1>
-<a id="gdesktunes" class="anchor" href="#gdesktunes" aria-hidden="true"><span class="octicon octicon-link"></span></a>GDeskTunes</h1>
+            <a id="gdesktunes" class="anchor" href="#gdesktunes" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+            GDeskTunes - for Google Play Music™
+        </h1>
 
-<h3>
-<a id="for-google-play-music" class="anchor" href="#for-google-play-music" aria-hidden="true"><span class="octicon octicon-link"></span></a>for Google Play Music™</h3>
+        <h3>
+            <a id="multiplatform" class="anchor" href="#multiplatform" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+            Multi Platform Desktop Player for Google Play Music™ that integrates beatifully in your OS.
+        </h3>
+            <div>
+            <div class="slider platforms">
+                <div><a href="pictures/platforms/windows.png"><p style="margin:0"><img src="pictures/platforms/windows.png"></p></a><strong>Windows</strong></div>
+                <div><a href="pictures/platforms/mac.png"><p style="margin:0"><img src="pictures/platforms/mac.png"></p></a><strong>Mac</strong></div>
+            </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    $('.platforms').slick();
+                });
+            </script>
+          
+        <h3>Features</h3>
 
-<p><img src="https://raw.githubusercontent.com/gearlux/gdesktunes/gh-pages/pictures/gdesktunes_songs_spotify_black.png" alt=""></p>
+        <ul>
+            <li>
+                <strong><a href="#multiplatform">Multi Platform</a></strong>: Use the same player on your desktop, at home or at work. No need to switch to a desktop player with less functionality.
+            </li>
+            <li>
+                <strong><a href="#customstyles">Custom Styles</a></strong>: Use custom styles built into GDeskTunes to make it look beautiful, or stick with Google's original theme.
+            </li>
+            <li>
+                <strong><a href="#appearance">Adjustable Appearance</a></strong>: Adjust the application bar of Google Play Music™ to navigate your music easily and switch fast between the different player modes.
+            </li>
+            <li>
+                <strong>Media Keys</strong>: Control your music without having to switch applications. GDeskTunes responds to the media keys built in your computer, allowing you to easily control the playback of your music no matter what you're doing.
+            </li>
+            <li>
+                <strong>Mini Layout</strong>: Switch to a minimal layout so you can continue your work while viewing the song that is playing.
+            </li>
+            <li>
+                <strong>Last.Fm Integration</strong>: Update your Now Playing status and scrobble tracks to Last.fm.
+            </li>
+            <li>
+                <strong>Notification</strong>: Get notifications whenever the currently playing song changes.
+            </li>
+            <li>
+                <strong>Mini Player</strong>: Access the mini player from your tray icon.
+            </li>
+        </ul>
 
-<h2>
-<a id="multi-platform-desktop-player-for-google-play-music-that-integrates-beatifully-in-your-os" class="anchor" href="#multi-platform-desktop-player-for-google-play-music-that-integrates-beatifully-in-your-os" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multi Platform Desktop Player for Google Play Music™ that integrates beatifully in your OS.</h2>
+        <h3>
+            <a id="customstyles" class="anchor" href="#customstyles" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+            Custom Styles
+        </h3>
+          
+            <p>Use custom styles built into GDeskTunes to make it look beautiful, or stick with Google's original theme.</p>
 
-<h3>
-<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
+            <div>
+                <div class="feature custom">
+                    <div><p style="margin:0"><img src="pictures/styles/original.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/styles/cocoa.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/styles/darkflat.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/styles/dark.png"></p></div>
+                    <div><p style="margin:0"><img src="pictures/styles/spotifyblack.png"></p></div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    $('.custom').slick({
+                        dots: true,
+                        infinite: true,
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    });
+                });
+            </script>
+                    
+        <h3>
+            <a id="appearance" class="anchor" href="#appearance" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+            Adjustable Appearance
+        </h3>
+          
+            <p>Adjust the application bar of Google Play Music™ to navigate your music easily and switch fast between the different player modes.</p>
+            <div>
+                <div class="slider bar">
+                    <div><p style="margin:0"><img src="pictures/bar/original.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/bar/without_logo.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/bar/without_links.png"/></p></div>
+                    <div><p style="margin:0"><img src="pictures/bar/links.png"/></p></div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    $('.bar').slick({
+                        dots: true,
+                        infinite: true,
+                        speed: 500,
+                        fade: true,
+                        slide: 'div',
+                        cssEase: 'linear'
+                    });
+                });
+            </script>
 
-<ul>
-<li>
-<strong>Media Keys</strong>: Control your music without having to switch applications. Radiant Player responds to the media keys built in your computer, allowing you to easily control the playback of your music no matter what you're doing.</li>
-<li>
-<strong>Mini Layout</strong>: Switch to a minimal layout so you can continue your work while viewing the song that is playing.</li>
-<li>
-<strong>Last.Fm Integration</strong>: Update your Now Playing status and scrobble tracks to Last.fm.</li>
-<li>
-<strong>Custom Styles</strong>: Use custom styles built into GDeskTunes to make it look beautiful, or stick with Google's original theme.</li>
-<li>
-<strong>Notification</strong>: Get notifications whenever the currently playing song changes.</li>
-<li>
-<strong>Mini Player</strong>: Access the mini player from your tray icon.</li>
-</ul>
-
+            <div><img src="pictures/Appearance.png"/></div>
+          
 <h3>
 <a id="downloads" class="anchor" href="#downloads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloads</h3>
 
@@ -85,7 +179,7 @@
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		          <script type="text/javascript">
+                  <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -96,5 +190,11 @@
             } catch(err) {}
           </script>
 
+      <style>
+          
+          .slick-prev:before, .slick-next:before { 
+            color:black !important;
+          }
+      </style>
   </body>
 </html>
