@@ -23,6 +23,8 @@ public slots:
 
 public:
     void keyPressEvent(QKeyEvent *event);
+
+private:
     void setText(QString msg, QString link);
 
 private:

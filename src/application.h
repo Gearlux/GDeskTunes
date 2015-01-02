@@ -3,29 +3,44 @@
 
 #include "thirdparty/qt-solutions/qtsingleapplication/src/QtSingleApplication"
 
-class Application : public QtSingleApplication
+// Forward declarations
+class QMainWindow;
+class QSystemTrayIcon;
+
+/**
+ * @brief The DockedApplication class.
+ *
+ * The DockedApplication class implements functionality specifically for Mac to
+ * implement the dockClicked() signal.
+ *
+ * In order to implement this, the application needs to be aware of the system tray
+ * icon and all other active windows. Use the appropriate methods to register them.
+ *
+ * If done correctly, you can safely use the dockClicked() signal to connect your
+ * application's functionality.
+ */
+class DockedApplication : public QtSingleApplication
 {
     Q_OBJECT
 public:
-    explicit Application(int &argc, char **argv, bool GUIenabled = true);
+    explicit DockedApplication(int &argc, char **argv, bool GUIenabled = true);
 
 signals:
-    void applicationActivated();
-    void applicationInActivated();
-    void applicationHidden();
-    void applicationSuspended();
+    void dockClicked();
 
-    void onDockTrueTrue();
-    void onDockTrueFalse();
-    void onDockFalseTrue();
-    void onDockFalseFalse();
+public:
+    void setTrayIcon(QSystemTrayIcon *tray);
+    void addWindow(QMainWindow *window);
 
-public slots:
+private slots:
+    // Connected slots
     void onApplicationStateChanged(Qt::ApplicationState state);
-    void trayIconClicked();
+    void onTrayIconTriggered();
+    void onWindowDestroyed(QObject *);
 
 private:
     qint64 tray_icon_time;
+    QList<QMainWindow *> windows;
 };
 
 #endif // APPLICATION_H

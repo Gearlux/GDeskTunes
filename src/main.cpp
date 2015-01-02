@@ -86,24 +86,32 @@ int main(int argc, char *argv[])
     // Capture multi media keys
     QApplication::setAttribute(Qt::AA_CaptureMultimediaKeys);
 #endif
+
 #ifdef Q_OS_MAC
     // Make sure no icons are shown in menus on Mac
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
-
     // Create a single application
-    Application a(argc, argv);
-    a.setObjectName("Application");
+    DockedApplication* a = new DockedApplication(argc, argv);
 
-    bool debug = a.arguments().contains("-debug");
+    // All object should have a name
+    a->setObjectName("Application");
+
+    // It is possible that all windows run in the background
+    a->setQuitOnLastWindowClosed(false);
+
+    // Check if "-debug" was specified on the command line and
+    // install a new error handles to suppress SSL messages
+    bool debug = a->arguments().contains("-debug");
     qDebug() << "Debug mode: " << debug;
     if (debug)
     {
         qInstallMessageHandler(ignoreSSLMessages);
     }
 
-
+    // Check if ssl is supported.
+    // This is needed for the Google Play.
     if (!QSslSocket::supportsSsl())
     {
         QMessageBox box;
@@ -121,18 +129,14 @@ int main(int argc, char *argv[])
         return box.exec();
     }
 
-
-    // It is possible that all windows run in the background
-    a.setQuitOnLastWindowClosed(false);
-
-    if (a.isRunning())
+    if (a->isRunning())
     {
         // Get the command line arguments and remove the first parameter
         // which is the program name
-        QStringList args = a.arguments();
+        QStringList args = a->arguments();
         args.removeAt(0);
         qDebug() << "Send activate to other application " + args.join(" ");
-        a.sendMessage("activate " + args.join(" "));
+        a->sendMessage("activate " + args.join(" "));
     }
     else
     {
@@ -141,26 +145,33 @@ int main(int argc, char *argv[])
         GDeskTunes *w = new GDeskTunes();
         w->setObjectName("GDeskTunes");
         w->setWindowIcon(QIcon(":/icons/gdesktunes.iconset/icon_128x128.png"));
+
         qDebug() << "Create LastFM";
         LastFM *last_fm = new LastFM(w);
         last_fm->setObjectName("LastFM");
+
         qDebug() << "Create GoogleMusicApp";
         GoogleMusicApp *app = new GoogleMusicApp(w);
         app->setObjectName("GoogleMusicApp");
+
         qDebug() << "Create Settings";
         Settings *settings = new Settings(w);
         settings->setObjectName("Settings");
+
         qDebug() << "Create CookeJar";
         CookieJar *jar = new CookieJar();
         jar->setObjectName("CookieJar");
+
         qDebug() << "Create SystemTrayIcon";
         SystemTrayIcon *trayIcon = new SystemTrayIcon(w);
         trayIcon->setObjectName("SystemTrayIcon");
         trayIcon->show();
+
         qDebug() << "Create MiniPlayer";
         MiniPlayer *miniplayer = new MiniPlayer();
         miniplayer->setObjectName("MiniPlayer");
 
+        qDebug() << "Create Downloader";
         Downloader *downloader = new Downloader(w);
         downloader->setObjectName("Downloader");
 
@@ -236,13 +247,15 @@ int main(int argc, char *argv[])
 
         QSignalTransition *trans;
 #ifdef Q_OS_MAC
-        trans = new QSignalTransition(&a, SIGNAL(onDockFalseFalse()));
-        background->addTransition(trans);
-        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
+        QObject::connect(a, SIGNAL(dockClicked()), w, SLOT(show()));
 
-        trans = new QSignalTransition(&a, SIGNAL(onDockFalseTrue()));
-        mini->addTransition(trans);
-        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
+//        trans = new QSignalTransition(a, SIGNAL(onDockFalseFalse()));
+//        background->addTransition(trans);
+//        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
+
+//        trans = new QSignalTransition(a, SIGNAL(onDockFalseTrue()));
+//        mini->addTransition(trans);
+//        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
 #endif
 #ifdef Q_OS_WIN
         trans = new QSignalTransition(miniplayer, SIGNAL(windowDeactivated()));
@@ -318,7 +331,8 @@ int main(int argc, char *argv[])
         machine->start();
 
         // Make sure the application receives the tray clicks
-        connect(trayIcon, SIGNAL(triggered()), &a, SLOT(trayIconClicked()));
+        a->setTrayIcon(trayIcon);
+        a->addWindow(miniplayer);
 
         QObject::connect(miniplayer, SIGNAL(keyPressed(QKeyEvent*)), w, SLOT(keyPressEvent(QKeyEvent*)));
         QObject::connect(settings, SIGNAL(keyPressed(QKeyEvent*)), w, SLOT(keyPressEvent(QKeyEvent*)));
@@ -355,12 +369,12 @@ int main(int argc, char *argv[])
         connectSlotsByName(app, miniplayer);
 
         // Save status on exit
-        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
-        connect(&a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
-        connect(&a, SIGNAL(aboutToQuit()), w, SLOT(save()));
-        connect(&a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
-        connect(&a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
-        connect(&a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
+        connect(a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), w, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
+        connect(a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
 
         // Apply website customizations
         connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
@@ -409,8 +423,8 @@ int main(int argc, char *argv[])
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
 
-        a.setActivationWindow(w);
-        connect(&a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
+        a->setActivationWindow(w);
+        connect(a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
 
         WebView *web_view = w->ui->webView;
 #ifdef USE_WEBKIT
@@ -434,7 +448,7 @@ int main(int argc, char *argv[])
         w->restore();
         w->show();
 
-        exit_result = a.exec();
+        exit_result = a->exec();
     }
 
     return exit_result;

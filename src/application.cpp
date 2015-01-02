@@ -1,73 +1,72 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "application.h"
 
 #include <QDebug>
-#include <QWindow>
-#include <QWidget>
 #include <QDateTime>
+#include <QSystemTrayIcon>
+#include <QMainWindow>
 
-Application::Application(int &argc, char **argv, bool GUIenabled) :
+DockedApplication::DockedApplication(int &argc, char **argv, bool GUIenabled) :
     QtSingleApplication(argc,argv, GUIenabled),
     tray_icon_time(0)
 {
     QObject::connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), this, SLOT(onApplicationStateChanged(Qt::ApplicationState)));
 }
 
-void Application::onApplicationStateChanged(Qt::ApplicationState state)
+void DockedApplication::onApplicationStateChanged(Qt::ApplicationState state)
 {
+    qDebug() << "Application::onApplicationStateChanged(" << state << ")";
+    qDebug() << "   activeWindow(): " << activeWindow();
+    qDebug() << "   activationWindow():" << activationWindow();
+    qDebug() << "   just_clicked:" << ((tray_icon_time + 100) > QDateTime::currentMSecsSinceEpoch());
     switch(state)
     {
     case  Qt::ApplicationActive:
     {
+        bool visible_window = false;
+        for(int i=0; i<windows.count(); ++i)
+        {
+            if (windows.at(i)->isVisible())
+                visible_window = true;
+        }
         qint64 current = QDateTime::currentMSecsSinceEpoch();
         bool just_clicked = tray_icon_time + 100 > current;
-        bool with_focus = activeWindow() != 0;
-        qDebug() << "Application::onApplicationStateChanged(ApplicationActive)";
-        emit applicationActivated();
-
-        qDebug() << "Application::onDockClick(" << just_clicked << "," << with_focus << ")" << current << tray_icon_time;
-        if (just_clicked && with_focus)
+        if (activeWindow() == 0 && !just_clicked && !visible_window)
         {
-            qDebug() << "emit onDockTrueTrue()";
-            emit onDockTrueTrue();
+            emit dockClicked();
+            return;
         }
-        if (!just_clicked && with_focus)
+        if (activeWindow() != 0 && !just_clicked)
         {
-            qDebug() << "emit onDockFalseTrue()";
-            emit onDockFalseTrue();
+            emit dockClicked();
+            return;
         }
-        if (just_clicked && !with_focus)
-        {
-            qDebug() <<  "emit onDockTrueFalse()";
-            emit onDockTrueFalse();
-        }
-        if (!just_clicked && !with_focus)
-        {
-            qDebug() << "emit onDockFalseFalse()";
-            emit onDockFalseFalse();
-        }
+        break;
     }
-        break;
-    case Qt::ApplicationInactive:
-        qDebug() << "Application::onApplicationStateChanged(ApplicationInactive)";
-        emit applicationInActivated();
-        break;
-    case Qt::ApplicationHidden:
-        qDebug() << "Application::onApplicationStateChanged(ApplicationHidden)";
-        emit applicationHidden();
-        break;
-    case Qt::ApplicationSuspended:
-        qDebug() << "Application::onApplicationStateChanged(ApplicationSuspended)";
-        emit applicationSuspended();
-        break;
     default:
         break;
     }
 }
 
-void Application::trayIconClicked()
+void DockedApplication::setTrayIcon(QSystemTrayIcon *tray)
 {
+    QObject::connect(tray, SIGNAL(triggered()), this, SLOT(onTrayIconTriggered()));
+}
+
+void DockedApplication::onTrayIconTriggered()
+{
+    qDebug() << "Application::onTrayIconTriggered()";
     tray_icon_time = QDateTime::currentMSecsSinceEpoch();
-    qDebug() << "Application::onTrayIconClicked()" << tray_icon_time;
+}
+
+void DockedApplication::addWindow(QMainWindow *window)
+{
+    windows.append(window);
+    QObject::connect(window, SIGNAL(destroyed(QObject*)), this, SLOT(onWindowDestroyed(QObject*)));
+}
+
+void DockedApplication::onWindowDestroyed(QObject *object)
+{
+    windows.removeAll(dynamic_cast<QMainWindow*>(object));
 }
