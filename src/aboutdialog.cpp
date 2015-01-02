@@ -94,7 +94,7 @@ public:
 };
 
 AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
+    KeyForwarder<QDialog, MainWindow>(parent),
     ui(new Ui::AboutDialog)
 {
     qDebug() << "AboutDialog::AboutDialog(" << parent << ")";
@@ -199,26 +199,4 @@ void AboutDialog::checkVersion(QNetworkReply *reply)
 void AboutDialog::donate()
 {
     QDesktopServices::openUrl(QUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=9DG9CCT9C7GQN&lc=BE&item_name=GearLux&item_number=GDeskTunes&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"));
-}
-
-void AboutDialog::keyPressEvent(QKeyEvent *event)
-{
-    switch(event->key())
-    {
-    case Qt::Key_MediaPlay:
-    case Qt::Key_MediaNext:
-    case Qt::Key_MediaPrevious:
-    {
-        MainWindow *w = qobject_cast<MainWindow*>(parent());
-        if (w != 0)
-        {
-            qDebug() << "About dialog captures media key";
-            w->keyPressEvent(event);
-            break;
-        }
-    }
-    default:
-        QDialog::keyPressEvent(event);
-        break;
-    }
 }

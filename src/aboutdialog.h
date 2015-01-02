@@ -4,11 +4,20 @@
 #include <QDialog>
 #include <QNetworkReply>
 
+#include "keys.h"
+#include "mainwindow.h"
+
 namespace Ui {
 class AboutDialog;
 }
 
-class AboutDialog : public QDialog
+/**
+ * @brief The AboutDialog class.
+ *
+ * The About Dialog implements a Dialog which can check for newer
+ * versions on github.
+ */
+class AboutDialog : public KeyForwarder<QDialog, MainWindow>
 {
     Q_OBJECT
 
@@ -16,13 +25,10 @@ public:
     explicit AboutDialog(QWidget *parent = 0);
     ~AboutDialog();
 
-public slots:
+private slots:
     void donate();
 
     void checkVersion(QNetworkReply *reply);
-
-public:
-    void keyPressEvent(QKeyEvent *event);
 
 private:
     void setText(QString msg, QString link);
