@@ -4,8 +4,11 @@
 #include <QDialog>
 #include <QNetworkReply>
 
-#include "keys.h"
+#include "mediakey.h"
 #include "mainwindow.h"
+
+// Forward declarations
+class VersionCheck;
 
 namespace Ui {
 class AboutDialog;
@@ -14,10 +17,16 @@ class AboutDialog;
 /**
  * @brief The AboutDialog class.
  *
- * The About Dialog implements a Dialog which can check for newer
- * versions on github.
+ * The About Dialog implements a custom dialog which checks
+ * for newer version on github.
+ *
+ * If you create a dialog and don't call show() before checking
+ * for updates, the dialog will automically show() if updates are
+ * available. If no updates are available or no connection with the
+ * internet can be made, this dialog will automatically close.
+ * (unless of course, you have called the show() function first)
  */
-class AboutDialog : public KeyForwarder<QDialog, MainWindow>
+class AboutDialog : public MediaKeySource<QDialog, MainWindow>
 {
     Q_OBJECT
 
@@ -25,10 +34,11 @@ public:
     explicit AboutDialog(QWidget *parent = 0);
     ~AboutDialog();
 
+    void checkForUpdates();
+
 private slots:
     void donate();
-
-    void checkVersion(QNetworkReply *reply);
+    void onFinished(VersionCheck *version);
 
 private:
     void setText(QString msg, QString link);

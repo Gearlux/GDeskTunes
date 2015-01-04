@@ -537,10 +537,13 @@ void MainWindow::hide()
 void MainWindow::about(bool show)
 {
     qDebug() << "MainWindow::about(" << show << ")";
-    QDialog *about = new AboutDialog();
+    AboutDialog *about = new AboutDialog();
     about->setAttribute( Qt::WA_DeleteOnClose, true );
     if (show)
+    {
         about->show();
+    }
+    about->checkForUpdates();
 }
 
 void MainWindow::createThumbnailToolBar()

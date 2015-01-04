@@ -1,11 +1,12 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "application.h"
 
+#include <QMainWindow>
+#include <QSystemTrayIcon>
+
 #include <QDebug>
 #include <QDateTime>
-#include <QSystemTrayIcon>
-#include <QMainWindow>
 
 DockedApplication::DockedApplication(int &argc, char **argv, bool GUIenabled) :
     QtSingleApplication(argc,argv, GUIenabled),

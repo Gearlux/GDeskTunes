@@ -195,7 +195,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="paypalButton">
         <property name="maximumSize">
          <size>
           <width>90</width>
@@ -266,7 +266,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>paypalButton</sender>
    <signal>clicked()</signal>
    <receiver>AboutDialog</receiver>
    <slot>donate()</slot>
