@@ -113,8 +113,6 @@ void VersionCheck::check()
 {
     QNetworkAccessManager* network_manager = new QNetworkAccessManager(this);
     QObject::connect(network_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onFinished(QNetworkReply*)));
-
-    QUrl url = QUrl("https://api.github.com/repos/Gearlux/GDeskTunes/releases");
     network_manager->get(QNetworkRequest(this->url));
 }
 

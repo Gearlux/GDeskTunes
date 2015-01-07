@@ -1,3 +1,4 @@
+// Refactoring status: OK
 // #define QT_NO_DEBUG_OUTPUT
 
 #include "application.h"
@@ -57,7 +58,6 @@ void DockedApplication::setTrayIcon(QSystemTrayIcon *tray)
 
 void DockedApplication::onTrayIconTriggered()
 {
-    qDebug() << "Application::onTrayIconTriggered()";
     tray_icon_time = QDateTime::currentMSecsSinceEpoch();
 }
 
