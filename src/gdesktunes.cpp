@@ -353,6 +353,11 @@ void GDeskTunes::receiveMessage(const QString &msg)
     qDebug() << "GDeskTunes::receiveMessage(" << msg << ")";
     QStringList commands = msg.split(" ");
 
+    if (!isVisible())
+    {
+        show();
+    }
+
     qDebug() << "Received message" << msg;
     if (commands.contains("--mini"))
     {

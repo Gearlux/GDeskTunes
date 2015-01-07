@@ -14,33 +14,6 @@
 if (typeof window.GMNavigation === 'undefined') {
     window.GMNavigation = true;
 
-    function notifyMe() {
-      // Let's check if the browser supports notifications
-      if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-      }
-
-      // Let's check if the user is okay to get some notification
-      else if (Notification.permission === "granted") {
-        // If it's okay let's create a notification
-        var notification = new Notification("Hi there!");
-      }
-
-      // Otherwise, we need to ask the user for permission
-      // Note, Chrome does not implement the permission static property
-      // So we have to check for NOT 'denied' instead of 'default'
-      else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function (permission) {
-          // If the user is okay, let's create a notification
-          if (permission === "granted") {
-            var notification = new Notification("Hi there!");
-          }
-        });
-      }
-
-      // At last, if the user already denied any notification, and you
-      // want to be respectful there is no need to bother them any more.
-    }
     
     var logoContainer = document.querySelector('#oneGoogleWrapper > div:first-child > div:first-child > div:nth-child(2) > div:first-child');
     // var buttonsEnabled = window.GoogleMusicApp.preferenceForKey("navigation.buttons.enabled");
@@ -55,7 +28,7 @@ if (typeof window.GMNavigation === 'undefined') {
         backButton.className = 'gm-nav-button';
         backButton.title = 'Back';
         backButton.id = 'gm-back';
-        backButton.addEventListener('click', function() { notifyMe; });
+        backButton.addEventListener('click', function() { window.history.back(); });
         
         var forwardButton = document.createElement('button');
         forwardButton.className = 'gm-nav-button';

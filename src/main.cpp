@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
     QApplication::setApplicationDisplayName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3.2");
+    QApplication::setApplicationVersion("0.3.4");
     QApplication::setOrganizationName("GearLux");
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
