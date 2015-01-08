@@ -257,7 +257,7 @@
   <customwidget>
    <class>QtWaitingSpinner</class>
    <extends>QWidget</extends>
-   <header>thirdparty/QtWaitingSpinner/QtWaitingSpinner.h</header>
+   <header>../thirdparty/QtWaitingSpinner/QtWaitingSpinner.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
