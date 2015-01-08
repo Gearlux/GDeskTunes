@@ -21,19 +21,27 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QtCore>
+#ifndef GUI_H
+#define GUI_H
 
-#include <stdlib.h>
+#include <QDialog>
 
-#include "gui.h"
+class QLabel;
+class QPushButton;
+class FortuneServer;
+class Protocol;
 
-int main(int argc, char *argv[])
+class Gui : public QDialog
 {
-    QApplication app(argc, argv);
-    Gui server;
-    server.show();
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    int x = server.exec();
-    return x;
-}
+    Q_OBJECT
+
+public:
+    Gui(QWidget *parent = 0);
+
+private:
+    QLabel *statusLabel;
+    QPushButton *quitButton;
+    FortuneServer *tcpServer;
+};
+
+#endif

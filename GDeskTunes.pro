@@ -122,8 +122,7 @@ HEADERS += \
     src/webview.h \
     mac/notificationcenter.h \
     src/mediakey.h \
-    src/versioncheck.h \
-    src/remote/bonjourrecord.h
+    src/versioncheck.h
 HEADERS += \
     thirdparty/liblastfm/src/AbstractType.h \
     thirdparty/liblastfm/src/Album.h \

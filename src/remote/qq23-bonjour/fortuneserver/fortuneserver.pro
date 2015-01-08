@@ -1,10 +1,17 @@
-HEADERS       = server.h \
+HEADERS       = \
                 bonjourserviceregister.h \
-    protocol.h
-SOURCES       = server.cpp \
+    protocol.h \
+    fortuneserver.h \
+    gui.h \
+    server.h \
+    bonjourrecord.h
+SOURCES       = \
                 main.cpp \
                 bonjourserviceregister.cpp \
-    protocol.cpp
+    protocol.cpp \
+    fortuneserver.cpp \
+    gui.cpp \
+    server.cpp
 QT           += network widgets
 
 !mac:x11:LIBS+=-ldns_sd

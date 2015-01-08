@@ -23,12 +23,12 @@
 
 #include <QApplication>
 
-#include "client.h"
+#include "gui.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    Client client;
+    Gui client;
     client.show();
     return client.exec();
 }
