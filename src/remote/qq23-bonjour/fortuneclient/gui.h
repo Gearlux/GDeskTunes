@@ -21,19 +21,54 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QtCore>
+#ifndef GUI_H
+#define GUI_H
 
-#include <stdlib.h>
+#include <QDialog>
+#include <QTcpSocket>
 
-#include "gui.h"
+#include "bonjourrecord.h"
 
-int main(int argc, char *argv[])
+class QDialogButtonBox;
+class QPushButton;
+class QLabel;
+class QTreeWidget;
+class Client;
+
+class Gui : public QDialog
 {
-    QApplication app(argc, argv);
-    Gui server;
-    server.show();
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    int x = server.exec();
-    return x;
-}
+    Q_OBJECT
+
+public:
+    Gui(QWidget *parent = 0);
+
+    void closeEvent(QCloseEvent *event);
+
+private slots:
+    void updateRecords(const QList<BonjourRecord> &list);
+    void requestNewFortune();
+    void displayError(QAbstractSocket::SocketError socketError, const QString &error);
+    void enableConnectButton();
+
+    void setFortune(const QString &nextFortune);
+
+    void onConnectClicked();
+    void onDisconnectClicked();
+    void onConnected();
+    void onDisconnected();
+
+private:
+    QLabel *statusLabel;
+    QPushButton *getFortuneButton;
+    QPushButton *quitButton;
+    QPushButton *connectButton;
+    QPushButton *disconnectButton;
+    QDialogButtonBox *buttonBox;
+
+    QString currentFortune;
+    QTreeWidget *treeWidget;
+
+    Client *client;
+};
+
+#endif
