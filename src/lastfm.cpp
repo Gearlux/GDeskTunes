@@ -92,7 +92,7 @@ void LastFM::nowPlaying(QString title, QString artist, QString album, QString ar
     if (isAuthorized() && scrobble)
     {
         qDebug() << "LastFM::nowPlaying(" << title << "," << artist << "," << album << "," << art << "," << duration << ")";
-        if (current_track.duration() != -1)
+        if (current_track.duration() != 0)
         {
             unsigned int playtime = current_track.timestamp().secsTo(QDateTime::currentDateTime());
             qDebug() << "Song " << current_track << " has played " << playtime << " seconds";
@@ -104,7 +104,7 @@ void LastFM::nowPlaying(QString title, QString artist, QString album, QString ar
                     audioscrobbler->submit();
                 }
             }
-            current_track.setDuration(-1);
+            current_track.setDuration(0);
         }
 
         lastfm::MutableTrack t;
