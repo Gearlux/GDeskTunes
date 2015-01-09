@@ -33,7 +33,7 @@ win32: {
     SOURCES += \
         src/win/NdisEvents.cpp \
         src/win/WmiSink.cpp \
-        src/win/WNetworkConnectionMonitor_win.cpp \
+        src/win/WNetworkConnectionMonitor_win.cpp
     LIBS += -lwinhttp -lwbemuuid
 }
 

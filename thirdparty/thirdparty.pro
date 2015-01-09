@@ -11,7 +11,7 @@ OTHER_FILES +=  \
     QtWaitingSpinner.pro
 
 linux: {
-system(thirdparty/bootstrap.sh)
+system(./bootstrap.sh)
 }
 
 win32: {
