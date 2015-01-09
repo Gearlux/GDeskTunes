@@ -7,7 +7,7 @@
 TARGET = GDeskTunes
 TEMPLATE = app
 
-QT       += core gui webkit widgets network xml
+QT += core gui webkit widgets network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += webkitwidgets
 
@@ -26,6 +26,8 @@ win32: {
 
     # Resource file for windows systems
     RC_FILE = ../gdesktunes.rc
+
+    LIBS += -luser32 -lshell32
 }
 
 mac: {
@@ -148,6 +150,8 @@ export(js)
 INSTALLS += css minicss js
 
 # Liblastfm
+DEFINES += LASTFM_LIB_STATIC
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../thirdparty/liblastfm/release/ -lliblastfm
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../thirdparty/liblastfm/debug/ -lliblastfm
 else:unix: LIBS += -L$$OUT_PWD/../thirdparty/liblastfm/ -lliblastfm
