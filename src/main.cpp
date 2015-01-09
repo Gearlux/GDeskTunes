@@ -249,14 +249,6 @@ int main(int argc, char *argv[])
         QSignalTransition *trans;
 #ifdef Q_OS_MAC
         QObject::connect(a, SIGNAL(dockClicked()), w, SLOT(show()));
-
-//        trans = new QSignalTransition(a, SIGNAL(onDockFalseFalse()));
-//        background->addTransition(trans);
-//        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
-
-//        trans = new QSignalTransition(a, SIGNAL(onDockFalseTrue()));
-//        mini->addTransition(trans);
-//        QObject::connect(trans, SIGNAL(triggered()), w, SLOT(show()));
 #endif
 #ifdef Q_OS_WIN
         trans = new QSignalTransition(miniplayer, SIGNAL(windowDeactivated()));
