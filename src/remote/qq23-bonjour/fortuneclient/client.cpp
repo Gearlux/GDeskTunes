@@ -1,3 +1,5 @@
+#include <QDateTime>
+
 #include "client.h"
 
 #include "bonjourservicebrowser.h"
@@ -7,7 +9,6 @@
 
 #include <QTcpSocket>
 #include <QHostInfo>
-#include <QDateTime>
 
 Client::Client(QObject *parent) :
     QObject(parent),

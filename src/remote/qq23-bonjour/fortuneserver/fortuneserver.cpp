@@ -1,6 +1,6 @@
-#include "fortuneserver.h"
-
 #include <QDateTime>
+
+#include "fortuneserver.h"
 
 FortuneServer::FortuneServer(QObject *parent) : Server(parent)
 {

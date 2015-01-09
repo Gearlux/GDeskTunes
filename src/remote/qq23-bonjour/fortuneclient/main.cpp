@@ -23,7 +23,7 @@
 
 #include <QApplication>
 
-#include "gui.h"
+#include "fortuneclient.h"
 
 int main(int argc, char *argv[])
 {

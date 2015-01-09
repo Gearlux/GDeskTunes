@@ -1,8 +1,12 @@
+#undef min
 #include "server.h"
 
+#undef min
 #include "bonjourserviceregister.h"
+#undef min
 #include "protocol.h"
 
+#undef min
 #include <QtNetwork>
 
 Server::Server(QObject *parent):

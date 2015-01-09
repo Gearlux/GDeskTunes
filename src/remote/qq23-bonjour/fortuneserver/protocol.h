@@ -1,5 +1,5 @@
-#ifndef TCPSOCKET_H
-#define TCPSOCKET_H
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
 #include <QObject>
 #include <QVariant>

@@ -31,7 +31,7 @@
 #include <QMessageBox>
 #include <QGridLayout>
 
-#include "gui.h"
+#include "fortuneclient.h"
 #include "bonjourservicebrowser.h"
 #include "client.h"
 

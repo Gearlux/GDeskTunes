@@ -21,8 +21,8 @@
 **
 ****************************************************************************/
 
-#ifndef GUI_H
-#define GUI_H
+#ifndef FORTUNECLIENT_H
+#define FORTUNECLIENT_H
 
 #include <QDialog>
 #include <QTcpSocket>

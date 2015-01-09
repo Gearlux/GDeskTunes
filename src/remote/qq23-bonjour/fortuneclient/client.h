@@ -1,5 +1,5 @@
-#ifndef FORTUNECLIENT_H
-#define FORTUNECLIENT_H
+#ifndef CLIENT_H
+#define CLIENT_H
 
 #include <QObject>
 
