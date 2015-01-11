@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "bonjourrecord.h"
-#include "../fortuneserver/protocol.h"
+#include "protocol.h"
 #include <QAbstractSocket>
 
 class BonjourServiceBrowser;

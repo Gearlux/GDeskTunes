@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -508,13 +508,13 @@ void MainWindow::receiveMacMediaKey(int key, bool repeat, bool pressed)
 
 void MainWindow::show()
 {
-    // qDebug() << "MainWindow::show()";
+    qDebug() << "MainWindow::show()";
 
     // Compute the windows_offset if necessary
     if (windows_offset.isNull())
     {
         windows_offset = geometry().topLeft() - frameGeometry().topLeft();
-        // qDebug() << "windows offset" << windows_offset;
+        qDebug() << "windows offset" << windows_offset;
     }
 
     QMainWindow::show();
@@ -642,7 +642,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     // FIXME MAC: actually the button needs to be disabled
     if (isFullScreen())
     {
-        event->ignore();
+        QTimer::singleShot(250, this, SLOT(restore()));
+        event->accept();
         return;
     }
     event->ignore();
@@ -661,24 +662,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::showFullScreen()
 {
     qDebug() << "MainWindow::showFullScreen()";
-#ifdef Q_OS_MAC
-    // QFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000)
-    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x8000|0x80000000|Qt::CustomizeWindowHint));
-#endif
     QMainWindow::showFullScreen();
 }
 
 void MainWindow::showNormal()
 {
     qDebug() << "MainWindow::showNormal()";
-    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
     QMainWindow::showNormal();
 }
 
 void MainWindow::showMinimized()
 {
     qDebug() << "MainWindow::showMinimized()";
-    // setWindowFlags(Qt::WindowFlags(0x1|0x1000|0x2000|0x4000|0x8000|0x8000000|0x80000000));
     QMainWindow::showMinimized();
 }
 
@@ -801,7 +796,8 @@ void MainWindow::bringToFront()
         show();
 #endif
 
-    showNormal();
+    if (!isFullScreen())
+        showNormal();
     raise();
     activateWindow();
 }

@@ -109,7 +109,9 @@ void GDeskTunes::setMini(bool toMini)
         // Apply window flags
         setWindowFlags(miniPlayerFlags());
         show();
-        // hide();
+#ifndef Q_OS_WINDOWS
+        hide();
+#endif
 
         // Changing flags loses geometry, save position into pos variable
         restoreMini();
@@ -117,7 +119,11 @@ void GDeskTunes::setMini(bool toMini)
         this->mini = toMini;
 
         // Apply new geometry
+#ifdef Q_OS_MAC
+        move(pos);
+#else
         move(pos - windows_offset);
+#endif
         resize(w, h);
         show();
     }
@@ -139,7 +145,9 @@ void GDeskTunes::setMini(bool toMini)
         // Show hide combination is only to apply the window flags
         // This will lose the geometry which will be set after hide()
         show();
-        // hide();
+#ifndef Q_OS_WINDOWS
+        hide();
+#endif
 
         restore();
         disableStyle(this->mini_css, "mini");

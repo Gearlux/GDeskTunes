@@ -3,7 +3,7 @@
 #include "bonjourservicebrowser.h"
 #include "bonjourserviceresolver.h"
 
-#include "../fortuneserver/protocol.h"
+#include "protocol.h"
 
 #include <QTcpSocket>
 #include <QHostInfo>

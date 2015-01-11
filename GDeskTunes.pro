@@ -2,4 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     thirdparty \
-    src
+    src \
+    lib \
+    examples

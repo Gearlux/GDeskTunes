@@ -10,6 +10,7 @@
 #include "qutils.h"
 #include "statemachine.h"
 #include "downloader.h"
+#include "server/remoteserver.h"
 
 #include "ui_mainwindow.h"
 #include "ui_settings.h"
@@ -181,6 +182,17 @@ int main(int argc, char *argv[])
 
         QFinalState *exit_state = new QFinalState();
         machine->addState(exit_state);
+
+        RemoteServer *server = 0;
+        if (debug)
+        {
+            qDebug() << "Running Server";
+            server = new RemoteServer();
+            server->setObjectName("RemoteServer");
+            server->listen();
+
+            connectSlotsByName(server, app);
+        }
 
         QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));
 
