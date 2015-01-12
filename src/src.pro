@@ -66,6 +66,17 @@ mac: {
     }
 }
 
+# Bonjour dependencies
+!mac:x11:LIBS+=-ldns_sd
+
+win32 {
+    # Add your path to bonjour here.
+    INCLUDEPATH += "C:/Program Files/Bonjour SDK/Include"
+
+    LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/Win32" -ldnssd
+}
+
+
 INCLUDEPATH += ..
 
 HEADERS += \

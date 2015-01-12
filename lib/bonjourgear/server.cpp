@@ -1,9 +1,10 @@
 #include "server.h"
 
-#include "bonjourserviceregister.h"
 #include "protocol.h"
 
 #include <QtNetwork>
+
+#include "bonjourserviceregister.h"
 
 Server::Server(QObject *parent):
     QTcpServer(parent),

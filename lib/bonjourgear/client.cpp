@@ -1,13 +1,13 @@
 #include "client.h"
 
-#include "bonjourservicebrowser.h"
-#include "bonjourserviceresolver.h"
-
 #include "protocol.h"
 
 #include <QTcpSocket>
 #include <QHostInfo>
 #include <QDateTime>
+
+#include "bonjourservicebrowser.h"
+#include "bonjourserviceresolver.h"
 
 Client::Client(QObject *parent) :
     QObject(parent),

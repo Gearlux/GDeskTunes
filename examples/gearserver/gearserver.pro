@@ -19,6 +19,16 @@ SOURCES += main.cpp\
 HEADERS  += dialog.h \
     fortuneserver.h
 
+# Bonjour dependencies
+!mac:x11:LIBS+=-ldns_sd
+
+win32 {
+    # Add your path to bonjour here.
+    INCLUDEPATH += "C:/Program Files/Bonjour SDK/Include"
+
+    LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/Win32" -ldnssd
+}
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/bonjourgear/release/ -lbonjourgear
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/bonjourgear/debug/ -lbonjourgear
 else:unix: LIBS += -L$$OUT_PWD/../../lib/bonjourgear/ -lbonjourgear
