@@ -79,7 +79,11 @@ public:
         const char *endOfString = cString.constData() + cString.size();
 
         do {
+#if _MSC_VER < 1800
+            const qulonglong value = _strtoui64(start, (char**)&end, 10);
+#else
             const qulonglong value = strtoull(start, (char**)&end, 10);
+#endif
             seg.append(int(value));
             start = end + 1;
             lastGoodEnd = end;

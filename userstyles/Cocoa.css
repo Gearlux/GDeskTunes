@@ -49,6 +49,14 @@
     background-color: #f8f8f8;
 }
 
+.card .image {
+    height: auto;
+}
+
+.cluster {
+    margin-left: 0px;
+}
+
 .song-table {
     padding: 0;
 }
@@ -253,7 +261,7 @@
     background: none;
 }
 
-#player [data-id="now-playing-menu"] {
+#player:not(.material) [data-id="now-playing-menu"] {
     border: none;
 }
 
@@ -371,15 +379,21 @@ div.simple-dialog-bg {
     visibility: visible;
 }
 
+.read-more-button-wrapper.fade-out {
+    background: transparent;
+}
+
 ::-webkit-scrollbar {
     width: 10px !important;
 }
 
 ::-webkit-scrollbar-thumb {
+    background-color: #ABAFB7 !important;
     border-width: 1px !important;
     border-radius: 6px !important;
 }
 
 ::-webkit-scrollbar-track {
+    background: #DBDFE7 !important;
     border-width: 0 !important;
 }

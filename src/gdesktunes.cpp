@@ -134,6 +134,12 @@ void GDeskTunes::setMini(bool toMini)
         hide();
         this->mini = toMini;
 
+        disableStyle(this->mini_css, "mini");
+        if (customize)
+        {
+            applyStyle(this->css);
+        }
+
         ui->actionSwitch_mini->setText("Switch to Compact Layout");
         ui->actionSwitch_Full_Screen->setEnabled(true);
 
@@ -150,11 +156,6 @@ void GDeskTunes::setMini(bool toMini)
 #endif
 
         restore();
-        disableStyle(this->mini_css, "mini");
-        if (customize)
-        {
-            applyStyle(this->css);
-        }
 
 #ifdef Q_OS_LINUX
         activateWindow();

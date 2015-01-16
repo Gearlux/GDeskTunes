@@ -232,7 +232,7 @@ void MainWindow::setMenuVisible(bool visible)
     }
     ::SetMenuItemInfoA(hMenu, IDM_SHOW_MENU, false, &mii);
 #endif
-#if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if defined Q_OS_WIN && QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
     if (visible)
     {
         if (show_hide_menu)
