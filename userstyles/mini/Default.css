@@ -88,10 +88,10 @@ body {
 
 #player-right-wrapper {
     float: none !important;
-    width: 100%;
+    width: 100% !important;
     background-color: transparent !important;
-    margin-left: 0px;
-    text-align: left;
+    margin-left: 0px  !important;
+    text-align: left  !important;
 }
 
 .screensaver.visible, .panning {

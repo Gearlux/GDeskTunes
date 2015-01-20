@@ -25,7 +25,7 @@
   <widget class="QWidget" name="centralwidget">
    <property name="maximumSize">
     <size>
-     <width>384</width>
+     <width>336</width>
      <height>16777215</height>
     </size>
    </property>

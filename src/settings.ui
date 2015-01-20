@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>306</height>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,27 +121,6 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QCheckBox" name="show_notifications">
-            <property name="text">
-             <string>Display notification when song changes</string>
-            </property>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignLeft">
-           <widget class="QCheckBox" name="album_art_notifications">
-            <property name="text">
-             <string>Show album art in notification</string>
-            </property>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignLeft">
-           <widget class="QCheckBox" name="iTunes_notifications">
-            <property name="text">
-             <string>Use ITunes style notifications</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QCheckBox" name="tray_icon">
             <property name="text">
              <string>Show tray icon</string>
@@ -152,6 +131,43 @@
            <widget class="QCheckBox" name="minimize_to_tray">
             <property name="text">
              <string>Minimize to Tray</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Notifications</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QCheckBox" name="show_notifications">
+            <property name="text">
+             <string>Display notification when song changes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="hide_when_active">
+            <property name="text">
+             <string>Hide notificatons when GDeskTunes is active window</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="album_art_notifications">
+            <property name="text">
+             <string>Show album art in notification</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="iTunes_notifications">
+            <property name="text">
+             <string>Use ITunes style notifications</string>
             </property>
            </widget>
           </item>
@@ -408,7 +424,23 @@
     </hint>
     <hint type="destinationlabel">
      <x>344</x>
-     <y>328</y>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>show_notifications</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>hide_when_active</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>220</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>244</y>
     </hint>
    </hints>
   </connection>

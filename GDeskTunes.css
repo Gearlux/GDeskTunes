@@ -1,0 +1,87 @@
+/*
+#id Selects id
+.class selects class
+element selects element
+*/
+
+/* Background of the top section */
+/* class="gb_Pb gb_Mc" */
+.gb_Tb, .gb_Nb, .gb_Pb, .gb_Qb {
+	background: rgb(40,40,40) !important;
+}
+
+/* Do not display the google logo */
+/* class="gb_Qa gb_La" class="gb_Oa" */
+.gb_Ba, .gb_Oa, .gb_Pa {
+	display: none !important; 
+}
+
+/* Do not display the google goodies. This also removes the "Add Music" button. */
+/* class="gb_5 gb_Mc gb_f gb_Lc" */
+.gb_0, .gb_5 {
+	display: none !important;
+}
+
+#gbqfb {
+	background: #fb8521 !important;
+}
+
+/* The banner with the Music All Access Logo at the left top */
+.music-banner {
+	background-color: rgb(75,75,75) !important;
+}
+
+/* Banner next to the music-banner */
+.nav-bar, #breadcrumbs {
+	background-color: rgb(100, 100, 100) !important;
+}
+
+/* Navigation area below the banner */
+.nav-item-container, #nav {
+	background-color: rgb(100, 100, 100) !important;
+}
+
+.fade-out:after {
+	background-image: none !important;
+	background: none !important;
+}
+
+/* Darken the center of the player */
+#content {
+	background-color: rgb(125, 125, 125) !important;
+}
+
+/* My Library artist/albums titles */
+.card {
+	background: rgb(150, 150, 150) !important;
+}
+
+.read-more-button-wrapper.fade-out {
+    background: none !important;
+}
+
+/* Song rows */
+.song-table, 
+.song-table [data-col='index'],
+.song-table [data-col='track'],
+.song-table [data-col='title'], 
+.song-table [data-col='duration'] ,
+.song-table [data-col='artist'] , 
+.song-table [data-col='album']  ,
+.song-table [data-col='play-count']  ,
+.song-table [data-col='rating'][data-rating='undefined']  
+{
+	background: rgb(120, 120, 120) !important;
+	color: rgb(200, 200, 200) !important;
+}
+
+/* Player */
+#player, .player-middle , .now-playing-menu-wrapper{
+	background-color: rgb(75, 75, 75) !important;
+}
+
+/* Border of the now-playing-menu */
+#player [data-id="now-playing-menu"] {
+    border: none !important;
+    background-color: transparent !important;
+}

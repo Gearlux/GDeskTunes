@@ -81,8 +81,23 @@ int main(int argc, char *argv[])
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
     QApplication::setApplicationDisplayName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3.4");
+    QApplication::setApplicationVersion("0.3.5");
     QApplication::setOrganizationName("GearLux");
+
+    // Clean up all temporary files created by QT for the jump-list
+    QDir jl_icons = QDir(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QDir::separator() + QDir::toNativeSeparators("GDeskTunes/qt-jl-icons"));
+    if (jl_icons.exists())
+    {
+        jl_icons.setNameFilters(QStringList() << "*.ico");
+        jl_icons.setFilter(QDir::Files);
+        qDebug() << "Cleaning up jump list icons" << jl_icons;
+        foreach(QString iconFile, jl_icons.entryList())
+        {
+            qDebug() << "Remove " << iconFile;
+            jl_icons.remove(iconFile);
+        }
+    }
+
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     // Capture multi media keys
