@@ -95,6 +95,9 @@
             <li>
                 <strong><a href="#compact">Compact Layout</a></strong>: Switch to a compact layout so you can continue your work while viewing the song that is playing. You can adjust the layout with css to create your own mini player.
             </li>
+            <li>
+                <strong><a href="#sidebar">Sidebar</a></strong>: Hide or show the sidebar to adjust the space where you can browse your music.
+            </li>
         </ul>
 
         <h3>
@@ -241,6 +244,32 @@
             });
           </script>
         
+        <h3>
+            <a id="sidebar" class="anchor" href="#sidebar" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+            Sidebar
+        </h3>
+          
+            <p>Hide or show the sidebar to adjust the space where you can browse your music.</p>
+            
+            <div>
+                <div class="sidebar">
+                    <div><center><p style="margin:0"><img src="pictures/sidebar/sidebar.png"  width="50%"/></p></center></div>
+                    <div><center><p style="margin:0"><img src="pictures/sidebar/without_sidebar.png" width="50%"/></p></center></div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    $('.sidebar').slick({
+                        dots: true,
+                        infinite: true,
+                        speed: 500,
+                        fade: true,
+                        slide: 'div',
+                        cssEase: 'linear'
+                    });
+                });
+            </script>
+          
           
         <!---------------------->
         <!--    Downloads     -->
