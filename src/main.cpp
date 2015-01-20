@@ -38,6 +38,7 @@
 #include <QSignalTransition>
 #include <QSignalMapper>
 #include <QMessageBox>
+#include <QDesktopServices>
 
 #ifdef USE_WEBKIT
 #include <QWebFrame>

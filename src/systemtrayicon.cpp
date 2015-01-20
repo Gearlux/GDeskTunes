@@ -11,10 +11,10 @@
 
 SystemTrayIcon::SystemTrayIcon(MainWindow *parent) :
     QSystemTrayIcon(parent),
-    hide_when_active(false),
     use_album_art(false),
     itunes_like(false),
     tray_icon(false),
+    hide_when_active(false),
     last_activation(0)
 {
     qDebug() << "SystemTrayIcon::SystemTrayIcon()";
