@@ -2,6 +2,7 @@
 #define REMOTESERVER_H
 
 #include "server.h"
+#include <QPixmap>
 
 class RemoteServer : public Server
 {
@@ -20,6 +21,12 @@ public slots:
     void onClientPlay();
     void onClientNext();
     void onClientPrevious();
+
+    void isPlaying(int playing);
+    void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
+
+    void repeat(QString mode);
+    void shuffle(QString mode);
 };
 
 #endif // REMOTESERVER_H

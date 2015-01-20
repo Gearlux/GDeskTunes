@@ -5,38 +5,35 @@ import QtQuick.Dialogs 1.2
 import org.gearlux.gdeskremote 1.0
 
 ApplicationWindow {
+    id: window
     title: qsTr("Hello World")
     width: 640
-    height: 480
+    height: 960
     visible: true
 
     RemoteClient {
         id: remoteClient
     }
 
-    MainForm {
+    Rectangle {
+        id: bg
+        color: "#E0E0E0"
         anchors.fill: parent
-        button1.onClicked: {
-            // messageDialog.show(qsTr("Button 1 pressed"))
-            remoteClient.onPrevious()
-        }
-        button2.onClicked: {
-            // messageDialog.show(qsTr("Button 2 pressed"))
-            remoteClient.onPlay()
-        }
-        button3.onClicked: {
-            // messageDialog.show(qsTr("Button 3 pressed"))
-            remoteClient.onNext()
-        }
     }
 
-    MessageDialog {
-        id: messageDialog
-        title: qsTr("May I have your attention, please?")
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        focus: true
 
-        function show(caption) {
-            messageDialog.text = caption;
-            messageDialog.open();
+        initialItem: Item {
+            width: parent.width
+            height: parent.height
+
+            Player {
+                anchors.fill: parent
+                client: remoteClient
+            }
         }
     }
 }

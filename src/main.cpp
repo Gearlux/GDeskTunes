@@ -186,12 +186,13 @@ int main(int argc, char *argv[])
         RemoteServer *server = 0;
         if (debug)
         {
-            qDebug() << "Running Server";
             server = new RemoteServer();
             server->setObjectName("RemoteServer");
             server->listen();
+            qDebug() << "Running Server on " << server->serverPort();
 
             connectSlotsByName(server, app);
+            connectSlotsByName(app, server);
         }
 
         QObject::connect(machine, SIGNAL(finished()), QApplication::instance(), SLOT(quit()));

@@ -3,15 +3,23 @@
 #include <QTcpSocket>
 #include <QBuffer>
 
+#if 0
+#define CONVERT(variable, value) \
+    variable = Q_ARG(QVariant, value);
+#else
 #define CONVERT(variable, value) \
     switch(value.type()) \
     { \
     case QVariant::String: \
         variable =  Q_ARG(QString, value.toString()); \
     break; \
+    case QVariant::Int: \
+        variable = Q_ARG(int, value.toInt()); \
+    break; \
     default: \
         qWarning() << "Conversion error"; \
     }
+#endif
 
 
 Protocol::Protocol(QTcpSocket *socket, QObject *target) :
@@ -130,6 +138,7 @@ void Protocol::readCommand()
     QGenericArgument val9;
 
     qDebug() << "commandReceived: " << command << " " << arguments;
+    qDebug() << "target: " << target->objectName();
 
     if (arguments.size() > 0)
         CONVERT(val0, arguments.at(0));

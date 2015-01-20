@@ -1,6 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MainForm.ui.qml</file>
+        <file>Player.qml</file>
+        <file>images/backward.svg</file>
+        <file>images/forward.svg</file>
+        <file>images/pause.svg</file>
+        <file>images/play.svg</file>
+        <file>images/volume_down.svg</file>
+        <file>images/volume_up.svg</file>
+        <file>images/icon_512x512.png</file>
     </qresource>
 </RCC>

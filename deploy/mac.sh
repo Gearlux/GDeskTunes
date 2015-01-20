@@ -2,13 +2,21 @@
 
 # GDESKTUNES=~/builds/build-GDeskTunes-Desktop_Qt_5_4_clang_64bit-Release
 GDESKTUNES=../
+QTDIR=/Users/gert/Qt/5.4/clang_64/bin
 
-rm -f GDeskTunes.dmg
+rm -rf build
+mkdir build
+cd build
+$QTDIR/qmake ../../GDeskTunes.pro -r -spec macx-clang CONFIG+=x86_64
+make 
+make install
+cd ..
+
 rm -rf GDeskTunes.app
 rm -rf installer/packages/org.gearlux.gdesktunes/data/*
 
-cp -a $GDESKTUNES/release/GDeskTunes.app .
-~/Qt/5.4/clang_64/bin/macdeployqt GDeskTunes.app
+cp -a build/src/release/GDeskTunes.app .
+$QTDIR/macdeployqt GDeskTunes.app
 make
 rm -rf GDeskTunes.app
 

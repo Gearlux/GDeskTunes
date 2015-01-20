@@ -12,8 +12,7 @@
 Client::Client(QObject *parent) :
     QObject(parent),
     protocol(0),
-    bonjourResolver(0),
-    target(this)
+    bonjourResolver(0)
 {
     BonjourServiceBrowser *bonjourBrowser = new BonjourServiceBrowser(this);
 
@@ -99,6 +98,7 @@ void Client::connectToServer(const BonjourRecord &record)
         connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
                 this, SLOT(onError(QAbstractSocket::SocketError)));
 
+        qDebug() << "Creating protocol";
         protocol = createProtocol(tcpSocket);
     }
     bonjourResolver->resolveBonjourRecord(record);
@@ -106,5 +106,5 @@ void Client::connectToServer(const BonjourRecord &record)
 
 Protocol* Client::createProtocol(QTcpSocket *socket)
 {
-    return new Protocol(socket, parent());
+    return new Protocol(socket, this);
 }

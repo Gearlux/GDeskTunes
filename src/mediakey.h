@@ -56,6 +56,8 @@ public:
         case Qt::Key_MediaPlay:
         case Qt::Key_MediaNext:
         case Qt::Key_MediaPrevious:
+        case Qt::Key_MediaTogglePlayPause:
+        case Qt::Key_MediaStop:
         {
             Parent *w = qobject_cast<Parent*>(T::parentWidget());
             if (w != 0)

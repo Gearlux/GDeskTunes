@@ -257,6 +257,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     // qDebug() << "MainWindow::keyPressEvent(" << event << ")";
     switch(event->key())
     {
+    case Qt::Key_MediaTogglePlayPause:
     case Qt::Key_MediaPlay:
     {
         ui->actionPlay->trigger();
