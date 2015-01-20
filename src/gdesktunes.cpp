@@ -24,6 +24,7 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     mini_css(QString::null),
     mini(false),
     customize(false),
+    show_sidebar(true),
     check_update_startup(false),
     updates_checked(false)
 {
@@ -429,6 +430,7 @@ void GDeskTunes::save()
     settings.setValue("css", this->css);
     settings.setValue("minicss", this->mini_css);
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
+    settings.setValue("showSidebar", this->show_sidebar);
     settings.setValue("minimizeToTray", this->minimize_to_tray);
 
     settings.setValue("keeplogo", this->keep_logo);
@@ -445,7 +447,8 @@ void GDeskTunes::load()
     this->setMiniPlayerOnTop(settings.value("miniPlayerOnTop", false).toBool());
     this->setCSS(settings.value("css", "").toString());
     this->setMiniCSS(settings.value("minicss", "Default").toString());
-    setMenuVisible(!settings.value("hideMenu", false).toBool());
+    this->setMenuVisible(!settings.value("hideMenu", false).toBool());
+    this->setShowSidebar(settings.value("showSidebar", true).toBool());
     this->setCustomized(settings.value("customize", false).toBool());
 
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
@@ -522,6 +525,11 @@ void GDeskTunes::updateAppearance()
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(3) { display: none; }";
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child > div:nth-child(2) > div:nth-child(4) { display: none; }";
     }
+    if (!show_sidebar)
+    {
+       css += "#nav-container { display: none; }";
+       css += "#content-container { margin: 0 0 0 0; }";
+    }
     setStyle("gdesktunes.navigation.customization", css);
 }
 
@@ -544,4 +552,22 @@ void GDeskTunes::loadUrl()
 {
     ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
+}
+
+void GDeskTunes::setShowSidebar(bool show)
+{
+    this->show_sidebar = show;
+    this->ui->actionView_Sidebar->setText(this->show_sidebar ? "Hide Sidebar" : "Show Sidebar");
+}
+
+void GDeskTunes::viewSidebar()
+{
+    setShowSidebar(!this->show_sidebar);
+
+    updateAppearance();
+
+    // FIXME: can be more efficient
+    float zoomFactor = ui->webView->zoomFactor();
+    ui->webView->setZoomFactor(zoomFactor * 0.99);
+    ui->webView->setZoomFactor(zoomFactor);
 }

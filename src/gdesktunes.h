@@ -25,6 +25,7 @@ public slots:
     void finishedLoad(bool ok);
 
     void switchMini();
+    void viewSidebar();
     void receiveMessage(const QString &msg);
 
     void save();
@@ -49,6 +50,7 @@ public slots:
     void checkFlashPlayer();
 
 public:
+    void setShowSidebar(bool show);
     void setMini(bool toMini);
 
     bool isMini() { return this->mini; }
@@ -74,6 +76,8 @@ private:
     bool keep_logo;
     bool keep_links;
     bool navigation_buttons;
+    bool show_sidebar;
+
     bool check_update_startup;
     bool updates_checked;
 
