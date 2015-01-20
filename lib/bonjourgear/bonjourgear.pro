@@ -4,7 +4,6 @@
 #
 #-------------------------------------------------
 
-QT      -= gui
 QT      += network
 
 TARGET = bonjourgear

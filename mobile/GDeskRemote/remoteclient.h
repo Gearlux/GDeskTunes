@@ -2,6 +2,7 @@
 #define REMOTECLIENT_H
 
 #include "client.h"
+#include <QPixmap>
 
 class RemoteClient : public Client
 {
@@ -17,6 +18,7 @@ public:
 
     Q_INVOKABLE void onServerPlaying(int playing);
     Q_INVOKABLE void onServerNowPlaying(QString title, QString artist, QString album, QString art, int duration);
+    Q_INVOKABLE void onServerAlbumArt(QString url, QPixmap pixmap);
 
     Q_PROPERTY(int mode READ getMode NOTIFY modeChanged)
     Q_PROPERTY(QString title READ getTitle NOTIFY titleChanged)

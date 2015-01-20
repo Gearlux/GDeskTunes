@@ -48,7 +48,7 @@ public slots:
     void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
     void playbackTime(int current, int total);
     void rating(int rate);
-    void albumArt(QPixmap pixmap);
+    void albumArt(QString, QPixmap pixmap);
 
     void repeat(QString mode);
     void shuffle(QString mode);

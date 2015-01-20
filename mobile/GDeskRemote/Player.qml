@@ -102,6 +102,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.minimumHeight: controls.height / 5
                     Layout.minimumWidth: Layout.minimumHeight
+                    enabled: client.mode > 0
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -110,7 +111,7 @@ Item {
                             Image {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectFit
-                                source: client.mode == 2 ? "qrc:///images/play.svg" : "qrc:///images/pause.svg"
+                                source: client.mode == 2 ? "qrc:///images/pause.svg" : "qrc:///images/play.svg"
                             }
                         }
 

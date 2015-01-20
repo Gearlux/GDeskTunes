@@ -23,7 +23,7 @@ public:
 signals:
     void isPlaying(int playing);
     void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
-    void albumArt(QPixmap array);
+    void albumArt(QString url, QPixmap pixmap);
     void rating(int rating);
     void playbackTime(int current, int total);
     void love(QString title, QString artist, QString album);
@@ -93,6 +93,7 @@ private:
     QString current_title;
     QString current_artist;
     QString current_album;
+    QString current_art;
     int current_rating;
 
     QString current_repeat;

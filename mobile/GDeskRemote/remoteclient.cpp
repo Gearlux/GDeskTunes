@@ -1,4 +1,9 @@
 #include "remoteclient.h"
+#include "engine.h"
+#include "imageprovider.h"
+#include <qqml.h>
+
+#include <QUrl>
 
 RemoteClient::RemoteClient() :
     Client(0),
@@ -46,7 +51,7 @@ void RemoteClient::onServerPlaying(int mode)
     emit modeChanged(mode);
 }
 
-void RemoteClient::onServerNowPlaying(QString title, QString artist, QString album, QString art, int duration)
+void RemoteClient::onServerNowPlaying(QString title, QString artist, QString album, QString, int)
 {
     this->title = title;
     emit titleChanged(title);
@@ -57,8 +62,33 @@ void RemoteClient::onServerNowPlaying(QString title, QString artist, QString alb
     this->album = album;
     emit albumChanged(album);
 
-    this->albumArt = art;
-    emit albumArtChanged(art);
+    // this->albumArt = art;
+    // emit albumArtChanged(art);
+}
+
+void RemoteClient::onServerAlbumArt(QString url, QPixmap pixmap)
+{
+    // Transform the url
+    QString transformed = url.replace("https", "image");
+    QUrl real_url(url);
+    transformed = transformed.replace(real_url.host(), "gdeskremote");
+    qDebug() << transformed;
+
+    Engine *engine = dynamic_cast<Engine*>(qmlEngine(this));
+    qDebug() << "engine: " << engine;
+    if (engine != 0)
+    {
+        ImageProvider *provider = dynamic_cast<ImageProvider*>(engine->getImageProvider("gdeskremote"));
+        qDebug() << "provider:" << provider;
+        if (provider == 0)
+        {
+            provider->addPixmap(transformed, pixmap);
+
+            this->albumArt = transformed;
+            emit albumArtChanged(transformed);
+        }
+    }
+
 }
 
 int RemoteClient::getMode()

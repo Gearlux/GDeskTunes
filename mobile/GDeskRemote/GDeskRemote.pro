@@ -6,10 +6,14 @@ QTPLUGIN += qsvg
 TARGET = GDeskRemote
 
 SOURCES += main.cpp \
-    remoteclient.cpp
+    remoteclient.cpp \
+    imageprovider.cpp \
+    engine.cpp
 
 HEADERS += \
-    remoteclient.h
+    remoteclient.h \
+    imageprovider.h \
+    engine.h
 
 RESOURCES += qml.qrc
 

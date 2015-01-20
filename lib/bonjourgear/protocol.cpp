@@ -2,24 +2,24 @@
 
 #include <QTcpSocket>
 #include <QBuffer>
+#include <QTimer>
+#include <QPixmap>
 
-#if 0
-#define CONVERT(variable, value) \
-    variable = Q_ARG(QVariant, value);
-#else
-#define CONVERT(variable, value) \
-    switch(value.type()) \
+#define CONVERT(variable, val) \
+    switch(val.type()) \
     { \
     case QVariant::String: \
-        variable =  Q_ARG(QString, value.toString()); \
+        variable =  Q_ARG(QString, val.toString()); \
     break; \
     case QVariant::Int: \
-        variable = Q_ARG(int, value.toInt()); \
+        variable = Q_ARG(int, val.toInt()); \
+    break; \
+    case QVariant::Pixmap: \
+        variable = Q_ARG(QPixmap, val.value<QPixmap>() ); \
     break; \
     default: \
         qWarning() << "Conversion error"; \
     }
-#endif
 
 
 Protocol::Protocol(QTcpSocket *socket, QObject *target) :
@@ -90,7 +90,7 @@ void Protocol::readCommand()
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_0);
 
-    qDebug() << socket->bytesAvailable() << block_size;
+    qDebug() << "Bytes available:" << socket->bytesAvailable() << "current block_size: " << block_size;
 
     if (block_size == 0) {
         if (socket->bytesAvailable() < (int)sizeof(quint16))
@@ -99,14 +99,23 @@ void Protocol::readCommand()
         in >> block_size;
     }
 
+    qDebug() << "Bytes available:" << socket->bytesAvailable() << "current block_size: " << block_size;
     if (socket->bytesAvailable() < block_size)
+    {
+        qDebug() << "Waiting for more data";
         return;
+    }
 
     QByteArray data = socket->read(block_size);
     if (data.size() != block_size)
     {
         qDebug() << "Not enough data read";
         return;
+    }
+    if (socket->bytesAvailable() > 0)
+    {
+        qDebug() << "More data available, read next command";
+        QTimer::singleShot(0, this, SLOT(readCommand()));
     }
     QBuffer buffer(&data);
     buffer.open(QIODevice::ReadOnly);

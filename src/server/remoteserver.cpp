@@ -1,7 +1,10 @@
 #include "remoteserver.h"
 
 RemoteServer::RemoteServer() :
-    Server()
+    Server(),
+    state_playing(-1),
+    state_repeat(QString::null),
+    state_shuffle(QString::null)
 {
 
 }
@@ -31,6 +34,8 @@ void RemoteServer::onClientPrevious()
 
 void RemoteServer::isPlaying(int playing)
 {
+    if (playing == state_playing) return;
+    state_playing = playing;
     connections_mutex.lock();
     for(int i=0; i<connections.count();++i)
     {
@@ -53,8 +58,24 @@ void RemoteServer::nowPlaying(QString title, QString artist, QString album, QStr
     connections_mutex.unlock();
 }
 
+void RemoteServer::albumArt(QString url, QPixmap pixmap)
+{
+    qDebug() << "RemoteServer::albumArt(" << url << "," << pixmap << ")";
+    connections_mutex.lock();
+    for(int i=0; i<connections.count();++i)
+    {
+        Protocol* proto = connections.at(i);
+        proto->invokeMethod("onServerAlbumArt", url, pixmap);
+    }
+    connections_mutex.unlock();
+
+}
+
+
 void RemoteServer::repeat(QString mode)
 {
+    if (state_repeat == mode) return;
+    state_repeat = mode;
     connections_mutex.lock();
     for(int i=0; i<connections.count();++i)
     {
@@ -66,6 +87,8 @@ void RemoteServer::repeat(QString mode)
 
 void RemoteServer::shuffle(QString mode)
 {
+    if (state_shuffle == mode) return;
+    state_shuffle = mode;
     connections_mutex.lock();
     for(int i=0; i<connections.count();++i)
     {
@@ -73,6 +96,5 @@ void RemoteServer::shuffle(QString mode)
         // proto->invokeMethod("onServerShuffle", mode);
     }
     connections_mutex.unlock();
-
 }
 

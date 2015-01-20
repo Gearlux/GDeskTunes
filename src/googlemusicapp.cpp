@@ -11,10 +11,16 @@
 
 GoogleMusicApp::GoogleMusicApp(QObject *parent) :
 #ifdef USE_WEBKIT
-    QWebPage(parent)
+    QWebPage(parent),
 #else
-    QWebEnginePage(parent)
+    QWebEnginePage(parent),
 #endif
+    current_title(QString::null),
+    current_artist(QString::null),
+    current_album(QString::null),
+    current_art(QString::null),
+    current_repeat(QString::null),
+    current_shuffle(QString::null)
 {
 #ifdef USE_WEBKIT
     QObject::connect(mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addWindowObjects()));
@@ -154,6 +160,7 @@ void GoogleMusicApp::notifySong(QString title, QString artist, QString album, QS
     current_title = title;
     current_artist = artist;
     current_album = album;
+    current_art = art;
 
     current_rating = -1;
 
@@ -172,7 +179,7 @@ void GoogleMusicApp::onDownloaded(QByteArray &data)
     pixmap.loadFromData(data);
     sender()->deleteLater();
 
-    emit albumArt(pixmap);
+    emit albumArt(current_art, pixmap);
 }
 
 void GoogleMusicApp::loadFinished(bool status)

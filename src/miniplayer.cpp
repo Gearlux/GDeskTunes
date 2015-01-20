@@ -175,7 +175,7 @@ void MiniPlayer::on_slider_valueChanged(int s)
 }
 
 
-void MiniPlayer::albumArt(QPixmap pixmap)
+void MiniPlayer::albumArt(QString, QPixmap pixmap)
 {
     int w = ui->album_art->width();
     int h = ui->album_art->height();
