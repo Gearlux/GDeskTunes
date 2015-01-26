@@ -11,6 +11,7 @@ public:
 
 public:
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
 
     void addPixmap(const QString &id, QPixmap pixmap);
 

@@ -39,6 +39,7 @@ signals:
     void switchToCompactPlayer();
 
 public slots:
+    void setVolume(int volume);
     void increaseVolume();
     void decreaseVolume();
 

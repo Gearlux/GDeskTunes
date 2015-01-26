@@ -13,6 +13,8 @@ RemoteClient::RemoteClient() :
     setObjectName("RemoteClient");
     connect(this, SIGNAL(currentBonjourRecordsChanged(const QList<BonjourRecord> &)),
             this, SLOT(bonjourConnect(const QList<BonjourRecord> &)));
+    connect(this, SIGNAL(connected()), this, SLOT(onInfo()));
+    connect(this, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 }
 
 RemoteClient::~RemoteClient()
@@ -45,14 +47,32 @@ void RemoteClient::onNext()
     invokeMethod("onClientNext");
 }
 
+void RemoteClient::onVolume(float volume)
+{
+    int server_volume = qMax(0, qMin(100, (int)(volume * 100)));
+    invokeMethod("onClientVolume", server_volume);
+}
+
+void RemoteClient::onInfo()
+{
+    invokeMethod("onClientInfo");
+}
+
+void RemoteClient::onDisconnected()
+{
+    this->mode = -1;
+    emit modeChanged(mode);
+}
+
 void RemoteClient::onServerPlaying(int mode)
 {
     this->mode = mode;
     emit modeChanged(mode);
 }
 
-void RemoteClient::onServerNowPlaying(QString title, QString artist, QString album, QString, int)
+void RemoteClient::onServerNowPlaying(QString title, QString artist, QString album)
 {
+    qDebug() << "onServerNowPlaying(" << title << "," << artist << "," << album << ")";
     this->title = title;
     emit titleChanged(title);
 
@@ -68,10 +88,11 @@ void RemoteClient::onServerNowPlaying(QString title, QString artist, QString alb
 
 void RemoteClient::onServerAlbumArt(QString url, QPixmap pixmap)
 {
+    qDebug() << "onServerAlbumArt(" << url << "," << pixmap << ")";
     // Transform the url
     QString transformed = url.replace("https", "image");
     QUrl real_url(url);
-    transformed = transformed.replace(real_url.host(), "gdeskremote");
+    transformed = transformed.replace(real_url.host(), "gdeskremote") + ".png";
     qDebug() << transformed;
 
     Engine *engine = dynamic_cast<Engine*>(qmlEngine(this));
@@ -80,7 +101,7 @@ void RemoteClient::onServerAlbumArt(QString url, QPixmap pixmap)
     {
         ImageProvider *provider = dynamic_cast<ImageProvider*>(engine->getImageProvider("gdeskremote"));
         qDebug() << "provider:" << provider;
-        if (provider == 0)
+        if (provider)
         {
             provider->addPixmap(transformed, pixmap);
 
@@ -88,7 +109,33 @@ void RemoteClient::onServerAlbumArt(QString url, QPixmap pixmap)
             emit albumArtChanged(transformed);
         }
     }
+}
 
+void RemoteClient::onServerShuffle(QString mode)
+{
+    if (mode == "NO_SHUFFLE")
+    {
+        shuffle = 0;
+    }
+    else
+        shuffle = 1;
+    emit shuffleChanged(shuffle);
+}
+
+void RemoteClient::onServerRepeat(QString mode)
+{
+    if (mode == "NO_REPEAT")
+    {
+        repeat = 0;
+    }
+    else if (mode == "SINGLE_REPEAT")
+    {
+        repeat = 1;
+    }
+    else
+        repeat = 2;
+    qDebug() << "onServerRepeat(" << mode << ")" << repeat;
+    emit repeatChanged(repeat);
 }
 
 int RemoteClient::getMode()
@@ -114,4 +161,14 @@ QString RemoteClient::getAlbum()
 QString RemoteClient::getAlbumArt()
 {
     return this->albumArt;
+}
+
+int RemoteClient::getShuffle()
+{
+    return this->shuffle;
+}
+
+int RemoteClient::getRepeat()
+{
+    return this->repeat;
 }

@@ -42,6 +42,8 @@ void Client::connectToServer(const QHostInfo &hostInfo, int port)
         {
             qDebug() << "connectToHost";
             protocol->getSocket()->connectToHost(addresses.first(), port);
+
+            emit connected();
         }
     }
 }

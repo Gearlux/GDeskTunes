@@ -50,3 +50,10 @@ HEADERS += \
     ../../lib/bonjourgear/bonjourservicebrowser.h \
     ../../lib/bonjourgear/bonjourserviceresolver.h \
     ../../lib/bonjourgear/protocol.h
+
+win32 {
+    # Add your path to bonjour here.
+    INCLUDEPATH += "C:/Program Files/Bonjour SDK/Include"
+
+    LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/Win32" -ldnssd
+}

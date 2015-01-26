@@ -32,6 +32,28 @@ void RemoteServer::onClientPrevious()
     emit previous();
 }
 
+void RemoteServer::onClientInfo()
+{
+    qDebug() << "RemoteServer::onClientInfo()";
+    connections_mutex.lock();
+    for(int i=0; i<connections.count();++i)
+    {
+        Protocol* proto = connections.at(i);
+        proto->invokeMethod("onServerNowPlaying", state_title, state_artist, state_album);
+        proto->invokeMethod("onServerPlaying", state_playing);
+        proto->invokeMethod("onServerAlbumArt", state_url, state_pixmap);
+        proto->invokeMethod("onServerRepeat", state_repeat);
+        proto->invokeMethod("onServerShuffle", state_shuffle);
+    }
+    connections_mutex.unlock();
+}
+
+void RemoteServer::onClientVolume(int vol)
+{
+    qDebug() << "RemoteServer::onClientVolume(" << vol << ")";
+    emit volume(vol);
+}
+
 void RemoteServer::isPlaying(int playing)
 {
     if (playing == state_playing) return;
@@ -49,11 +71,14 @@ void RemoteServer::isPlaying(int playing)
 void RemoteServer::nowPlaying(QString title, QString artist, QString album, QString art, int duration)
 {
     qDebug() << "RemoteServer::nowPlaying(" << title << "," << artist << "," << album << "," << art << "," << duration << ")";
+    state_title = title;
+    state_artist = artist;
+    state_album = album;
     connections_mutex.lock();
     for(int i=0; i<connections.count();++i)
     {
         Protocol* proto = connections.at(i);
-        proto->invokeMethod("onServerNowPlaying", title, artist, album, art, duration);
+        proto->invokeMethod("onServerNowPlaying", title, artist, album);
     }
     connections_mutex.unlock();
 }
@@ -61,6 +86,9 @@ void RemoteServer::nowPlaying(QString title, QString artist, QString album, QStr
 void RemoteServer::albumArt(QString url, QPixmap pixmap)
 {
     qDebug() << "RemoteServer::albumArt(" << url << "," << pixmap << ")";
+    if (url == state_url) return;
+    state_url = url;
+    state_pixmap = pixmap;
     connections_mutex.lock();
     for(int i=0; i<connections.count();++i)
     {
@@ -80,7 +108,7 @@ void RemoteServer::repeat(QString mode)
     for(int i=0; i<connections.count();++i)
     {
         Protocol* proto = connections.at(i);
-        // proto->invokeMethod("onServerRepeat", mode);
+        proto->invokeMethod("onServerRepeat", mode);
     }
     connections_mutex.unlock();
 }
@@ -93,7 +121,7 @@ void RemoteServer::shuffle(QString mode)
     for(int i=0; i<connections.count();++i)
     {
         Protocol* proto = connections.at(i);
-        // proto->invokeMethod("onServerShuffle", mode);
+        proto->invokeMethod("onServerShuffle", mode);
     }
     connections_mutex.unlock();
 }

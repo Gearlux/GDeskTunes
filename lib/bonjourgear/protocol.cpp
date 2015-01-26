@@ -6,19 +6,21 @@
 #include <QPixmap>
 
 #define CONVERT(variable, val) \
+{ \
     switch(val.type()) \
-    { \
+{ \
     case QVariant::String: \
-        variable =  Q_ARG(QString, val.toString()); \
+    variable = new Q_ARG(QString, val.toString()); \
     break; \
     case QVariant::Int: \
-        variable = Q_ARG(int, val.toInt()); \
+    variable = new Q_ARG(int, val.toInt()); \
     break; \
     case QVariant::Pixmap: \
-        variable = Q_ARG(QPixmap, val.value<QPixmap>() ); \
+    variable = new Q_ARG(QPixmap, val.value<QPixmap>() ); \
     break; \
     default: \
-        qWarning() << "Conversion error"; \
+    qWarning() << "Conversion error"; \
+    } \
     }
 
 
@@ -41,10 +43,10 @@ Protocol::~Protocol()
     socket = 0;
 }
 
-void Protocol::invokeMethod(const char* method, const QVariant &arg1, const QVariant &arg2,
-                            const QVariant &arg3, const QVariant &arg4, const QVariant &arg5,
-                            const QVariant &arg6, const QVariant &arg7, const QVariant &arg8,
-                            const QVariant &arg9)
+void Protocol::invokeMethod(const char* method, QVariant arg1, QVariant arg2,
+                            QVariant arg3, QVariant arg4, QVariant arg5,
+                            QVariant arg6, QVariant arg7, QVariant arg8,
+                            QVariant arg9)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -83,6 +85,7 @@ void Protocol::invokeMethod(const char* method, const QVariant &arg1, const QVar
     }
 }
 
+
 void Protocol::readCommand()
 {
     qDebug() << "Protocol::readCommand()";
@@ -112,68 +115,135 @@ void Protocol::readCommand()
         qDebug() << "Not enough data read";
         return;
     }
-    if (socket->bytesAvailable() > 0)
-    {
-        qDebug() << "More data available, read next command";
-        QTimer::singleShot(0, this, SLOT(readCommand()));
-    }
+
+    int size = block_size;
+    block_size = 0;
+
     QBuffer buffer(&data);
     buffer.open(QIODevice::ReadOnly);
     in.setDevice(&buffer);
 
     char *command;
-    in >> command;
-
     QList<QVariant> arguments;
 
-    while(buffer.pos() < block_size)
+    in >> command;
+
+    qDebug() << "command:" << command;
+
+    while(buffer.pos() < size)
     {
         QVariant next_argument;
         in >> next_argument;
         arguments.append(next_argument);
     }
 
-    block_size = 0;
+    qDebug() << "arguments: " << arguments;
 
-    QGenericArgument val0(0);
-    QGenericArgument val1;
-    QGenericArgument val2;
-    QGenericArgument val3;
-    QGenericArgument val4;
-    QGenericArgument val5;
-    QGenericArgument val6;
-    QGenericArgument val7;
-    QGenericArgument val8;
-    QGenericArgument val9;
+    ProtocolExecutor* executor = new ProtocolExecutor(target, command, arguments);
+
+    if (socket->bytesAvailable() > 0)
+    {
+        qDebug() << "More data available, read next command";
+        QTimer::singleShot(0, this, SLOT(readCommand()));
+    }
+
+    QTimer::singleShot(0, executor, SLOT(execute()));
+
+    // parse(in, size, data);
+}
+
+
+ProtocolExecutor::ProtocolExecutor(QObject *target, char* command, QList<QVariant> arguments) :
+    target(target),
+    command(command),
+    arguments(arguments)
+{
+}
+
+void ProtocolExecutor::execute()
+{
+    qDebug() << "ProtocolExecutor::execute()";
+
+    QGenericArgument* val0 = 0;
+    QGenericArgument* val1 = 0;
+    QGenericArgument* val2 = 0;
+    QGenericArgument* val3 = 0;
+    QGenericArgument* val4 = 0;
+    QGenericArgument* val5 = 0;
+    QGenericArgument* val6 = 0;
+    QGenericArgument* val7 = 0;
+    QGenericArgument* val8 = 0;
+    QGenericArgument* val9 = 0;
 
     qDebug() << "commandReceived: " << command << " " << arguments;
     qDebug() << "target: " << target->objectName();
 
     if (arguments.size() > 0)
+    {
         CONVERT(val0, arguments.at(0));
+    }
+    else val0 = new QGenericArgument();
     if (arguments.size() > 1)
+    {
         CONVERT(val1, arguments.at(1));
+    }
+    else val1 = new QGenericArgument();
     if (arguments.size() > 2)
+    {
         CONVERT(val2, arguments.at(2));
+    }
+    else val2 = new QGenericArgument();
     if (arguments.size() > 3)
+    {
         CONVERT(val3, arguments.at(3));
+    }
+    else val3 = new QGenericArgument();
     if (arguments.size() > 4)
+    {
         CONVERT(val4, arguments.at(4));
+    }
+    else val4 = new QGenericArgument();
     if (arguments.size() > 5)
+    {
         CONVERT(val5, arguments.at(5));
+    }
+    else val5 = new QGenericArgument();
     if (arguments.size() > 6)
+    {
         CONVERT(val6, arguments.at(6));
+    }
+    else val6 = new QGenericArgument();
     if (arguments.size() > 7)
+    {
         CONVERT(val7, arguments.at(7));
+    }
+    else val7 = new QGenericArgument();
     if (arguments.size() > 8)
+    {
         CONVERT(val8, arguments.at(8));
+    }
+    else val8 = new QGenericArgument();
     if (arguments.size() > 9)
+    {
         CONVERT(val9, arguments.at(9));
+    }
+    else
+        val9 = new QGenericArgument();
 
-    // qDebug() << command << *(QString*)val0.data();
-
-    QMetaObject::invokeMethod(target, command,  Qt::QueuedConnection, val0, val1, val2, val3, val4, val5, val6, val7, val8, val9);
+    QMetaObject::invokeMethod(target, command,  Qt::DirectConnection, *val0, *val1, *val2, *val3, *val4, *val5, *val6, *val7, *val8, *val9);
 
     delete command;
-}
 
+    delete val0;
+    delete val1;
+    delete val2;
+    delete val3;
+    delete val4;
+    delete val5;
+    delete val6;
+    delete val7;
+    delete val8;
+    delete val9;
+
+    this->deleteLater();
+}

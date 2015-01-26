@@ -45,6 +45,7 @@ Item {
     }
 
 
+    // Controls
     Rectangle {
         id: controls
         anchors.bottom: parent.bottom
@@ -61,6 +62,7 @@ Item {
             anchors.leftMargin: parent.width / 20
             anchors.rightMargin: parent.width / 20
 
+            // Title
             Label {
                 font.bold: true
                 font.pixelSize: controls.height / 8
@@ -68,13 +70,16 @@ Item {
                 verticalAlignment: "AlignVCenter"
                 horizontalAlignment: "AlignHCenter"
                 text: client.title
+                opacity: client.mode == -1 ? 0.25 : 1;
             }
+            // Artist - Album
             Label {
                 font.pixelSize: controls.height / 12
                 Layout.fillWidth: true
                 verticalAlignment: "AlignVCenter"
                 horizontalAlignment: "AlignHCenter"
                 text: client.artist +" - " + client.album
+                opacity: client.mode == -1 ? 0.25 : 1;
             }
 
             RowLayout {
@@ -84,6 +89,8 @@ Item {
                     Layout.fillWidth: true
                     Layout.minimumHeight: controls.height / 5
                     Layout.minimumWidth: Layout.minimumHeight
+                    enabled: client.mode >= 0
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -95,14 +102,15 @@ Item {
                                 source: "qrc:///images/backward.svg"
                             }
                         }
-
                     }
+                    onClicked: client.onPrevious()
                 }
                 Button {
                     Layout.fillWidth: true
                     Layout.minimumHeight: controls.height / 5
                     Layout.minimumWidth: Layout.minimumHeight
                     enabled: client.mode > 0
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -114,13 +122,15 @@ Item {
                                 source: client.mode == 2 ? "qrc:///images/pause.svg" : "qrc:///images/play.svg"
                             }
                         }
-
                     }
+                    onClicked: client.onPlay()
                 }
                 Button {
                     Layout.fillWidth: true
                     Layout.minimumHeight: controls.height / 5
                     Layout.minimumWidth: Layout.minimumHeight
+                    enabled: client.mode >= 0
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -133,15 +143,21 @@ Item {
                             }
                         }
                     }
+                    onClicked: client.onNext()
                 }
             }
 
+
+            //
+            // Volume Controls
+            //
             RowLayout {
                 Layout.fillWidth: true
 
                 Button {
                     Layout.minimumHeight: controls.height / 10
                     Layout.minimumWidth: controls.height / 10
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -154,14 +170,22 @@ Item {
                             }
                         }
                     }
+                    onClicked:  volume.value = volume.value - 0.05
+
                 }
                 Slider
                 {
+                    id: volume
                     Layout.fillWidth: true
+                    opacity: client.mode == -1 ? 0.25 : 1;
+                    stepSize: 0.001
+                    updateValueWhileDragging: false
+                    onValueChanged: client.onVolume(value)
                 }
                 Button {
                     Layout.minimumHeight: controls.height / 10
                     Layout.minimumWidth: controls.height / 10
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style : ButtonStyle {
                         background: Rectangle {
                             anchors.fill: parent
@@ -174,10 +198,15 @@ Item {
                             }
                         }
                     }
+                    onClicked:  volume.value = volume.value + 0.05
                 }
 
             }
 
+
+            //
+            // Shuffle - Repeat
+            //
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -186,18 +215,19 @@ Item {
                 Button {
                     id: repeat
                     Layout.minimumWidth: parent.width / 5
-                    text: "Repeat"
+                    text: client.repeat == 1 ? "Repeat Song" : "Repeat"
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style: ButtonStyle {
                         background: Rectangle {
                             radius: 5
                             anchors.fill: parent
                             border.width: 0
-                            color: "#ff5e3d"
+                            color: client.repeat == 0 ? "transparent" : "#ff5e3d"
                         }
                         label: Label {
                             anchors.fill: parent
                             horizontalAlignment: "AlignHCenter"
-                            color: "white"
+                            color: client.repeat == 0 ? "#ff5e3d" : "white"
                             text: repeat.text
                         }
                     }
@@ -210,17 +240,18 @@ Item {
                     id: shuffle
                     Layout.minimumWidth: parent.width / 5
                     text: "Shuffle"
+                    opacity: client.mode == -1 ? 0.25 : 1;
                     style: ButtonStyle {
                         background: Rectangle {
                             radius: 5
                             anchors.fill: parent
                             border.width: 0
-                            color: "#ff5e3d"
+                            color: client.shuffle == 1 ? "#ff5e3d" : "transparent"
                         }
                         label: Label {
                             anchors.fill: parent
                             horizontalAlignment: "AlignHCenter"
-                            color: "white"
+                            color: client.shuffle == 1 ? "white" : "#ff5e3d"
                             text: shuffle.text
                         }
                     }

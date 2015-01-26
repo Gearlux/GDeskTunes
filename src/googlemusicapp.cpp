@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "googlemusicapp.h"
 #include "mainwindow.h"
@@ -31,14 +31,21 @@ GoogleMusicApp::GoogleMusicApp(QObject *parent) :
 
 void GoogleMusicApp::increaseVolume()
 {
-    qDebug() << "increaseVolume";
+    qDebug() << "GoogleMusicApp::increaseVolume()";
     evaluateJavaScript("MusicAPI.Volume.increaseVolume(10);");
 }
 
 void GoogleMusicApp::decreaseVolume()
 {
-    qDebug() << "decreaseVolume";
+    qDebug() << "GoogleMusicApp::decreaseVolume()";
     evaluateJavaScript("MusicAPI.Volume.decreaseVolume(10);");
+}
+
+void GoogleMusicApp::setVolume(int volume)
+{
+    qDebug() << "GoogleMusicApp::setVolume(" << volume << ")";
+    evaluateJavaScript(QString("MusicAPI.Volume.setVolume(%1);").arg(volume));
+
 }
 
 void GoogleMusicApp::playbackChanged(int mode)
