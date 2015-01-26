@@ -231,6 +231,7 @@ Item {
                             text: repeat.text
                         }
                     }
+                    onClicked: client.repeat = client.repeat == 0 ? 2 : client.repeat - 1
                 }
                 Rectangle {
                     Layout.fillWidth: true
