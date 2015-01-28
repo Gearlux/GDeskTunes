@@ -28,6 +28,7 @@ signals:
     void playbackTime(int current, int total);
     void love(QString title, QString artist, QString album);
     void unlove(QString title, QString artist, QString album);
+    void volume(int vol);
 
     void forwardEnabled(int mode);
     void rewindEnabled(int mode);
@@ -39,7 +40,9 @@ signals:
     void switchToCompactPlayer();
 
 public slots:
-    void setVolume(int volume);
+    void volChanged(int vol);
+    void volumeChanged(int vol);
+    int getVolume();
     void increaseVolume();
     void decreaseVolume();
 
@@ -80,6 +83,8 @@ public slots:
 
     void on_miniButton_clicked();
     void on_compactButton_clicked();
+
+    void info();
 
 public:
     int getBodyWidth();

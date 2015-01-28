@@ -6,9 +6,10 @@
 
 #include "bonjourserviceregister.h"
 
-Server::Server(QObject *parent):
+Server::Server(QLatin1String service, QObject *parent):
     QTcpServer(parent),
-    bonjourRegister(0)
+    bonjourRegister(0),
+    service(service)
 {
 
 }
@@ -28,8 +29,8 @@ bool Server::listen(const QHostAddress &address, quint16 port)
     if (result)
     {
         bonjourRegister = new BonjourServiceRegister(this);
-        bonjourRegister->registerService(BonjourRecord(tr("Fortune Server on %1").arg(QHostInfo::localHostName()),
-                                                QLatin1String("_trollfortune._tcp"), QString()),
+        bonjourRegister->registerService(BonjourRecord(tr("%2 Server on %1").arg(QHostInfo::localHostName()).arg(service),
+                                                QLatin1String(service), QString()),
                                          this->serverPort());
     }
 

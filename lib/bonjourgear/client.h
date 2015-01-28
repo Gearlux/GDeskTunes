@@ -16,7 +16,7 @@ class Client: public QObject, public ProtocolFactory
     Q_OBJECT
 
 public:
-    Client(QObject *parent);
+    Client(QLatin1String service, QObject *parent);
     ~Client();
 
 signals:

@@ -2,7 +2,7 @@
 
 #include "fortuneserver.h"
 
-FortuneServer::FortuneServer(QObject *parent) : Server(parent)
+FortuneServer::FortuneServer(QObject *parent) : Server(QLatin1String("_trollfortune._tcp"), parent)
 {
     fortunes << tr("You've been leading a dog's life. Stay off the furniture.")
              << tr("You've got to think about tomorrow.")

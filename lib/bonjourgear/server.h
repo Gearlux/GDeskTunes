@@ -12,7 +12,7 @@ class Server : public QTcpServer, public ProtocolFactory
     Q_OBJECT
 
 public:
-    Server(QObject *parent = 0);
+    Server(QLatin1String service, QObject *parent = 0);
     ~Server();
 
 public:
@@ -31,6 +31,7 @@ protected:
 
 private:
     BonjourServiceRegister *bonjourRegister;
+    QLatin1String service;
 };
 
 #endif // SERVER_H

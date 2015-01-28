@@ -170,17 +170,27 @@ Item {
                             }
                         }
                     }
-                    onClicked:  volume.value = volume.value - 0.05
+                    onClicked:  volume.value = volume.value - 5
 
                 }
                 Slider
                 {
                     id: volume
+                    value: client.volume
                     Layout.fillWidth: true
                     opacity: client.mode == -1 ? 0.25 : 1;
-                    stepSize: 0.001
+                    stepSize: 1
                     updateValueWhileDragging: false
-                    onValueChanged: client.onVolume(value)
+                    minimumValue: 0
+                    maximumValue: 100
+                    onValueChanged: client.volume = value
+                    style: SliderStyle {
+                           groove: Rectangle {
+                               implicitHeight: 6
+                               radius: 6
+                               color: "#ff5e3d"
+                           }
+                    }
                 }
                 Button {
                     Layout.minimumHeight: controls.height / 10
@@ -198,7 +208,7 @@ Item {
                             }
                         }
                     }
-                    onClicked:  volume.value = volume.value + 0.05
+                    onClicked:  volume.value = volume.value + 5
                 }
 
             }
@@ -256,6 +266,7 @@ Item {
                             text: shuffle.text
                         }
                     }
+                    onClicked: client.shuffle = client.shuffle == 1 ? 0 : 1;
                 }
             }
         }

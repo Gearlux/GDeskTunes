@@ -386,6 +386,18 @@ if (typeof window.MusicAPI === 'undefined') {
         });
     });
 
+    var volumeObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            var target = m.target;
+            var id = target.id;
+
+            if (id == 'vslider') {
+                var currentVolume = parseInt(target.getAttribute('aria-valuenow'));
+                window.GoogleMusicApp.volChanged(currentVolume);
+            }
+        });
+    });
+
 
     addObserver.observe(document.querySelector('#playerSongInfo'), { childList: true, subtree: true });
     shuffleObserver.observe(document.querySelector('#player button[data-id="shuffle"]'), { attributes: true });
@@ -395,4 +407,5 @@ if (typeof window.MusicAPI === 'undefined') {
     previousObserver.observe(document.querySelector('#player button[data-id="forward"]'), { attributes: true });
     playbackTimeObserver.observe(document.querySelector('#player #slider'), { attributes: true });
     ratingObserver.observe(document.querySelector('#player .player-rating-container'), { attributes: true, subtree: true });
+    volumeObserver.observe(document.querySelector('#vslider'), { attributes: true });
 }

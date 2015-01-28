@@ -29,6 +29,12 @@ GoogleMusicApp::GoogleMusicApp(QObject *parent) :
 #endif
 }
 
+int GoogleMusicApp::getVolume()
+{
+    qDebug() << "GoogleMusicApp::getVolume()";
+    return evaluateJavaScript("MusicAPI.Volume.getVolume();").toInt();
+}
+
 void GoogleMusicApp::increaseVolume()
 {
     qDebug() << "GoogleMusicApp::increaseVolume()";
@@ -41,11 +47,16 @@ void GoogleMusicApp::decreaseVolume()
     evaluateJavaScript("MusicAPI.Volume.decreaseVolume(10);");
 }
 
-void GoogleMusicApp::setVolume(int volume)
+void GoogleMusicApp::volChanged(int vol)
 {
-    qDebug() << "GoogleMusicApp::setVolume(" << volume << ")";
-    evaluateJavaScript(QString("MusicAPI.Volume.setVolume(%1);").arg(volume));
+    qDebug() << "GoogleMusicApp::volChanged(" << vol << ")";
+    emit volume(vol);
+}
 
+void GoogleMusicApp::volumeChanged(int vol)
+{
+    qDebug() << "GoogleMusicApp::volumeChanged(" << vol << ")";
+    evaluateJavaScript(QString("MusicAPI.Volume.setVolume(%1);").arg(vol));
 }
 
 void GoogleMusicApp::playbackChanged(int mode)
@@ -341,3 +352,7 @@ QColor GoogleMusicApp::getBackgroundColor()
     return qColor;
 }
 
+void GoogleMusicApp::info()
+{
+    emit volume(this->getVolume());
+}

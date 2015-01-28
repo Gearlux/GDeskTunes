@@ -12,11 +12,19 @@ public:
     RemoteServer();
     ~RemoteServer();
 
+    int convertRepeat(QString mode);
+    int convertShuffle(QString mode);
 signals:
     void play();
     void next();
     void previous();
-    void volume(int volume);
+    void volumeChanged(int volume);
+    void shuffleOff();
+    void shuffleOn();
+    void repeatOne();
+    void repeatOff();
+    void repeatAll();
+    void info();
 
 public slots:
     void onClientPlay();
@@ -24,10 +32,13 @@ public slots:
     void onClientPrevious();
     void onClientInfo();
     void onClientVolume(int volume);
+    void onClientShuffle(int shuffle);
+    void onClientRepeat(int repeat);
 
     void isPlaying(int playing);
     void nowPlaying(QString title, QString artist, QString album, QString art, int duration);
     void albumArt(QString url, QPixmap pixmap);
+    void volume(int vol);
 
     void repeat(QString mode);
     void shuffle(QString mode);
@@ -40,8 +51,9 @@ private:
     QString state_album;
     QString state_url;
     QPixmap state_pixmap;
-    QString state_repeat;
-    QString state_shuffle;
+    int state_repeat;
+    int state_shuffle;
+    int state_volume;
 };
 
 #endif // REMOTESERVER_H

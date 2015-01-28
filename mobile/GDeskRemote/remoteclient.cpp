@@ -6,7 +6,7 @@
 #include <QUrl>
 
 RemoteClient::RemoteClient() :
-    Client(0),
+    Client(QLatin1String("_gdeskremote._tcp"), 0),
     mode(-1),
     title("Title")
 {
@@ -47,10 +47,18 @@ void RemoteClient::onNext()
     invokeMethod("onClientNext");
 }
 
-void RemoteClient::onVolume(float volume)
+void RemoteClient::setVolume(int volume)
 {
-    int server_volume = qMax(0, qMin(100, (int)(volume * 100)));
-    invokeMethod("onClientVolume", server_volume);
+    qDebug() << "RemoteClient::onVolume(" << volume << ")";
+    if (vol == volume) return;
+    vol = volume;
+    invokeMethod("onClientVolume", vol);
+    emit volumeChanged(vol);
+}
+
+int RemoteClient::getVolume()
+{
+    return vol;
 }
 
 void RemoteClient::onInfo()
@@ -111,30 +119,22 @@ void RemoteClient::onServerAlbumArt(QString url, QPixmap pixmap)
     }
 }
 
-void RemoteClient::onServerShuffle(QString mode)
+void RemoteClient::onServerVolume(int vol)
 {
-    if (mode == "NO_SHUFFLE")
-    {
-        shuffle = 0;
-    }
-    else
-        shuffle = 1;
+    this->vol = vol;
+    emit volumeChanged(vol);
+}
+
+void RemoteClient::onServerShuffle(int mode)
+{
+    shuffle = mode;
     emit shuffleChanged(shuffle);
 }
 
-void RemoteClient::onServerRepeat(QString mode)
+void RemoteClient::onServerRepeat(int mode)
 {
-    if (mode == "NO_REPEAT")
-    {
-        repeat = 0;
-    }
-    else if (mode == "SINGLE_REPEAT")
-    {
-        repeat = 1;
-    }
-    else
-        repeat = 2;
     qDebug() << "onServerRepeat(" << mode << ")" << repeat;
+    repeat = mode;
     emit repeatChanged(repeat);
 }
 
@@ -168,7 +168,19 @@ int RemoteClient::getShuffle()
     return this->shuffle;
 }
 
+void RemoteClient::setShuffle(int shuffle)
+{
+    this->shuffle = shuffle;
+    invokeMethod("onClientShuffle", shuffle);
+}
+
 int RemoteClient::getRepeat()
 {
     return this->repeat;
+}
+
+void RemoteClient::setRepeat(int repeat)
+{
+    this->repeat = repeat;
+    invokeMethod("onClientRepeat", repeat);
 }

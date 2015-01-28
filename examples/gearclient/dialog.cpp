@@ -52,7 +52,7 @@ Dialog::Dialog(QWidget *parent)
     connect(disconnectButton, SIGNAL(clicked()),  this, SLOT(onDisconnectClicked()));
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    client = new Client(this);
+    client = new Client(QLatin1String("_trollfortune._tcp"),this);
 
     connect(client, SIGNAL(currentBonjourRecordsChanged(const QList<BonjourRecord> &)),
             this, SLOT(updateRecords(const QList<BonjourRecord> &)));

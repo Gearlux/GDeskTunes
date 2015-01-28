@@ -9,7 +9,7 @@
 #include "bonjourservicebrowser.h"
 #include "bonjourserviceresolver.h"
 
-Client::Client(QObject *parent) :
+Client::Client(QLatin1String service, QObject *parent) :
     QObject(parent),
     protocol(0),
     bonjourResolver(0)
@@ -19,7 +19,7 @@ Client::Client(QObject *parent) :
     connect(bonjourBrowser, SIGNAL(currentBonjourRecordsChanged(const QList<BonjourRecord> &)),
             this, SIGNAL(currentBonjourRecordsChanged(const QList<BonjourRecord> &)));
 
-    bonjourBrowser->browseForServiceType(QLatin1String("_trollfortune._tcp"));
+    bonjourBrowser->browseForServiceType(service);
 }
 
 Client::~Client()
