@@ -119,6 +119,8 @@ public:
         case Qt::Key_MediaPlay:
         case Qt::Key_MediaNext:
         case Qt::Key_MediaPrevious:
+        case Qt::Key_MediaTogglePlayPause:
+        case Qt::Key_MediaStop:
         {
             qDebug() << T::objectName() << " signals media key";
             emit keyPressed(event);
@@ -142,5 +144,23 @@ public:
         }
     }
 };
+
+#ifdef Q_OS_WIN
+#include <QAbstractNativeEventFilter>
+
+class MediaKey : public QObject, QAbstractNativeEventFilter
+{
+    Q_OBJECT
+
+public:
+    MediaKey();
+
+     virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
+
+signals:
+    void keyReceived(int sig, bool repeat, bool pressed);
+};
+
+#endif
 
 #endif // MEDIAKEYS_H

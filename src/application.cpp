@@ -51,6 +51,17 @@ void DockedApplication::onApplicationStateChanged(Qt::ApplicationState state)
     }
 }
 
+bool DockedApplication::event(QEvent *ev)
+{
+    qDebug() << "DockedApplication::event()" << ev->type();
+    if (ev->type() == QEvent::KeyPress)
+    {
+        qDebug() << "KeyPress";
+    }
+
+    return QtSingleApplication::event(ev);
+}
+
 void DockedApplication::setTrayIcon(QSystemTrayIcon *tray)
 {
     QObject::connect(tray, SIGNAL(triggered()), this, SLOT(onTrayIconTriggered()));

@@ -25,6 +25,7 @@
 #ifdef Q_OS_DARWIN
 #include "mac/mediakeys.h"
 #endif
+#include "mediakey.h"
 
 #include "thirdparty/qt-solutions/qtsingleapplication/src/qtsingleapplication.h"
 
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
         qDebug() << "Cleaning up jump list icons" << jl_icons;
         foreach(QString iconFile, jl_icons.entryList())
         {
-            qDebug() << "Remove " << iconFile;
+            // qDebug() << "Remove " << iconFile;
             jl_icons.remove(iconFile);
         }
     }
@@ -364,6 +365,11 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_DARWIN
         qDebug() << "Mac application";
         MediaKeys *keys = new MediaKeys(w);
+        QObject::connect(keys, SIGNAL(keyReceived(int,bool,bool)), w, SLOT(receiveMacMediaKey(int, bool, bool)));
+#endif
+#ifdef Q_OS_WIN
+        qDebug() << "Windows application";
+        MediaKey *keys = new MediaKey();
         QObject::connect(keys, SIGNAL(keyReceived(int,bool,bool)), w, SLOT(receiveMacMediaKey(int, bool, bool)));
 #endif
         // Notify changes of the google app to the application

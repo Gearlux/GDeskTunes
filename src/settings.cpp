@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "settings.h"
 #include "ui_settings.h"
@@ -120,6 +120,7 @@ QStringList Settings::getStyles(QString subdir)
 
 void Settings::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "Settings::keyPressEvent(" << event << ")";
     switch(event->key())
     {
     case Qt::Key_MediaPlay:

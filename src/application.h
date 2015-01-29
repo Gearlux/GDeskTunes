@@ -32,6 +32,8 @@ public:
     void setTrayIcon(QSystemTrayIcon *tray);
     void addWindow(QMainWindow *window);
 
+    bool DockedApplication::event(QEvent *ev);
+
 private slots:
     // Connected slots
     void onApplicationStateChanged(Qt::ApplicationState state);

@@ -121,7 +121,8 @@ SOURCES += \
     downloader.cpp \
     webview.cpp \
     versioncheck.cpp \
-    server/remoteserver.cpp
+    server/remoteserver.cpp \
+    mediakey.cpp
 
 RESOURCES += \
     ../gdesktunes.qrc

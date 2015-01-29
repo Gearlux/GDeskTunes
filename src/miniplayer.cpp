@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
@@ -121,6 +121,7 @@ void MiniPlayer::placeMiniPlayer(QPoint& pt)
 
 void MiniPlayer::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "MiniPlayer::keyPressEvent(" << event << ")";
     switch(event->key())
     {
     case Qt::Key_MediaPlay:

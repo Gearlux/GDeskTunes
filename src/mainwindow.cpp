@@ -254,23 +254,26 @@ void MainWindow::setMenuVisible(bool visible)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    // qDebug() << "MainWindow::keyPressEvent(" << event << ")";
+    qDebug() << "MainWindow::keyPressEvent(" << event << ")";
     switch(event->key())
     {
     case Qt::Key_MediaTogglePlayPause:
     case Qt::Key_MediaPlay:
     {
         ui->actionPlay->trigger();
+        event->accept();
     }
         break;
     case Qt::Key_MediaNext:
     {
         ui->actionNext->trigger();
+        event->accept();
     }
         break;
     case Qt::Key_MediaPrevious:
     {
        ui->actionPrevious->trigger();
+       event->accept();
     }
         break;
     default:
@@ -284,7 +287,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     for(int i=0; i<list.size(); ++i)
     {
         QAction* action = list.at(i);
-        if (checkAction(event, action)) break;
+        if (checkAction(event, action))
+        {
+            event->accept();
+            break;
+        }
     }
 }
 

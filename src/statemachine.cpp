@@ -1,3 +1,4 @@
+#define QT_NO_DEBUG_OUTPUT
 #include "statemachine.h"
 
 #include <QDebug>
