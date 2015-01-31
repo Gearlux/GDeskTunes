@@ -99,7 +99,8 @@ HEADERS += \
     webview.h \
     mediakey.h \
     versioncheck.h \
-    server/remoteserver.h
+    server/remoteserver.h \
+    mediakeydialog.h
 
 SOURCES += \
     aboutdialog.cpp \
@@ -122,7 +123,8 @@ SOURCES += \
     webview.cpp \
     versioncheck.cpp \
     server/remoteserver.cpp \
-    mediakey.cpp
+    mediakey.cpp \
+    mediakeydialog.cpp
 
 RESOURCES += \
     ../gdesktunes.qrc
@@ -131,7 +133,8 @@ FORMS += \
     mainwindow.ui \
     settings.ui \
     aboutdialog.ui \
-    miniplayer.ui
+    miniplayer.ui \
+    mediakeydialog.ui
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles

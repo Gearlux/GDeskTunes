@@ -153,12 +153,23 @@ class MediaKey : public QObject, QAbstractNativeEventFilter
     Q_OBJECT
 
 public:
-    MediaKey();
+    MediaKey(QWidget* parent);
 
-     virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
+    virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
 
 signals:
     void keyReceived(int sig, bool repeat, bool pressed);
+    void registerMediaKeys(bool registered);
+
+public slots:
+    void setRegisterMediaKeys(bool reg);
+
+    void load();
+    void save();
+
+private:
+    bool register_media_keys;
+    bool media_keys_warning;
 };
 
 #endif

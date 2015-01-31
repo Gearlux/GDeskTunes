@@ -49,6 +49,9 @@ Settings::Settings(GDeskTunes *parent) :
    ui->album_art_notifications->hide();
    ui->iTunes_notifications->hide();
 #endif
+#ifndef Q_OS_WIN
+   ui->register_media_keys->hide();
+#endif
 
     QStringList styles = getStyles();
     ui->CSS->addItems(styles);

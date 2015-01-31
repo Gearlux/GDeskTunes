@@ -81,6 +81,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="register_media_keys">
+            <property name="text">
+             <string>Register Media Keys</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
     QApplication::setApplicationDisplayName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3.5");
+    QApplication::setApplicationVersion("0.3.6");
     QApplication::setOrganizationName("GearLux");
 
     // Clean up all temporary files created by QT for the jump-list
@@ -369,8 +369,12 @@ int main(int argc, char *argv[])
 #endif
 #ifdef Q_OS_WIN
         qDebug() << "Windows application";
-        MediaKey *keys = new MediaKey();
+        MediaKey *keys = new MediaKey(w);
+        keys->setObjectName("MediaKey");
         QObject::connect(keys, SIGNAL(keyReceived(int,bool,bool)), w, SLOT(receiveMacMediaKey(int, bool, bool)));
+        QObject::connect(a, SIGNAL(aboutToQuit()), keys, SLOT(save()));
+
+        connectUI(settings, keys);
 #endif
         // Notify changes of the google app to the application
         connectSlotsByName(app, w);
@@ -447,6 +451,10 @@ int main(int argc, char *argv[])
         last_fm->load();
         jar->load();
         trayIcon->load();
+
+#ifdef Q_OS_WIN
+        keys->load();
+#endif
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
