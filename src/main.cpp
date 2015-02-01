@@ -373,8 +373,10 @@ int main(int argc, char *argv[])
         keys->setObjectName("MediaKey");
         QObject::connect(keys, SIGNAL(keyReceived(int,bool,bool)), w, SLOT(receiveMacMediaKey(int, bool, bool)));
         QObject::connect(a, SIGNAL(aboutToQuit()), keys, SLOT(save()));
+        QObject::connect(a, SIGNAL(aboutToQuit()), keys, SLOT(deleteLater()));
 
         connectUI(settings, keys);
+        QObject::connect(keys, SIGNAL(ignoreMediaKeys(bool)), w, SLOT(setIgnoreMediaKeys(bool)));
 #endif
         // Notify changes of the google app to the application
         connectSlotsByName(app, w);

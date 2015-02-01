@@ -1,0 +1,6 @@
+; MMShellHook.def : Declares the module parameters for the DLL.
+
+LIBRARY      "MMShellHook"
+
+SECTIONS
+	.shared read write shared

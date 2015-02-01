@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>326</height>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,63 +58,29 @@
        <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>GDeskTunes</string>
+       <item row="5" column="0">
+        <widget class="QGroupBox" name="media_key_box">
+         <property name="enabled">
+          <bool>true</bool>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QCheckBox" name="mini_player_on_top">
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Mini player on top</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="check_updates_startup">
-            <property name="text">
-             <string>Check for updates automatically</string>
-            </property>
-           </widget>
-          </item>
+         <property name="title">
+          <string>Media Keys</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
            <widget class="QCheckBox" name="register_media_keys">
-            <property name="text">
-             <string>Register Media Keys</string>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This command registers the media keys as hotkeys. This will allow GDeskTunes to repsond to your media keys when running in the background. No other application may register the media keys as hotkeys for this method to function correctly.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Layout</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QCheckBox" name="navigation_buttons">
             <property name="text">
-             <string>Add navigation buttons</string>
+             <string>Register Media Hot Keys</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="keep_logo">
+           <widget class="QCheckBox" name="register_app_commands">
             <property name="text">
-             <string>Keep Google logo</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="keep_links">
-            <property name="text">
-             <string>Keep Google links</string>
+             <string>Register Media App Commands</string>
             </property>
            </widget>
           </item>
@@ -144,7 +110,37 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Layout</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QCheckBox" name="navigation_buttons">
+            <property name="text">
+             <string>Add navigation buttons</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="keep_logo">
+            <property name="text">
+             <string>Keep Google logo</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="keep_links">
+            <property name="text">
+             <string>Keep Google links</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="1">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
           <string>Notifications</string>
@@ -175,6 +171,32 @@
            <widget class="QCheckBox" name="iTunes_notifications">
             <property name="text">
              <string>Use ITunes style notifications</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>GDeskTunes</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="mini_player_on_top">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Mini player on top</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="check_updates_startup">
+            <property name="text">
+             <string>Check for updates automatically</string>
             </property>
            </widget>
           </item>

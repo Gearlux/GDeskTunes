@@ -92,6 +92,9 @@ public slots:
     void keyPressEvent(QKeyEvent *event);
 
     void on_actionGDeskTunes_triggered();
+
+    void setIgnoreMediaKeys(bool ignore) { this->ignore_media_keys = ignore; }
+
 public:
     virtual bool isMini();
 
@@ -156,6 +159,9 @@ private:
     bool do_move;
     int mouse_click_x_coordinate;
     int mouse_click_y_coordinate;
+
+    // Do not respond to media keys when other
+    bool ignore_media_keys;
 };
 
 #endif // MAINWINDOW_H

@@ -7,12 +7,15 @@
 #include <QWidget>
 #include <QSettings>
 #include <QApplication>
+#include <QDir>
 
 #include <QAbstractEventDispatcher>
 
 #include <windows.h>
 #include <WinUser.h>
 #include <strsafe.h>
+
+#include "mmshellhook.h"
 
 void ErrorExit(LPTSTR lpszFunction)
 {
@@ -49,9 +52,39 @@ void ErrorExit(LPTSTR lpszFunction)
 
 
 MediaKey::MediaKey(QWidget *parent) :
-    QObject(parent)
+    QObject(parent),
+    register_media_keys(false),
+    register_app_commands(false),
+    media_keys_warning(false),
+    mmgdeskhook(0)
 {
     QAbstractEventDispatcher::instance()->installNativeEventFilter(this);
+}
+
+MediaKey::~MediaKey()
+{
+    if (mmgdeskhook != 0)
+    {
+        qDebug() << "Terminating MMGDeskHook";
+
+        mmgdeskhook->terminate();
+        mmgdeskhook->waitForFinished(250);
+    }
+    QWidget* widget = dynamic_cast<QWidget*>(parent());
+    if (widget != 0)
+    {
+        HWND hWND = (HWND)widget->winId();
+        if (register_app_commands)
+        {
+            UnSetMMShellHook(hWND);
+        }
+        if (register_media_keys)
+        {
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB3);
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB1);
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB0);
+        }
+    }
 }
 
 void MediaKey::load()
@@ -61,6 +94,7 @@ void MediaKey::load()
 
     this->media_keys_warning = settings.value("media_keys_warning", true).toBool();
     this->setRegisterMediaKeys(settings.value("register_media_keys", false).toBool());
+    this->setRegisterAppCommands(settings.value("register_app_commands", false).toBool());
 }
 
 void MediaKey::save()
@@ -69,33 +103,73 @@ void MediaKey::save()
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
 
     settings.setValue("register_media_keys", this->register_media_keys);
+    settings.setValue("register_app_commands", this->register_app_commands);
     settings.setValue("media_keys_warning", this->media_keys_warning);
+}
 
-    if (this->register_media_keys)
-        setRegisterMediaKeys(false);
+void MediaKey::setRegisterAppCommands(bool reg)
+{
+    qDebug() << "MediaKey::setRegisterAppCommands(" << reg << ")";
+    if (reg == this->register_app_commands) return;
+
+    QWidget* widget = dynamic_cast<QWidget*>(parent());
+    if (widget != 0)
+    {
+        this->register_app_commands = reg;
+        emit registerAppCommands(reg);
+
+        HWND hWND = (HWND)widget->winId();
+        if (reg)
+        {
+            setRegisterMediaKeys(false);
+            SetMMShellHook(hWND);
+
+            if (mmgdeskhook == 0)
+            {
+                QString program;
+#ifdef _WIN32
+                program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook64.exe";
+#else
+                program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook.exe";
+#endif
+                if (QFile(program).exists())
+                {
+                    mmgdeskhook = new QProcess();
+                    mmgdeskhook->start(program, QStringList() << QString::number((long)hWND));
+                    qDebug() << program << (long)hWND << hWND << (int)hWND;
+                    mmgdeskhook->waitForStarted();
+                }
+            }
+        }
+        else
+        {
+            UnSetMMShellHook(hWND);
+            if (mmgdeskhook != 0)
+            {
+                mmgdeskhook->terminate();
+                mmgdeskhook = 0;
+            }
+        }
+    }
+
+    emit ignoreMediaKeys(this->register_app_commands || this->register_media_keys);
 }
 
 void MediaKey::setRegisterMediaKeys(bool reg)
 {
-    QWidget* widget = dynamic_cast<QWidget*>(parent());
     if (reg == this->register_media_keys) return;
 
+    QWidget* widget = dynamic_cast<QWidget*>(parent());
     if (widget != 0)
     {
         this->register_media_keys = reg;
         emit registerMediaKeys(reg);
 
         HWND hWND = (HWND)widget->winId();
-        if (!reg)
+        if (reg)
         {
-            qDebug() << "Unregistering hot keys" << hWND;
-            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB3);
-            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB1);
-            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB0);
-            qDebug() << "Hot keys unregistered";
-        }
-        else
-        {
+            setRegisterAppCommands(false);
+
             bool warning = false;
             if (RegisterHotKey(hWND,MOD_NOREPEAT ^0xB0,MOD_NOREPEAT,0xB0))
             {
@@ -104,7 +178,7 @@ void MediaKey::setRegisterMediaKeys(bool reg)
             else
             {
                 qDebug() << "Hotkey 'NEXT' could not be registered";
-               warning = true;
+                warning = true;
             }
             if (RegisterHotKey(hWND,MOD_NOREPEAT ^0xB1,MOD_NOREPEAT,0xB1))
             {
@@ -135,10 +209,20 @@ void MediaKey::setRegisterMediaKeys(bool reg)
                     {
                         this->media_keys_warning = !dlg->ui->do_not_show_waring->isChecked();
                     }
-               }
+                }
             }
         }
+        else
+        {
+            qDebug() << "Unregistering hot keys" << hWND;
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB3);
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB1);
+            UnregisterHotKey(hWND,MOD_NOREPEAT ^0xB0);
+            qDebug() << "Hot keys unregistered";
+        }
     }
+
+    emit ignoreMediaKeys(this->register_app_commands || this->register_media_keys);
 }
 
 bool MediaKey::nativeEventFilter(const QByteArray & eventType, void * message, long * result)
@@ -149,34 +233,52 @@ bool MediaKey::nativeEventFilter(const QByteArray & eventType, void * message, l
     MSG* msg = static_cast<MSG*>(message);
     if (msg->message == WM_HOTKEY)
     {
-        const quint32 keycode = HIWORD(msg->lParam);
-        const quint32 modifiers = LOWORD(msg->lParam);
-
-        if (modifiers == 0)
+        qDebug() << "Received hotkey";
+        if (register_media_keys)
         {
-            switch(keycode)
+            const quint32 keycode = HIWORD(msg->lParam);
+            const quint32 modifiers = LOWORD(msg->lParam);
+
+            qDebug() << keycode << modifiers;
+
+            if (modifiers == 0)
             {
-            case 0xb3:
-                emit keyReceived(16, false, true);
-                return true;
-            case 0xb0:
-                emit keyReceived(19, false, true);
-                return true;
-            case 0xb1:
-                emit keyReceived(20, false, true);
-                return true;
+                switch(keycode)
+                {
+                case 0xb3:
+                    emit keyReceived(16, false, true);
+                    return true;
+                case 0xb0:
+                    emit keyReceived(19, false, true);
+                    return true;
+                case 0xb1:
+                    emit keyReceived(20, false, true);
+                    return true;
+                }
             }
         }
-        // activateShortcut(keycode, modifiers);
-        qDebug() << keycode << modifiers;
     }
     if (msg->message == WM_APPCOMMAND)
     {
-        qDebug() << "app command";
+        qDebug() << "Received appcommand";
+        if (register_app_commands)
+        {
+            qDebug() << msg->lParam;
+            switch(GET_APPCOMMAND_LPARAM(msg->lParam))
+            {
+            case APPCOMMAND_MEDIA_NEXTTRACK:
+                emit keyReceived(19, false, true);
+                return true;
+            case APPCOMMAND_MEDIA_PREVIOUSTRACK:
+                emit keyReceived(20, false, true);
+                return true;
+            case APPCOMMAND_MEDIA_PLAY_PAUSE:
+                emit keyReceived(16, false, true);
+                return true;
+            }
+        }
     }
-
     return false;
 }
-
 #endif
 

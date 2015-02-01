@@ -1,6 +1,6 @@
 REM PATH=%PATH%;C:\Qt\5.4\msvc2013_opengl\bin
 REM PATH=%PATH%;E:\Source\Qt\5.4\msvc2013_opengl\bin
-PATH=%PATH%;D:\Source\Qt\5.4\msvc2012_opengl\bin
+PATH=%PATH%;D:\Source\Qt\5.4\msvc2013_opengl\bin
 
 rmdir /S /Q build
 mkdir build
@@ -13,6 +13,7 @@ REM Cleanup install distribution files
 rmdir /S /Q GDeskTunes
 mkdir GDeskTunes
 xcopy /S build\src\release GDeskTunes
+xcopy /S build\lib\MMShellHook\release\mmshellhook.dll GDeskTunes
 del GDeskTunes\*.obj
 del GDeskTunes\*.cpp
 del GDeskTunes\*.moc

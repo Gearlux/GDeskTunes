@@ -147,6 +147,7 @@ public:
 
 #ifdef Q_OS_WIN
 #include <QAbstractNativeEventFilter>
+#include <QProcess>
 
 class MediaKey : public QObject, QAbstractNativeEventFilter
 {
@@ -154,22 +155,29 @@ class MediaKey : public QObject, QAbstractNativeEventFilter
 
 public:
     MediaKey(QWidget* parent);
+    virtual ~MediaKey();
 
     virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
 
 signals:
     void keyReceived(int sig, bool repeat, bool pressed);
     void registerMediaKeys(bool registered);
+    void registerAppCommands(bool registered);
+    void ignoreMediaKeys(bool ignore);
 
 public slots:
     void setRegisterMediaKeys(bool reg);
+    void setRegisterAppCommands(bool reg);
 
     void load();
     void save();
 
 private:
     bool register_media_keys;
+    bool register_app_commands;
     bool media_keys_warning;
+
+    QProcess *mmgdeskhook;
 };
 
 #endif

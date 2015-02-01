@@ -260,24 +260,32 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     case Qt::Key_MediaTogglePlayPause:
     case Qt::Key_MediaPlay:
     {
-        ui->actionPlay->trigger();
-        event->accept();
+        if (!ignore_media_keys)
+        {
+            ui->actionPlay->trigger();
+            event->accept();
+        }
     }
-        break;
+    break;
     case Qt::Key_MediaNext:
     {
-        ui->actionNext->trigger();
-        event->accept();
+        if (!ignore_media_keys)
+        {
+            ui->actionNext->trigger();
+            event->accept();
+        }
     }
-        break;
+    break;
     case Qt::Key_MediaPrevious:
     {
-       ui->actionPrevious->trigger();
-       event->accept();
+        if (!ignore_media_keys)
+        {
+            ui->actionPrevious->trigger();
+            event->accept();
+        }
     }
-        break;
+    break;
     default:
-
         QMainWindow::keyPressEvent(event);
         break;
     }
@@ -687,9 +695,15 @@ void MainWindow::showMinimized()
 
 void MainWindow::switchFullScreen()
 {
+     qDebug() << "MainWindow::switchFullScreen()";
     if (isFullScreen())
     {
-        showNormal();
+        qDebug() << windowState() << windowFlags();
+
+        if (isMaximized())
+            showMaximized();
+        else
+            showNormal();
     }
     else
     {

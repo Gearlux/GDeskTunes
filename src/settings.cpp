@@ -50,7 +50,7 @@ Settings::Settings(GDeskTunes *parent) :
    ui->iTunes_notifications->hide();
 #endif
 #ifndef Q_OS_WIN
-   ui->register_media_keys->hide();
+   ui->media_key_box->hide();
 #endif
 
     QStringList styles = getStyles();

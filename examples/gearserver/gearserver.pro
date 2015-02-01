@@ -26,7 +26,11 @@ win32 {
     # Add your path to bonjour here.
     INCLUDEPATH += "C:/Program Files/Bonjour SDK/Include"
 
-    LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/Win32" -ldnssd
+    contains(QMAKE_HOST.arch, x86_64):{
+        LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/x64" -ldnssd
+    } else {
+        LIBS+= -L"C:/Program Files/Bonjour SDK/Lib/Win32" -ldnssd
+    }
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/bonjourgear/release/ -lbonjourgear
