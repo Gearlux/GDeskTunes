@@ -45,7 +45,8 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     corner(0),
     slider_moving(false),
     play_mode(0),
-    opacity(1.0f)
+    opacity(1.0f),
+    pinned(false)
 {
     ui->setupUi(this);
 
@@ -558,9 +559,9 @@ void MiniPlayer::show()
     qDebug() << "MiniPlayer::show()";
     // Check to which position we have to move the player
     qint64 current = QDateTime::currentMSecsSinceEpoch();
-    qDebug() << current << " " << trayIconTiming << " " << userIconTiming;
+    qDebug() << current << " " << trayIconTiming << " " << userIconTiming << pinned;
     bool savePosition = false;
-    if (current < trayIconTiming + 100)
+    if (current < trayIconTiming + 100 && !pinned)
     {
         // Place it on the trayIcon position
         move(trayIconPosition.x(), trayIconPosition.y());
@@ -801,4 +802,20 @@ void MiniPlayer::showElements(bool visible)
     // ui->top_row->setVisible(visible);
     ui->thumbs_frame->setVisible(visible);
     ui->album_art->setVisible(visible);
+}
+
+void MiniPlayer::on_pin_mini_clicked()
+{
+    qDebug() << "MiniPlayer::on_pin_mini_clicked()";
+
+    if (pinned)
+    {
+        pinned = false;
+        ui->pin_mini->setIcon(QIcon(":/icons/8x8/unpinned.png"));
+    }
+    else
+    {
+        pinned = true;
+        ui->pin_mini->setIcon(QIcon(":/icons/8x8/pinned.png"));
+    }
 }

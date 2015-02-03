@@ -79,6 +79,8 @@ public slots:
     void on_slider_sliderReleased();
     void on_slider_valueChanged(int);
 
+    void on_pin_mini_clicked();
+
 private:
     void invert(bool inv);
     void showElements(bool visible);
@@ -133,6 +135,9 @@ private:
 
     int play_mode;
     float opacity;
+
+    // Persistent properties
+    bool pinned;
 
 };
 
