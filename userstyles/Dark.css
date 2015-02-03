@@ -279,6 +279,7 @@ a, .simple-dialog a {
 }
 
 #player, .player-middle {
+    background-color: #464646 !important;
     background: -webkit-linear-gradient(90deg, #464646, #606060);
     background: linear-gradient(0deg, #464646, #606060);
     border-top: 1px solid #292929;
