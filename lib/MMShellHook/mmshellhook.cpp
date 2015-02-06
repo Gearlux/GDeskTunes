@@ -8,6 +8,8 @@
 #include <winuser.h>
 
 #include <crtdbg.h>
+#include <iostream>
+#include <fstream>
 /////////////////////////////////////////////////////////////////////////////
 // Storage for the global data in the DLL
 
@@ -16,15 +18,11 @@ HWND hNotifyWnd = NULL;
 HHOOK hShellHook = NULL;							// Handle to the Shell hook
 #pragma data_seg( )
 /////////////////////////////////////////////////////////////////////////////
+
 // Per-instance DLL variables
-
-
 HINSTANCE hInstance = NULL;							// This instance of the DLL
 
-
 LRESULT CALLBACK ShellProc (int nCode, WPARAM wParam, LPARAM lParam);
-
-
 
 // The DLL's main procedure
 BOOL WINAPI DllMain (HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
@@ -34,7 +32,7 @@ BOOL WINAPI DllMain (HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
     {
 
     case DLL_PROCESS_ATTACH:
-        // qDebug() << "MMShellHook : Hook DLL loaded";
+        std::cout << "MMShellHook : Hook DLL loaded" << std::endl;
         // Save the instance handle
         hInstance = (HINSTANCE)hInst;
         // ALWAYS return TRUE to avoid breaking unhookable applications!!!
@@ -52,7 +50,7 @@ BOOL WINAPI DllMain (HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 
 MMSHELLHOOKSHARED_EXPORT BOOL SetMMShellHook(HWND hWnd)
 {
-    //  qDebug() << "SetMMShellHook(" << hWnd << ")";
+    std::cout << "SetMMShellHook(" << hWnd << ")" << std::endl;
 
     // Don't add the hook if the window ID is NULL
     if (hWnd == NULL)
@@ -77,7 +75,7 @@ MMSHELLHOOKSHARED_EXPORT BOOL SetMMShellHook(HWND hWnd)
 
         hNotifyWnd = hWnd;						// Save the WinRFB window handle
 
-        // qDebug() << "Notify Window is" << hWnd;
+        std::cout << "Notify Window is" << hWnd << std::endl;
         return TRUE;
     }
     // The hook failed, so return an error code
@@ -88,7 +86,7 @@ MMSHELLHOOKSHARED_EXPORT BOOL SetMMShellHook(HWND hWnd)
 // Remove the hook from the system
 MMSHELLHOOKSHARED_EXPORT int UnSetMMShellHook(HWND hWnd)
 {
-    // qDebug() << "UnSetMMShellHook(" << hWnd << ")";
+    std::cout << "UnSetMMShellHook(" << hWnd << ")" << std::endl;
     BOOL unHooked = TRUE;
 
     // Is the window handle valid?
@@ -120,7 +118,9 @@ MMSHELLHOOKSHARED_EXPORT int UnSetMMShellHook(HWND hWnd)
 
 LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    // qDebug() << "ShellProc(" << nCode << "," << wParam << "," << lParam << ")";
+    std::ofstream debug;
+    debug.open("c:\\mmgdeskhook.txt", std::ios::app);
+    debug << "ShellProc(" << nCode << "," << wParam << "," << lParam << ")" << std::endl;
     // Do we have to handle this message?
     if (nCode == HSHELL_APPCOMMAND)
     {
@@ -136,13 +136,16 @@ LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
             case APPCOMMAND_MEDIA_PLAY_PAUSE:
             case APPCOMMAND_MEDIA_PREVIOUSTRACK:
             case APPCOMMAND_MEDIA_STOP:
+                debug << "PostMessage: WM_APPCOMMAND" << std::endl;
                 ::PostMessage(hNotifyWnd,WM_APPCOMMAND,wParam,lParam);
+                debug.close();
                 return 1; // dont call CallNextHookEx, instead return non-zero, because we have handled the message (see MSDN doc)
 
             }
         }
     }
 
+    debug.close();
     // Call the next handler in the chain
     return CallNextHookEx (hShellHook, nCode, wParam, lParam);
 }
