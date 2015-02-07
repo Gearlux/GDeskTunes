@@ -36,8 +36,10 @@ MainWindow::MainWindow(QWidget *parent) :
     windows_offset(0,0),
     draggable(false),
     hide_menu(false),
+    tray_icon(false),
     minimize_to_tray(false),
-    do_move(false)
+    do_move(false),
+    ignore_media_keys(false)
 {
     ui->setupUi(this);
 
@@ -255,6 +257,7 @@ void MainWindow::setMenuVisible(bool visible)
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << "MainWindow::keyPressEvent(" << event << ")";
+    qDebug() << "   ignoreMediaKeys: " << ignore_media_keys;
     switch(event->key())
     {
     case Qt::Key_MediaTogglePlayPause:
@@ -449,9 +452,9 @@ void MainWindow::populateJumpList()
     {
         switchmini_menu = new QWinJumpListItem(QWinJumpListItem::Link);
         if (isMini())
-            switchmini_menu->setTitle("Switch from Miniplayer");
+            switchmini_menu->setTitle("Switch from Compact Layout");
         else
-            switchmini_menu->setTitle("Switch to Miniplayer");
+            switchmini_menu->setTitle("Switch to Compact Layout ");
         switchmini_menu->setIcon(QIcon(":/icons/32x32/multimedia-player-apple-ipod.png"));
         switchmini_menu->setFilePath(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
         switchmini_menu->setArguments(QStringList("--mini"));

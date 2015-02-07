@@ -409,6 +409,7 @@ int main(int argc, char *argv[])
         connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
         connect(a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
         connect(a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), miniplayer, SLOT(save()));
 
         // Apply website customizations
         connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
@@ -459,6 +460,7 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_WIN
         keys->load();
 #endif
+        miniplayer->load();
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);

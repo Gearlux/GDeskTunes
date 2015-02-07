@@ -81,6 +81,9 @@ public slots:
 
     void on_pin_mini_clicked();
 
+    void save();
+    void load();
+
 private:
     void invert(bool inv);
     void showElements(bool visible);

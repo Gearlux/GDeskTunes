@@ -13,7 +13,7 @@
    height="64"
    id="svg4136"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.48.5 r10040"
    viewBox="0 0 64 64"
    sodipodi:docname="unpinned.svg"
    inkscape:export-filename="D:\Users\amjmr\workspace\GDeskTunes\icons\8x8\unpinned.png"
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.7781746"
-     inkscape:cx="59.165504"
+     inkscape:cx="39.109384"
      inkscape:cy="25.650075"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -38,8 +38,8 @@
      showguides="false"
      inkscape:window-width="1920"
      inkscape:window-height="1028"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-x="3064"
+     inkscape:window-y="522"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -60,9 +60,27 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
+    <g
+       id="g3058"
+       transform="translate(-55.254668,-5.1503882)">
+      <rect
+         y="19.578173"
+         x="69.935562"
+         height="34.84499"
+         width="34.849232"
+         id="rect5242"
+         style="fill:#000000;fill-opacity:0.50196078;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.50196078;stroke-dasharray:none" />
+      <rect
+         y="13.275431"
+         x="63.635159"
+         height="47.449142"
+         width="47.449142"
+         id="rect3352"
+         style="fill:none;stroke:#000000;stroke-width:12.65999985;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.50196078;stroke-dasharray:none" />
+    </g>
     <path
-       style="fill:#ffffff;fill-opacity:0.50196078;fill-rule:evenodd;stroke:#000000;stroke-width:1.35950077px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 0.72471879,32.134017 20.24771621,-4.036092 0.0287,-13.227654 2.018047,-0.16418 c 5.080941,0.186985 11.569467,5.313657 11.445876,10.628071 l 0.04369,3.465471 27.14632,-10.384215 0,27.437197 -27.190015,-9.874856 -0.04369,3.058499 c -0.05631,3.94183 -6.036512,10.914664 -11.538521,10.985358 l -1.881702,-0.01703 0.015,-13.744508 z"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.61191617999999990px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 5,31.142055 23.277007,24.856291 23.302917,4.255692 25.124548,4 c 4.586414,0.2912085 10.443411,8.27543 10.331849,16.552038 l 0.03943,5.397085 L 60,9.7768645 60,52.507245 35.456388,37.128255 35.416958,41.891528 C 35.366128,48.030489 29.96798,58.889902 25.001481,59 l -1.698556,-0.02652 0.01354,-21.405541 z"
        id="path4688"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccscccc" />
