@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 
 #include "mmshellhook.h"
 
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     HWND hWnd = (HWND)atol(argv[1]);
 
-    printf("Adding hook for %d\n", (long)hWnd);
+    std::cout << "Adding hook for " << (long)hWnd << std::endl;
 
     SetMMShellHook(hWnd);
 
