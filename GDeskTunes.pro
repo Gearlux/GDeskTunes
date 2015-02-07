@@ -4,7 +4,11 @@ SUBDIRS += \
     thirdparty \
     lib \
     src \
-    examples
+    examples \
+    plugins
+
+src.depends = lib
+examples.depends = lib
 
 OTHER_FILES += \
     icons/gdesktunes.iconset/* \

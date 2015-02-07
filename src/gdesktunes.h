@@ -15,6 +15,8 @@ signals:
     void customized(bool custom);
     void keepLogo(bool keep);
     void navigationButtons(bool buttons);
+    void playerButtons(bool buttons);
+    void styleMenu(bool style);
     void keepLinks(bool keep);
     void CSS(QString style);
     void miniCSS(QString style);
@@ -38,10 +40,13 @@ public slots:
 
     void setKeepLogo(bool keep) { if (keep == keep_logo) return; keep_logo = keep; emit keepLogo(keep); }
     void setNavigationButtons(bool buttons) { if (navigation_buttons == buttons) return; navigation_buttons = buttons; emit navigationButtons(buttons); }
+    void setPlayerButtons(bool buttons) { if (player_buttons == buttons) return; player_buttons = buttons; emit playerButtons(buttons); }
+    void setStyleMenu(bool style) {  if (style_menu == style) return; style_menu = style; emit styleMenu(style); }
     void setKeepLinks(bool keep) { if (keep == keep_links) return; keep_links = keep; emit keepLinks(keep); }
     void setCheckUpdatesStartup(bool set) { if (check_update_startup == set) return; check_update_startup = set; emit checkUpdatesStartup(set); }
 
     void updateAppearance();
+    void updateStyle();
 
     void setCSS(QString css);
     void setMiniCSS(QString css);
@@ -56,6 +61,7 @@ public:
     bool isMini() { return this->mini; }
 
     void restoreMini();
+
 
 private:
     void evaluateJavaScriptFile(QString filePath);
@@ -76,6 +82,8 @@ private:
     bool keep_logo;
     bool keep_links;
     bool navigation_buttons;
+    bool player_buttons;
+    bool style_menu;
     bool show_sidebar;
 
     bool check_update_startup;

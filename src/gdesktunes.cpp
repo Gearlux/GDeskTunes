@@ -24,6 +24,12 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     mini_css(QString::null),
     mini(false),
     customize(false),
+    mini_player_on_top(false),
+    keep_logo(false),
+    keep_links(false),
+    navigation_buttons(false),
+    player_buttons(false),
+    style_menu(false),
     show_sidebar(true),
     check_update_startup(false),
     updates_checked(false)
@@ -207,7 +213,9 @@ void GDeskTunes::setCustomized(bool customize)
         disableStyle(css);
 
         ui->toolBar->setStyleSheet("");
-        ui->actionSwitch_mini->setIcon(QIcon(":/icons/8x8/close_delete.png"));
+        ui->menuBar->setStyleSheet("");
+        qApp->setStyleSheet("");
+
         emit backgroundColor(QColor(250,250,250));
     }
 }
@@ -216,6 +224,20 @@ void GDeskTunes::setCustomized(bool customize)
  * This function executes all java scripts in the js directory of the application
  * and applies the selected style.
  */
+void GDeskTunes::updateStyle()
+{
+    if (this->customize)
+        applyStyle(this->css);
+
+    if (!style_menu)
+    {
+        ui->menuBar->setStyleSheet("");
+        qApp->setStyleSheet("");
+    }
+
+    updateAppearance();
+}
+
 void GDeskTunes::finishedLoad(bool ok)
 {
     qDebug() << "GDeskTunes::finishedLoad(" << ok << ")";
@@ -242,10 +264,7 @@ void GDeskTunes::finishedLoad(bool ok)
         evaluateJavaScriptFile(nextFile.absoluteFilePath());
     }
 
-    if (this->customize)
-        applyStyle(this->css);
-
-    updateAppearance();
+    updateStyle();
 }
 
 /*
@@ -295,9 +314,27 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
     QColor qColor = page->getBackgroundColor();
 
-    QString color = QString("rgb(") + qColor.red() + "," + qColor.green() + "," + qColor.blue() + ")";
+    QString color = QString().sprintf("rgb(%d,%d,%d)",qColor.red(), qColor.green(), qColor.blue());
+    qDebug() << "Toolbar background: " << color;
     ui->toolBar->setStyleSheet("border: 0px; background: " + color);
 
+    if (style_menu)
+    {
+        ui->menuBar->setStyleSheet("border: 0px; background: " + color );
+        int gray = qGray(qColor.rgb());
+
+        if (gray < 128)
+        {
+            qApp->setStyleSheet("QMenuBar::item { background-color: transparent; color: white; }");
+        }
+        else
+        {
+            qApp->setStyleSheet("QMenuBar::item { background-color: transparent; color: black; }");
+        }
+    }
+
+    /*
+     * XXX
     int gray = qGray(qColor.rgb());
 
     if (gray < 128)
@@ -308,6 +345,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     {
         ui->actionSwitch_mini->setIcon(QIcon(":/icons/8x8/close_delete.png"));
     }
+    */
 
     qDebug() << "emit backgroundColor(" << qColor << ")";
     emit backgroundColor(qColor);
@@ -436,6 +474,8 @@ void GDeskTunes::save()
     settings.setValue("keeplogo", this->keep_logo);
     settings.setValue("keeplinks", this->keep_links);
     settings.setValue("navigation.buttons", this->navigation_buttons);
+    settings.setValue("player.buttons", this->player_buttons);
+    settings.setValue("sytle.menu", this->style_menu);
     settings.setValue("updates.startup", this->check_update_startup);
 }
 
@@ -454,6 +494,8 @@ void GDeskTunes::load()
     this->setKeepLogo(settings.value("keeplogo", true).toBool());
     this->setKeepLinks(settings.value("keeplinks", true).toBool());
     this->setNavigationButtons(settings.value("navigation.buttons", true).toBool());
+    this->setPlayerButtons(settings.value("player.buttons", true).toBool());
+    this->setStyleMenu(settings.value("style.menu", false).toBool());
     this->setMinimizeToTray(settings.value("minimizeToTray", false).toBool());
 
     this->setCheckUpdatesStartup(settings.value("updates.startup", true).toBool());
@@ -503,18 +545,23 @@ void GDeskTunes::updateAppearance()
 
         css += "#gm-back { background-image: url(http://radiant-player-mac/images/arrow-left.png); }";
         css += "#gm-forward { background-image: url(http://radiant-player-mac/images/arrow-right.png); }";
-
+    }
+    else
+    {
+        css += " .gm-nav-button { display: none; }";
+    }
+    if (player_buttons)
+    {
         css += "#compactButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
         css += "#compactButton:hover { opacity: 0.6; }";
 
-        css += "#miniButton { width: 12px; height: 12px; padding-right: 4px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#miniButton { width: 12px; height: 12px; padding-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
         css += "#miniButton:hover { opacity: 0.6; }";
 
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child { padding-right: 4px; }";
     }
     else
     {
-        css += " .gm-nav-button { display: none; }";
         css += "#miniButton { display: none; }";
     }
     if (!keep_links)
@@ -548,12 +595,6 @@ void GDeskTunes::checkFlashPlayer()
     }
 }
 
-void GDeskTunes::loadUrl()
-{
-    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
-    // ui->webView->load(QUrl("http://www.last.fm/home"));
-}
-
 void GDeskTunes::setShowSidebar(bool show)
 {
     this->show_sidebar = show;
@@ -571,3 +612,10 @@ void GDeskTunes::viewSidebar()
     ui->webView->setZoomFactor(zoomFactor * 0.99);
     ui->webView->setZoomFactor(zoomFactor);
 }
+
+void GDeskTunes::loadUrl()
+{
+    ui->webView->load(QUrl("https://play.google.com/music/listen#"));
+    // ui->webView->load(QUrl("http://www.last.fm/home"));
+}
+

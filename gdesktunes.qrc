@@ -59,5 +59,8 @@
         <file>icons/64x64/small_art.png</file>
         <file>radiant-player-mac/images/miniplayer.png</file>
         <file>radiant-player-mac/images/compactplayer.png</file>
+        <file>icons/8x8/maximize_compact.png</file>
+        <file>icons/8x8/pinned.png</file>
+        <file>icons/8x8/unpinned.png</file>
     </qresource>
 </RCC>

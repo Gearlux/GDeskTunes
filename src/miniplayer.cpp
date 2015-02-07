@@ -1,4 +1,4 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "miniplayer.h"
 #include "ui_miniplayer.h"
@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QScreen>
+#include <QSettings>
 
 
 QString seconds_to_DHMS(quint32 duration)
@@ -32,20 +33,25 @@ MiniPlayer::MiniPlayer(QWidget *parent) :
     trayIconTiming(0),
     trayIconPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     userIconTiming(std::numeric_limits<qint64>::max()),
-    userPosition(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
+    userPosition(0, 0),
     is_tray(false),
     inactiveTiming(0),
+    album_picture(QPixmap(":/icons/gdesktunes.iconset/icon_256x256.png")),
     background_image(0),
     large(false),
     do_move(false),
     has_moved(false),
     inverted(false),
     gray(255),
+    _shuffle(QString::null),
+    _repeat(QString::null),
+    _rating(-1),
     style(""),
     corner(0),
     slider_moving(false),
     play_mode(0),
-    opacity(1.0f)
+    opacity(1.0f),
+    pinned(false)
 {
     ui->setupUi(this);
 
@@ -330,18 +336,26 @@ void MiniPlayer::resize(int w, int h)
     case 2:
         QMainWindow::resize(w, h);
         move(topleft.x() + current_size.width() - w, topleft.y());
+        qDebug() << topleft.x() + current_size.width() - w << topleft.y();
         break;
     case 3:
         move(topleft.x() + current_size.width() - w, topleft.y() + current_size.height() - h);
         QMainWindow::resize(w, h);
+        qDebug() << topleft.x() + current_size.width() - w << topleft.y() + current_size.height() - h;
         break;
     case 4:
         move(topleft.x(), topleft.y() + current_size.height() - h);
+        qDebug() << topleft.x() << topleft.y() + current_size.height() - h;
         break;
     case 1:
     default:
         // Nothing to do
         break;
+    }
+    if (!is_tray)
+    {
+        userPosition = pos();
+        qDebug() << "Saving userPosition: " << userPosition;
     }
 }
 
@@ -495,10 +509,16 @@ void MiniPlayer::mouseMoveEvent(QMouseEvent *event)
 
 void MiniPlayer::mouseReleaseEvent(QMouseEvent *event)
 {
+    qDebug() << "MiniPlayer::mouseReleaseEvent()";
+
+    if (do_move)
+    {
+        qDebug() << "userPosition: " << pos();
+        userPosition = pos();
+        userIconTiming = QDateTime::currentMSecsSinceEpoch();
+    }
     do_move = false;
-    userPosition.setX(event->globalX() - mouse_click_x_coordinate);
-    userPosition.setY(event->globalY() - mouse_click_y_coordinate);
-    userIconTiming = QDateTime::currentMSecsSinceEpoch();
+
     QWidget::mouseReleaseEvent(event);
 
     if (has_moved)
@@ -558,11 +578,12 @@ void MiniPlayer::show()
     qDebug() << "MiniPlayer::show()";
     // Check to which position we have to move the player
     qint64 current = QDateTime::currentMSecsSinceEpoch();
-    qDebug() << current << " " << trayIconTiming << " " << userIconTiming;
+    qDebug() << current << " " << trayIconTiming << " " << userIconTiming << pinned;
     bool savePosition = false;
-    if (current < trayIconTiming + 100)
+    if (current < trayIconTiming + 100 && !pinned)
     {
         // Place it on the trayIcon position
+        qDebug() << "Tray Position" << trayIconPosition;
         move(trayIconPosition.x(), trayIconPosition.y());
         is_tray = true;
         // Adjust background and elements
@@ -572,14 +593,25 @@ void MiniPlayer::show()
     }
     else if (current > userIconTiming)
     {
+        qDebug() << "User Position" << userPosition;
         move(userPosition.x(), userPosition.y());
         is_tray = false;
+
+        // Adjust background and elements
+        if (large)
+            enableBackground();
+        showElements(true);
+
+        QScreen *screen = getBestScreen(this);
+        qDebug() << screen;
+
     }
     else
         savePosition = true;
     QMainWindow::show();
     if (savePosition)
     {
+        qDebug() << "Show userPosition: " << pos();
         userPosition = pos();
         userIconTiming = current;
     }
@@ -647,9 +679,13 @@ void MiniPlayer::invert(bool inv)
 
     QString text = "color: ";
     if (inv)
-        text += "white";
+    {
+        text += "white;";
+    }
     else
-        text += "black";
+    {
+        text += "black;";
+    }
     setStyle(ui->album, text);
     setStyle(ui->artist, text);
     setStyle(ui->title, text);
@@ -657,7 +693,7 @@ void MiniPlayer::invert(bool inv)
 
 void MiniPlayer::setStyle(QLabel *label, const QString &text)
 {
-    // qDebug() << "MiniPlayer::setStyle("<< label->objectName() << "," << text << ")";
+    qDebug() << "MiniPlayer::setStyle("<< label->objectName() << "," << text << ")";
 
     QString final_style = text;
 
@@ -675,13 +711,28 @@ void MiniPlayer::setStyle(QLabel *label, const QString &text)
             }
         }
         global_value /= (size.height() * size.width());
+
+        bool shade = !ui->control_frame->isVisible();
+
         bool inv = global_value < 128;
         if (inv)
         {
-            final_style = "color: white";
+            final_style = "color: white;\n";
+            if (shade)
+            {
+                final_style += "background-color: rgba(0,0,0,128);\n";
+                final_style += "border: 6px rgba(0,0,0,128);\n";
+            }
         }
         else
-            final_style = "color: black";
+        {
+            final_style = "color: black;\n";
+            if (shade)
+            {
+                final_style += "background-color: rgba(255,255,255,128);\n";
+                final_style += "border: 6px rgba(255,255,255,128);\n";
+            }
+        }
     }
     label->setStyleSheet(final_style);
 
@@ -788,9 +839,9 @@ bool MiniPlayer::event(QEvent *event)
     }
     if (event->type() == QEvent::HoverEnter)
     {
+        showElements(true);
         if (large)
             enableBackground();
-        showElements(true);
     }
     return QMainWindow::event(event);
 }
@@ -801,4 +852,45 @@ void MiniPlayer::showElements(bool visible)
     // ui->top_row->setVisible(visible);
     ui->thumbs_frame->setVisible(visible);
     ui->album_art->setVisible(visible);
+
+}
+
+void MiniPlayer::on_pin_mini_clicked()
+{
+    qDebug() << "MiniPlayer::on_pin_mini_clicked()";
+
+    if (pinned)
+    {
+        pinned = false;
+        ui->pin_mini->setIcon(QIcon(":/icons/8x8/unpinned.png"));
+    }
+    else
+    {
+        pinned = true;
+        ui->pin_mini->setIcon(QIcon(":/icons/8x8/pinned.png"));
+    }
+}
+
+void MiniPlayer::save()
+{
+    qDebug() << "MiniPlayer::save()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    settings.setValue("miniplayer.large", this->large);
+    settings.setValue("miniplayer.userposition", this->userPosition);
+    settings.setValue("miniplayer.pinned", this->pinned);
+
+}
+
+void MiniPlayer::load()
+{
+    qDebug() << "MiniPlayer::load()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    this->large = settings.value("miniplayer.large", false).toBool();
+    this->pinned = !settings.value("miniplayer.pinned", false).toBool();
+    on_pin_mini_clicked();
+
+    this->userPosition = settings.value("miniplayer.userposition", QPoint(0,0)).toPoint();
+    this->userIconTiming = QDateTime::currentMSecsSinceEpoch();
 }

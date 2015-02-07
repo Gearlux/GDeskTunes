@@ -409,6 +409,7 @@ int main(int argc, char *argv[])
         connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveState()));
         connect(a, SIGNAL(aboutToQuit()), jar, SLOT(save()));
         connect(a, SIGNAL(aboutToQuit()), last_fm, SLOT(save()));
+        connect(a, SIGNAL(aboutToQuit()), miniplayer, SLOT(save()));
 
         // Apply website customizations
         connect(w->ui->webView, SIGNAL(loadFinished(bool)), app, SLOT(loadFinished(bool)));
@@ -421,6 +422,8 @@ int main(int argc, char *argv[])
         connect(w, SIGNAL(keepLinks(bool)), w, SLOT(updateAppearance()));
         connect(w, SIGNAL(keepLogo(bool)), w, SLOT(updateAppearance()));
         connect(w, SIGNAL(navigationButtons(bool)), w, SLOT(updateAppearance()));
+        connect(w, SIGNAL(playerButtons(bool)), w, SLOT(updateAppearance()));
+        connect(w, SIGNAL(styleMenu(bool)), w, SLOT(updateStyle()));
 
         // Actions that need to be performed when the clear button is clicked
         connect(settings->ui->clear, SIGNAL(clicked()), jar, SLOT(deleteAllCookies()));
@@ -457,6 +460,7 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_WIN
         keys->load();
 #endif
+        miniplayer->load();
 
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);

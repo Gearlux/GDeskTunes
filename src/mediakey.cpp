@@ -127,15 +127,18 @@ void MediaKey::setRegisterAppCommands(bool reg)
             if (mmgdeskhook == 0)
             {
                 QString program;
-#ifdef _WIN32
+#ifdef Q_OS_WIN32
                 program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook64.exe";
 #else
                 program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook.exe";
 #endif
+                qDebug() << program;
                 if (QFile(program).exists())
                 {
                     mmgdeskhook = new QProcess();
+                    mmgdeskhook->setStandardOutputFile(QString("C:\\gdeskhook.txt"));
                     mmgdeskhook->start(program, QStringList() << QString::number((long)hWND));
+                    // mmgdeskhook->start("cmd", QStringList() << "/k" << program << QString::number((long)hWND));
                     qDebug() << program << (long)hWND << hWND << (int)hWND;
                     mmgdeskhook->waitForStarted();
                 }

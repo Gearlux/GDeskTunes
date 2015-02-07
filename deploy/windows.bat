@@ -1,6 +1,6 @@
 REM PATH=%PATH%;C:\Qt\5.4\msvc2013_opengl\bin
-REM PATH=%PATH%;E:\Source\Qt\5.4\msvc2013_opengl\bin
-PATH=%PATH%;D:\Source\Qt\5.4\msvc2013_opengl\bin
+PATH=%PATH%;E:\Source\Qt\5.4\msvc2013_opengl\bin
+REM PATH=%PATH%;D:\Source\Qt\5.4\msvc2013_opengl\bin
 
 rmdir /S /Q build
 mkdir build
@@ -50,5 +50,5 @@ xcopy /Y installer\packages\org.gearlux.gdesktunes\meta\shortcut.bat installer\p
 
 del /Q GDeskTunesInstaller.exe
 REM C:\Qt\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
-REM E:\Source\Qt\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
-D:\Source\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
+E:\Source\Qt\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
+REM D:\Source\QtIFW-1.5.0\bin\binarycreator.exe --offline-only -c installer\config\config.xml -p installer\packages GDeskTunesInstaller.exe
