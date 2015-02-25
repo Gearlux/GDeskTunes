@@ -552,11 +552,11 @@ void GDeskTunes::updateAppearance()
     }
     if (player_buttons)
     {
-        css += "#compactButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
-        css += "#compactButton:hover { opacity: 0.6; }";
-
-        css += "#miniButton { width: 12px; height: 12px; padding-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#miniButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
         css += "#miniButton:hover { opacity: 0.6; }";
+
+        css += "#compactButton { width: 12px; height: 12px; padding-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#compactButton:hover { opacity: 0.6; }";
 
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child { padding-right: 4px; }";
     }

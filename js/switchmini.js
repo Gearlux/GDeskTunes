@@ -12,7 +12,6 @@ if (typeof window.SwitchMiniPlayer === 'undefined') {
         window.GoogleMusicApp.on_compactButton_clicked();
         e.preventDefault();
     });
-    frame.appendChild(compactButton);
     var miniButton = document.createElement('a');
     miniButton.id = 'miniButton';
     miniButton.addEventListener('click', function(e) {
@@ -20,5 +19,6 @@ if (typeof window.SwitchMiniPlayer === 'undefined') {
         e.preventDefault();
     });
     frame.appendChild(miniButton);
+    frame.appendChild(compactButton);
     rightArea.appendChild(frame);
 }
