@@ -6,5 +6,7 @@ SUBDIRS += \
 win32: {
     SUBDIRS += \
         MMShellHook \
-        MMGDeskHook
+        GDeskHook
 }
+
+GDeskHook.depends = MMShellHook

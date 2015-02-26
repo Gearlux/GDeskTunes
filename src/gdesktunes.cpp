@@ -475,7 +475,7 @@ void GDeskTunes::save()
     settings.setValue("keeplinks", this->keep_links);
     settings.setValue("navigation.buttons", this->navigation_buttons);
     settings.setValue("player.buttons", this->player_buttons);
-    settings.setValue("sytle.menu", this->style_menu);
+    settings.setValue("style.menu", this->style_menu);
     settings.setValue("updates.startup", this->check_update_startup);
 }
 
@@ -552,10 +552,10 @@ void GDeskTunes::updateAppearance()
     }
     if (player_buttons)
     {
-        css += "#miniButton { width: 12px; height: 12px; margin-right: 6px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
+        css += "#miniButton { width: 12px; height: 12px; margin-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
         css += "#miniButton:hover { opacity: 0.6; }";
 
-        css += "#compactButton { width: 12px; height: 12px; padding-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/miniplayer.png); }";
+        css += "#compactButton { width: 12px; height: 12px; margin-right: 6px; padding-right: 0px; display: inline-block; vertical-align: top; background-size: cover; background-image: url(http://radiant-player-mac/images/compactplayer.png); }";
         css += "#compactButton:hover { opacity: 0.6; }";
 
         css += "#oneGoogleWrapper > div:first-child > div:first-child > div:first-child { padding-right: 4px; }";
@@ -563,6 +563,7 @@ void GDeskTunes::updateAppearance()
     else
     {
         css += "#miniButton { display: none; }";
+        css += "#compactButton { display: none; }";
     }
     if (!keep_links)
     {

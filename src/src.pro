@@ -158,9 +158,9 @@ export(js)
 win32: {
     mmgdeskhook.path = $$DESTDIR
     contains(QMAKE_HOST.arch, x86_64): {
-        mmgdeskhook.files = ../bin/MMGDeskHook.exe ../bin/MMSHellHook.dll
+        mmgdeskhook.files = ../bin/GDeskHook.exe ../bin/MMSHellHook.dll
     } else {
-        mmgdeskhook.files = ../bin/MMGDeskHook64.exe ../bin/MMSHellHook64.dll
+        mmgdeskhook.files = ../bin/GDeskHook64.exe ../bin/MMSHellHook64.dll
     }
     export(mmgdeskhook)
     INSTALLS += mmgdeskhook

@@ -283,6 +283,35 @@
               <number>0</number>
              </property>
              <item>
+              <widget class="QPushButton" name="showMain">
+               <property name="maximumSize">
+                <size>
+                 <width>12</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../gdesktunes.qrc">
+                 <normaloff>:/icons/32x32/main_window.png</normaloff>:/icons/32x32/main_window.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>8</width>
+                 <height>8</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="pin_mini">
                <property name="maximumSize">
                 <size>
@@ -299,35 +328,6 @@
                <property name="icon">
                 <iconset resource="../gdesktunes.qrc">
                  <normaloff>:/icons/8x8/unpinned.png</normaloff>:/icons/8x8/unpinned.png</iconset>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="showMain">
-               <property name="maximumSize">
-                <size>
-                 <width>12</width>
-                 <height>12</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">:hover { background: rgba(255,255,255,128); border-radius: 1px; }</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../gdesktunes.qrc">
-                 <normaloff>:/icons/8x8/maximize_compact.png</normaloff>:/icons/8x8/maximize_compact.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>8</width>
-                 <height>8</height>
-                </size>
                </property>
                <property name="flat">
                 <bool>true</bool>

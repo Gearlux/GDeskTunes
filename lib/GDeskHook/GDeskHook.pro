@@ -19,14 +19,15 @@ PROJDIR = $$PWD
 BINDIR ~= s,/,\\,g
 PROJDIR ~= s,/,\\,g
 contains(QMAKE_HOST.arch, x86_64){
-TARGET=MMGDeskHook64
+TARGET=GDeskHook64
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MMShellHook/release/ -lMMShellHook64
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MMShellHook/debug/ -lMMShellHook64
-QMAKE_POST_LINK += $$QMAKE_COPY $$BINDIR\\MMGDeskHook64.exe $$PROJDIR\\..\\..\\bin
+QMAKE_POST_LINK += $$QMAKE_COPY $$BINDIR\\GDeskHook64.exe $$PROJDIR\\..\\..\\bin
 } else {
+TARGET=GDeskHook
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MMShellHook/release/ -lMMShellHook
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MMShellHook/debug/ -lMMShellHook
-QMAKE_POST_LINK += $$QMAKE_COPY $$BINDIR\\MMGDeskHook.exe $$PROJDIR\\..\\..\\bin
+QMAKE_POST_LINK += $$QMAKE_COPY $$BINDIR\\GDeskHook.exe $$PROJDIR\\..\\..\\bin
 }
 
 INCLUDEPATH += $$PWD/../MMShellHook

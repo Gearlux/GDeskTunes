@@ -44,7 +44,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
@@ -228,7 +228,7 @@
   <action name="actionSwitch_mini">
    <property name="icon">
     <iconset resource="../gdesktunes.qrc">
-     <normaloff>:/icons/32x32/main_window.png</normaloff>:/icons/32x32/main_window.png</iconset>
+     <normaloff>:/icons/8x8/maximize_compact.png</normaloff>:/icons/8x8/maximize_compact.png</iconset>
    </property>
    <property name="text">
     <string>Switch to Compact Layout</string>
