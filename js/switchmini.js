@@ -18,7 +18,7 @@ if (typeof window.SwitchMiniPlayer === 'undefined') {
         window.GoogleMusicApp.on_miniButton_clicked();
         e.preventDefault();
     });
-    frame.appendChild(miniButton);
     frame.appendChild(compactButton);
+    frame.appendChild(miniButton);
     rightArea.appendChild(frame);
 }

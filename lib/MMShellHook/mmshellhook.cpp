@@ -118,9 +118,9 @@ MMSHELLHOOKSHARED_EXPORT int UnSetMMShellHook(HWND hWnd)
 
 LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    std::ofstream debug;
-    debug.open("c:\\mmgdeskhook.txt", std::ios::app);
-    debug << "ShellProc(" << nCode << "," << wParam << "," << lParam << ")" << std::endl;
+    // std::ofstream debug;
+    // debug.open("c:\\mmgdeskhook.txt", std::ios::app);
+    // debug << "ShellProc(" << nCode << "," << wParam << "," << lParam << ")" << std::endl;
     // Do we have to handle this message?
     if (nCode == HSHELL_APPCOMMAND)
     {
@@ -136,16 +136,16 @@ LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
             case APPCOMMAND_MEDIA_PLAY_PAUSE:
             case APPCOMMAND_MEDIA_PREVIOUSTRACK:
             case APPCOMMAND_MEDIA_STOP:
-                debug << "PostMessage: WM_APPCOMMAND" << std::endl;
+                // debug << "PostMessage: WM_APPCOMMAND" << std::endl;
                 ::PostMessage(hNotifyWnd,WM_APPCOMMAND,wParam,lParam);
-                debug.close();
+                // debug.close();
                 return 1; // dont call CallNextHookEx, instead return non-zero, because we have handled the message (see MSDN doc)
 
             }
         }
     }
 
-    debug.close();
+    // debug.close();
     // Call the next handler in the chain
     return CallNextHookEx (hShellHook, nCode, wParam, lParam);
 }
