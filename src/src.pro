@@ -156,14 +156,14 @@ js.files = ../js/*
 export(js)
 
 win32: {
-    mmgdeskhook.path = $$DESTDIR
+    gdeskhook.path = $$DESTDIR
     contains(QMAKE_HOST.arch, x86_64): {
-        mmgdeskhook.files = ../bin/GDeskHook.exe ../bin/MMSHellHook.dll
+        gdeskhook.files = ../bin/GDeskHook.exe ../bin/MMSHellHook.dll
     } else {
-        mmgdeskhook.files = ../bin/GDeskHook64.exe ../bin/MMSHellHook64.dll
+        gdeskhook.files = ../bin/GDeskHook64.exe ../bin/MMSHellHook64.dll
     }
-    export(mmgdeskhook)
-    INSTALLS += mmgdeskhook
+    export(gdeskhook)
+    INSTALLS += gdeskhook
 }
 
 INSTALLS += css minicss js

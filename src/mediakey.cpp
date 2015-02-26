@@ -56,19 +56,19 @@ MediaKey::MediaKey(QWidget *parent) :
     register_media_keys(false),
     register_app_commands(false),
     media_keys_warning(false),
-    mmgdeskhook(0)
+    gdeskhook(0)
 {
     QAbstractEventDispatcher::instance()->installNativeEventFilter(this);
 }
 
 MediaKey::~MediaKey()
 {
-    if (mmgdeskhook != 0)
+    if (gdeskhook != 0)
     {
-        qDebug() << "Terminating MMGDeskHook";
+        qDebug() << "Terminating sGDeskHook";
 
-        mmgdeskhook->terminate();
-        mmgdeskhook->waitForFinished(250);
+        gdeskhook->terminate();
+        gdeskhook->waitForFinished(250);
     }
     QWidget* widget = dynamic_cast<QWidget*>(parent());
     if (widget != 0)
@@ -124,33 +124,33 @@ void MediaKey::setRegisterAppCommands(bool reg)
             setRegisterMediaKeys(false);
             SetMMShellHook(hWND);
 
-            if (mmgdeskhook == 0)
+            if (gdeskhook == 0)
             {
                 QString program;
 #ifdef Q_OS_WIN32
-                program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook64.exe";
+                program = QCoreApplication::applicationDirPath() + QDir::separator() + "GDeskHook64.exe";
 #else
-                program = QCoreApplication::applicationDirPath() + QDir::separator() + "MMGDeskHook.exe";
+                program = QCoreApplication::applicationDirPath() + QDir::separator() + "GDeskHook.exe";
 #endif
                 qDebug() << program;
                 if (QFile(program).exists())
                 {
-                    mmgdeskhook = new QProcess();
-                    mmgdeskhook->setStandardOutputFile(QString("C:\\gdeskhook.txt"));
-                    mmgdeskhook->start(program, QStringList() << QString::number((long)hWND));
+                    gdeskhook = new QProcess();
+                    // mmgdeskhook->setStandardOutputFile(QString("C:\\gdeskhook.txt"));
+                    gdeskhook->start(program, QStringList() << QString::number((long)hWND));
                     // mmgdeskhook->start("cmd", QStringList() << "/k" << program << QString::number((long)hWND));
                     qDebug() << program << (long)hWND << hWND << (int)hWND;
-                    mmgdeskhook->waitForStarted();
+                    gdeskhook->waitForStarted();
                 }
             }
         }
         else
         {
             UnSetMMShellHook(hWND);
-            if (mmgdeskhook != 0)
+            if (gdeskhook != 0)
             {
-                mmgdeskhook->terminate();
-                mmgdeskhook = 0;
+                gdeskhook->terminate();
+                gdeskhook = 0;
             }
         }
     }

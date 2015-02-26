@@ -177,7 +177,7 @@ private:
     bool register_app_commands;
     bool media_keys_warning;
 
-    QProcess *mmgdeskhook;
+    QProcess *gdeskhook;
 };
 
 #endif
