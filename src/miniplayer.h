@@ -88,7 +88,6 @@ private:
     void invert(bool inv);
     void showElements(bool visible);
     void setIcon(QAbstractButton* button, QString base);
-    void setStyle(QLabel *label, const QString &text);
 
 public:
     Ui::MiniPlayer *ui;

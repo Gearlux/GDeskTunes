@@ -288,6 +288,7 @@ a, .simple-dialog a {
 
 #player:not(.material) [data-id="now-playing-menu"] {
     border: none;
+    background-color: transparent !important;
 }
 
 #player .rating-container.thumbs li.selected:hover, #player .rating-container.thumbs li:hover {

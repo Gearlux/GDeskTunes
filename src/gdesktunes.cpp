@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "gdesktunes.h"
 #include "ui_mainwindow.h"
@@ -602,16 +602,21 @@ void GDeskTunes::setShowSidebar(bool show)
     this->ui->actionView_Sidebar->setText(this->show_sidebar ? "Hide Sidebar" : "Show Sidebar");
 }
 
+void GDeskTunes::repaint()
+{
+    // FIXME: can be more efficient
+    float zoomFactor = ui->webView->zoomFactor();
+    ui->webView->setZoomFactor(zoomFactor * 0.99);
+    ui->webView->setZoomFactor(zoomFactor);
+}
+
 void GDeskTunes::viewSidebar()
 {
     setShowSidebar(!this->show_sidebar);
 
     updateAppearance();
 
-    // FIXME: can be more efficient
-    float zoomFactor = ui->webView->zoomFactor();
-    ui->webView->setZoomFactor(zoomFactor * 0.99);
-    ui->webView->setZoomFactor(zoomFactor);
+    repaint();
 }
 
 void GDeskTunes::loadUrl()

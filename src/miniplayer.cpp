@@ -609,6 +609,7 @@ void MiniPlayer::show()
     else
         savePosition = true;
     QMainWindow::show();
+    invert(this->inverted);
     if (savePosition)
     {
         qDebug() << "Show userPosition: " << pos();
@@ -677,31 +678,12 @@ void MiniPlayer::invert(bool inv)
     shuffle(this->_shuffle);
     rating(this->_rating);
 
-    QString text = "color: ";
-    if (inv)
-    {
-        text += "white;";
-    }
-    else
-    {
-        text += "black;";
-    }
-    setStyle(ui->album, text);
-    setStyle(ui->artist, text);
-    setStyle(ui->title, text);
-}
-
-void MiniPlayer::setStyle(QLabel *label, const QString &text)
-{
-    qDebug() << "MiniPlayer::setStyle("<< label->objectName() << "," << text << ")";
-
-    QString final_style = text;
-
+    bool inverted = inv;
     if (background_image != 0)
     {
         // Adjust the background according to the pixels rendered
-        QSize size = label->size();
-        QPoint pt = this->mapFromGlobal(label->mapToGlobal(QPoint(0,0)));
+        QSize size = ui->song_info->size();
+        QPoint pt = this->mapFromGlobal(ui->song_info->mapToGlobal(QPoint(0,0)));
         double global_value = 0;
         for(int r=0; r<size.height(); ++r)
         {
@@ -711,30 +693,39 @@ void MiniPlayer::setStyle(QLabel *label, const QString &text)
             }
         }
         global_value /= (size.height() * size.width());
-
-        bool shade = !ui->control_frame->isVisible();
-
-        bool inv = global_value < 128;
-        if (inv)
+        inverted = global_value < 128;
+    }
+    QString text;
+    if (inverted)
+    {
+        text += "color: white;";
+    }
+    else
+    {
+        text += "color: black;";
+    }
+    bool shade = !ui->control_frame->isVisible();
+    if (shade)
+    {
+        text += "\nbackground-color: rgba(0,0,0,0);";
+        QString style;
+        if (inverted)
         {
-            final_style = "color: white;\n";
-            if (shade)
-            {
-                final_style += "background-color: rgba(0,0,0,128);\n";
-                final_style += "border: 6px rgba(0,0,0,128);\n";
-            }
+            style += "background-color: rgba(0,0,0,128);\n";
         }
         else
         {
-            final_style = "color: black;\n";
-            if (shade)
-            {
-                final_style += "background-color: rgba(255,255,255,128);\n";
-                final_style += "border: 6px rgba(255,255,255,128);\n";
-            }
+            style += "background-color: rgba(255,255,255,128);\n";
         }
+        style += "border-radius: 6px;";
+        ui->song_info->setStyleSheet(style);
     }
-    label->setStyleSheet(final_style);
+    else
+        ui->song_info->setStyleSheet("");
+
+    ui->album->setStyleSheet(text);
+    ui->artist->setStyleSheet(text);
+    ui->title->setStyleSheet(text);
 
 }
 

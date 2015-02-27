@@ -54,6 +54,8 @@ public slots:
     void loadUrl();
     void checkFlashPlayer();
 
+    void repaint();
+
 public:
     void setShowSidebar(bool show);
     void setMini(bool toMini);
@@ -61,7 +63,6 @@ public:
     bool isMini() { return this->mini; }
 
     void restoreMini();
-
 
 private:
     void evaluateJavaScriptFile(QString filePath);
