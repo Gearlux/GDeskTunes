@@ -104,7 +104,8 @@ HEADERS += \
     mediakey.h \
     versioncheck.h \
     server/remoteserver.h \
-    mediakeydialog.h
+    mediakeydialog.h \
+    gdeskinterface.h
 
 SOURCES += \
     aboutdialog.cpp \
@@ -128,7 +129,8 @@ SOURCES += \
     versioncheck.cpp \
     server/remoteserver.cpp \
     mediakey.cpp \
-    mediakeydialog.cpp
+    mediakeydialog.cpp \
+    gdeskinterface.cpp
 
 RESOURCES += \
     ../gdesktunes.qrc
