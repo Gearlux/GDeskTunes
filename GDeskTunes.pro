@@ -5,7 +5,8 @@ SUBDIRS += \
     lib \
     src \
     examples \
-    plugins
+    plugins \
+    tools
 
 src.depends = lib
 examples.depends = lib
