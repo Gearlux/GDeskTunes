@@ -92,6 +92,7 @@ public slots:
     void keyPressEvent(QKeyEvent *event);
 
     void on_actionGDeskTunes_triggered();
+    void on_actionStyleEditor_triggered();
 
     void setIgnoreMediaKeys(bool ignore) { this->ignore_media_keys = ignore; }
 

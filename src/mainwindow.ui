@@ -44,7 +44,7 @@
      <x>0</x>
      <y>0</y>
      <width>890</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
@@ -100,6 +100,7 @@
     <addaction name="separator"/>
     <addaction name="actionGDeskTunes"/>
     <addaction name="actionMiniPlayer"/>
+    <addaction name="actionStyleEditor"/>
     <addaction name="separator"/>
     <addaction name="actionSwitch_mini"/>
     <addaction name="actionSwitch_miniPlayer"/>
@@ -361,6 +362,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionStyleEditor">
+   <property name="text">
+    <string>Style Editor</string>
    </property>
   </action>
  </widget>

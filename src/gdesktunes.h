@@ -49,6 +49,7 @@ public slots:
     void updateStyle();
 
     void setCSS(QString css);
+    QString getCSS() { return this->css; }
     void setMiniCSS(QString css);
 
     void loadUrl();

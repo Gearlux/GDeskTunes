@@ -53,11 +53,7 @@ Settings::Settings(GDeskTunes *parent) :
    ui->media_key_box->hide();
 #endif
 
-    QStringList styles = getStyles();
-    ui->CSS->addItems(styles);
-
-    QStringList mini_styles = getStyles(QString("mini"));
-    ui->mini_CSS->addItems(mini_styles);
+    updateStyles();
 }
 
 Settings::~Settings()
@@ -148,4 +144,17 @@ void Settings::keyPressEvent(QKeyEvent *event)
         }
         break;
     }
+}
+
+void Settings::updateStyles()
+{
+    ui->CSS->clear();;
+    ui->mini_CSS->clear();
+
+    QStringList styles = getStyles();
+    ui->CSS->addItems(styles);
+
+    QStringList mini_styles = getStyles(QString("mini"));
+    ui->mini_CSS->addItems(mini_styles);
+
 }

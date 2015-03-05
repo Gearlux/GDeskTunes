@@ -248,3 +248,17 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../lib/MMShellHook/
 }
 INCLUDEPATH += $$PWD/../lib/MMShellHook
 DEPENDPATH += $$PWD/../lib/MMShellHook
+
+# GDeskStyler
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../tools/GDeskStyler/release/ -lGDeskStyler
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../tools/GDeskStyler/debug/ -lGDeskStyler
+else:unix: LIBS += -L$$OUT_PWD/../tools/GDeskStyler/ -lGDeskStyler
+
+INCLUDEPATH += $$PWD/../tools/GDeskStyler
+DEPENDPATH += $$PWD/../tools/GDeskStyler
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/release/libGDeskStyler.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/debug/libGDeskStyler.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/release/GDeskStyler.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/debug/GDeskStyler.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/libGDeskStyler.a

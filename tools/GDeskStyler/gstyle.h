@@ -40,6 +40,7 @@ public:
     ~GStyle();
 
     void generate();
+    QString generate(QString name);
 
 private:
     void add_property(QString element, QString key, QString value);

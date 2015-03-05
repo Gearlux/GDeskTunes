@@ -25,10 +25,10 @@ signals:
 
 public slots:
     void activateAndRaise();
-
     void authorized(bool authorize);
-
     void authorize();
+
+    void updateStyles();
 
 public:
     QStringList getStyles(QString subdir = QString::null);

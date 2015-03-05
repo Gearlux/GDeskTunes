@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     // Create a single application
     DockedApplication* a = new DockedApplication(argc, argv);
 
-    // All object should have a name
+    // All objects should have a name
     a->setObjectName("Application");
 
     // It is possible that all windows run in the background

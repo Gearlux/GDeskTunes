@@ -1,10 +1,11 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include "aboutdialog.h"
 #include "settings.h"
+#include "gdeskstyler.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -842,6 +843,14 @@ void MainWindow::on_actionGDeskTunes_triggered()
         else
             show();
     }
+}
+
+void MainWindow::on_actionStyleEditor_triggered()
+{
+    qDebug() << "Showing editor";
+    GDeskStyler* styler = new GDeskStyler(0);
+    styler->show();
+    styler->setGDeskTunes(this);
 }
 
 
