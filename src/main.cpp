@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     // Set some global application properties
     QApplication::setApplicationName("GDeskTunes");
     QApplication::setApplicationDisplayName("GDeskTunes");
-    QApplication::setApplicationVersion("0.3.6");
+    QApplication::setApplicationVersion("0.3.7");
     QApplication::setOrganizationName("GearLux");
 
     // Clean up all temporary files created by QT for the jump-list

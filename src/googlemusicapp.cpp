@@ -319,7 +319,7 @@ QVariant GoogleMusicApp::evaluateJavaScript(const QString &script)
 QColor GoogleMusicApp::getBackgroundColor()
 {
 #ifdef USE_WEBKIT
-    QWebElement elt = mainFrame()->documentElement().findFirst("#player");
+    QWebElement elt = mainFrame()->documentElement().findFirst("#body");
 
     QString color = elt.styleProperty("background-color", QWebElement::CascadedStyle);
 #else

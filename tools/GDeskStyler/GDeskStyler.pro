@@ -15,8 +15,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        gdeskstyler.cpp
+        gdeskstyler.cpp \
+    gstyle.cpp
 
-HEADERS  += gdeskstyler.h
+HEADERS  += gdeskstyler.h \
+    gstyle.h
 
 FORMS    += gdeskstyler.ui

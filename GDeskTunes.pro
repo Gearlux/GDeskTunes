@@ -10,6 +10,7 @@ SUBDIRS += \
 
 src.depends = lib
 examples.depends = lib
+src.depends = tools
 
 OTHER_FILES += \
     icons/gdesktunes.iconset/* \
