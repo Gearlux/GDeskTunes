@@ -19,7 +19,9 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
     gdesktunes(0),
     ui(new Ui::GDeskStyler),
     style(0),
-    filename(QString::null)
+    filename(QString::null),
+    modified(false),
+    css(QString::null)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -49,6 +51,21 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
 GDeskStyler::~GDeskStyler()
 {
     qDebug() << "Deleting the styler";
+    ask();
+
+    if (this->gdesktunes && this->css != QString::null)
+    {
+        QObject *settings = this->gdesktunes->findChild<QObject*>("Settings");
+        if (settings != 0)
+        {
+            qDebug() << "Update styles";
+            QMetaObject::invokeMethod(settings, "updateStyles");
+        }
+
+        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
+        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, this->css));
+    }
+
     delete ui;
 }
 
@@ -65,12 +82,15 @@ void GDeskStyler::populate(QObject *object, QtProperty *parent)
         {
         case QVariant::String:
             item = stringManager->addProperty(property.name());
+            stringManager->setValue(item, variant.toString());
             break;
         case QVariant::Color:
             item = colorManager->addProperty(property.name());
+            colorManager->setValue(item, variant.value<QColor>());
             break;
         case QVariant::Int:
             item = intManager->addProperty(property.name());
+            intManager->setValue(item, variant.toInt());
             break;
          default:
             qDebug() << "Unsupported property" << property.name() << property.type();
@@ -127,6 +147,8 @@ void GDeskStyler::test()
 {
     stream(as_lvalue(qDebug()), style);
 
+    modified = true;
+
     if (this->gdesktunes)
     {
         QString css_file = style->generate("__gdesktunes_test");
@@ -144,6 +166,8 @@ void GDeskStyler::on_actionExit_triggered()
 void GDeskStyler::on_actionGenerate_triggered()
 {
     style->generate();
+
+    this->css = style->name;
 
     if (this->gdesktunes)
     {
@@ -204,6 +228,8 @@ void GDeskStyler::on_actionSave_As_triggered()
 
 void GDeskStyler::save(QString filename)
 {
+    style->generate();
+
     QFile gss_file(filename);
     gss_file.open(QIODevice::WriteOnly);
     QDataStream os(&gss_file);
@@ -211,8 +237,28 @@ void GDeskStyler::save(QString filename)
     gss_file.close();
 }
 
+void GDeskStyler::load(QString filename)
+{
+    QFile gss_file(filename);
+    gss_file.open(QIODevice::ReadOnly);
+    QDataStream os(&gss_file);
+    GStyle *new_style = new GStyle();
+    destream(os, new_style);
+    stream(as_lvalue(qDebug()), new_style);
+    this->filename = filename;
+
+    ui->property_browser->clear();
+
+    style = new_style;
+    populate(style);
+
+    modified = false;
+}
+
 void GDeskStyler::on_actionOpen_triggered()
 {
+    ask();
+
     QSettings settings(QApplication::organizationName(), QApplication::applicationName());
 
     QString dir = settings.value("gss.dir", QCoreApplication::applicationDirPath()).toString();
@@ -224,12 +270,7 @@ void GDeskStyler::on_actionOpen_triggered()
         QFileInfo info(filename);
         settings.setValue("gss.dir", info.absoluteDir().absolutePath());
 
-        QFile gss_file(filename);
-        gss_file.open(QIODevice::ReadOnly);
-        QDataStream os(&gss_file);
-        GStyle *new_style = new GStyle();
-        destream(os, new_style);
-        stream(as_lvalue(qDebug()), new_style);
+        load(filename);
     }
 }
 
@@ -249,5 +290,23 @@ void GDeskStyler::setGDeskTunes(QObject *gdesktunes)
     if (success)
     {
         qDebug() << "Return value" << css;
+
+        this->css = css;
+
+        QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+        QString dir = settings.value("gss.dir", QCoreApplication::applicationDirPath()).toString();
+        QString filename = dir + QDir::separator() + css + ".gss";
+
+        QFile gss_file(filename);
+
+        if (gss_file.exists())
+        {
+            load(filename);
+        }
     }
+}
+
+void GDeskStyler::ask()
+{
+    qDebug() << "Save ?";
 }

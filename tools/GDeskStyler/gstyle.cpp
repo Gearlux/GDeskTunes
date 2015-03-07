@@ -61,7 +61,7 @@ QString GStyle::generate(QString name)
     // Copied from the python code to set the background color
     add_property("body", "background-color", backgroundColor);
     add_property("#oneGoogleWrapper > div:first-child > div:first-child", "background", "none");
-    add_property(".music-banner", "background-color", "inherit");
+    // add_property(".music-banner", "background-color", "inherit");
     add_property("#headerBar", "background-color", "inherit");
     add_property(".nav-bar", "background-color", "inherit");
     add_property("#breadcrumbs", "background-color", "inherit");
@@ -71,14 +71,16 @@ QString GStyle::generate(QString name)
     add_property(".fade-out.gray:after", "background", "inherit");
     add_property(".read-more-button-wrapper.fade-out", "background", "inherit");
     add_property(".song-row .song-indicator", "background-color", backgroundColor);
-    add_property(".song-row.hover .song-indicator", "background-color", "inherit");
-    add_property(".song-row td", "background-color", "inherit");
-    add_property(".song-row .fade-out:after", "background", "inherit");
+    add_property(".song-row.hover .song-indicator", "background-color", "transparent");
+    add_property(".song-row td", "background-color", "transparent");
+    add_property(".song-row .fade-out:after", "background", "transparent");
     add_property("#player", "background-color", "inherit");
     add_property(".now-playing-menu-wrapper", "background", "inherit");
     add_property("#player:not(.material) [data-id=\"now-playing-menu\"]", "border", "inherit");
     add_property(".now-playing-menu-wrapper.fade-out:after", "background", "inherit");
     add_property(".player-middle", "background-color", "inherit");
+    add_property(".card", "background", "rgba(128,128,128,0.5)");
+    add_property(".button.small", "background", "rgba(128,128,128,0.5)");
 
     // Copied from the python code to set the foreground color
     add_property("body", "color", color);

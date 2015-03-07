@@ -28,6 +28,7 @@ public:
 
     void setGDeskTunes(QObject *gdesktunes);
 
+
 private slots:
     void valueChanged(QtProperty *property, QString value);
     void valueChanged(QtProperty *property, QColor value);
@@ -44,7 +45,9 @@ private slots:
 
 private:
     void save(QString filename);
+    void load(QString filename);
     void test();
+    void ask();
     void populate(QObject *style, QtProperty *parent=0);
 
     template <class Stream>
@@ -71,6 +74,7 @@ private:
                 qDebug() << "Unsupported" << property.name() << variant << variant.type();
                 os << property.name();
                 stream(os, variant.value<QObject*>());
+                os << property.name();
             }
         }
     }
@@ -122,6 +126,8 @@ private:
                 qDebug() << "Unsupported" << property.name() << variant << variant.type();
                 QObject *obj = property.read(object).value<QObject*>();
                 destream(os, obj);
+                QString end_value;
+                os >> end_value;
             }
             }
             if (variant.isValid())
@@ -140,7 +146,9 @@ private:
 
     QMap<QtProperty*,QObject*> holders;
 
+    QString css;
     QString filename;
+    bool modified;
 
     QtStringPropertyManager *stringManager;
     QtColorPropertyManager* colorManager;

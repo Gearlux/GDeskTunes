@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "googlemusicapp.h"
 #include "mainwindow.h"
@@ -319,9 +319,10 @@ QVariant GoogleMusicApp::evaluateJavaScript(const QString &script)
 QColor GoogleMusicApp::getBackgroundColor()
 {
 #ifdef USE_WEBKIT
-    QWebElement elt = mainFrame()->documentElement().findFirst("#body");
+    QWebElement elt = mainFrame()->documentElement().findFirst("#main");
 
-    QString color = elt.styleProperty("background-color", QWebElement::CascadedStyle);
+    QString color = elt.styleProperty("background-color", QWebElement::ComputedStyle);
+    // QString color = elt.styleProperty("background-color", QWebElement::CascadedStyle);
 #else
     QString color("rgb(250,250,250)");
 #endif
@@ -336,7 +337,7 @@ QColor GoogleMusicApp::getBackgroundColor()
         pos += rx.matchedLength();
     }
 
-    int r = 0, g = 0, b = 0, a = 255;
+    int r = 250, g = 250, b = 250, a = 255;
     if (nums.size() >= 3)
     {
         r = nums.at(0);
