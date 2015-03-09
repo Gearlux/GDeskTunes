@@ -5,7 +5,6 @@
 #include <QtGlobal>
 #include <QFile>
 #include <QTimer>
-#include <QNetworkDiskCache>
 #include <QStandardPaths>
 
 ImageReply::ImageReply(const QUrl &url) :
@@ -91,14 +90,21 @@ QByteArray ImageReply::readAll()
 NetworkManager::NetworkManager(QObject *parent) :
     QNetworkAccessManager(parent)
 {
-    QNetworkDiskCache *cache = new QNetworkDiskCache(this);
+    cache = new QNetworkDiskCache(this);
 
     qDebug() <<  QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     QString cache_loc = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     cache->setCacheDirectory(cache_loc);
-    cache->setMaximumCacheSize(100*1024*1024);
+    cache->clear();
+
+    cache->setMaximumCacheSize(10*1024*1024);
 
     this->setCache(cache);
+}
+
+NetworkManager::~NetworkManager()
+{
+    cache->clear();
 }
 
 QNetworkReply *NetworkManager::createRequest(

@@ -103,7 +103,9 @@ QStringList Settings::getStyles(QString subdir)
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles" + QDir::separator() + subdir);
 #endif
     qDebug() << dir;
-    QList<QFileInfo> files = dir.entryInfoList();
+    QStringList filters;
+    filters << "*.css";
+    QList<QFileInfo> files = dir.entryInfoList(filters);
     QStringList result;
     for(QList<QFileInfo>::iterator it = files.begin(); it != files.end(); ++it)
     {

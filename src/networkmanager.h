@@ -3,6 +3,7 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QNetworkDiskCache>
 
 class ImageReply: public QNetworkReply
 {
@@ -32,11 +33,15 @@ class NetworkManager : public QNetworkAccessManager
     Q_OBJECT
 public:
     explicit NetworkManager(QObject *parent = 0);
+    virtual ~NetworkManager();
 
 signals:
 
 public slots:
     QNetworkReply* createRequest(Operation op, const QNetworkRequest & req, QIODevice * outgoingData = 0);
+
+private:
+    QNetworkDiskCache *cache;
 };
 
 class FileDownloader: public QObject

@@ -5,6 +5,8 @@
 #include "gdeskstyler.h"
 #include "ui_gdeskstyler.h"
 
+#include "gserializer.h"
+
 #include "QtProperty"
 #include "QtStringPropertyManager"
 #include "QtColorPropertyManager"
@@ -19,9 +21,9 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
     gdesktunes(0),
     ui(new Ui::GDeskStyler),
     style(0),
+    css(QString::null),
     filename(QString::null),
-    modified(false),
-    css(QString::null)
+    modified(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -30,19 +32,23 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
     stringManager = new QtStringPropertyManager(this);
     colorManager = new QtColorPropertyManager(this);
     intManager = new QtIntPropertyManager(this);
+    boolManager = new QtBoolPropertyManager(this);
     groupManager = new QtGroupPropertyManager(this);
 
     QObject::connect(stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChanged(QtProperty *,QString)));
     QObject::connect(colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChanged(QtProperty *,QColor)));
     QObject::connect(intManager, SIGNAL(valueChanged(QtProperty*,int)), this, SLOT(valueChanged(QtProperty *,int)));
+    QObject::connect(boolManager, SIGNAL(valueChanged(QtProperty*,bool)), this, SLOT(valueChanged(QtProperty *,bool)));
 
     QtLineEditFactory *lineEditFactory = new QtLineEditFactory(this);
     QtColorEditorFactory *colorEditorFactory = new QtColorEditorFactory(this);
     QtSpinBoxFactory *spinBoxFactory = new QtSpinBoxFactory(this);
+    QtCheckBoxFactory *checkBoxFactory = new QtCheckBoxFactory(this);
 
     ui->property_browser->setFactoryForManager(stringManager, lineEditFactory);
     ui->property_browser->setFactoryForManager(colorManager, colorEditorFactory);
     ui->property_browser->setFactoryForManager(intManager, spinBoxFactory);
+    ui->property_browser->setFactoryForManager(boolManager, checkBoxFactory);
 
     style = new GStyle();
     populate(style);
@@ -92,6 +98,10 @@ void GDeskStyler::populate(QObject *object, QtProperty *parent)
             item = intManager->addProperty(property.name());
             intManager->setValue(item, variant.toInt());
             break;
+        case QVariant::Bool:
+            item = boolManager->addProperty(property.name());
+            boolManager->setValue(item, variant.toBool());
+            break;
          default:
             qDebug() << "Unsupported property" << property.name() << property.type();
             item = groupManager->addProperty(property.name());
@@ -100,7 +110,9 @@ void GDeskStyler::populate(QObject *object, QtProperty *parent)
         if (item)
         {
             if (parent)
+            {
                 parent->addSubProperty(item);
+            }
             else
             {
                 QtBrowserItem *it = ui->property_browser->addProperty(item);
@@ -143,9 +155,16 @@ void GDeskStyler::valueChanged(QtProperty *property, int value)
     test();
 }
 
+void GDeskStyler::valueChanged(QtProperty *property, bool value)
+{
+    value_changed(holders[property], property, value);
+    test();
+}
+
 void GDeskStyler::test()
 {
-    stream(as_lvalue(qDebug()), style);
+    GSerializer serializer;
+    serializer.serialize(as_lvalue(qDebug()), style);
 
     modified = true;
 
@@ -204,6 +223,7 @@ void GDeskStyler::on_actionSave_triggered()
     {
         save(filename);
     }
+    on_actionGenerate_triggered();
 }
 
 void GDeskStyler::on_actionSave_As_triggered()
@@ -233,7 +253,7 @@ void GDeskStyler::save(QString filename)
     QFile gss_file(filename);
     gss_file.open(QIODevice::WriteOnly);
     QDataStream os(&gss_file);
-    stream(os, style);
+    GSerializer().serialize(os, style);
     gss_file.close();
 }
 
@@ -243,8 +263,8 @@ void GDeskStyler::load(QString filename)
     gss_file.open(QIODevice::ReadOnly);
     QDataStream os(&gss_file);
     GStyle *new_style = new GStyle();
-    destream(os, new_style);
-    stream(as_lvalue(qDebug()), new_style);
+    GSerializer().deserialize(os, new_style);
+    GSerializer().serialize(as_lvalue(qDebug()), new_style);
     this->filename = filename;
 
     ui->property_browser->clear();

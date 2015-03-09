@@ -20,6 +20,7 @@ SOURCES += main.cpp\
     gstyle.cpp
 
 HEADERS  += gdeskstyler.h \
-    gstyle.h
+    gstyle.h \
+    gserializer.h
 
 FORMS    += gdeskstyler.ui
