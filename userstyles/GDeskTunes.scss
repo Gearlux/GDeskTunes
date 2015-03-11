@@ -1,60 +1,76 @@
-$background: white;
-$banner: inherit;
-
 body {
 	background: $background;
+    color: $color;
 }
 
-/* Banner at the top of the screen */
-#oneGoogleWrapper > div:first-child > div:first-child {
-	background: $banner;
+#oneGoogleWrapper > div:first-child > div:first-child, 
+#headerBar, 
+#music-content,
+.nav-bar, 
+#breadcrumbs, 
+#nav, 
+.fade-out:after, 
+.fade-out.gray:after, 
+.read-more-button-wrapper.fade-out, 
+.song-row.hover .song-indicator, 
+.song-row td, 
+.song-row .fade-out:after, 
+#player, 
+.now-playing-menu-wrapper, 
+#player:not(.material) [data-id="now-playing-menu"], 
+.now-playing-menu-wrapper.fade-out:after, 
+.player-middle, 
+{
+    background: inherit
 }
 
-#headerBar {
-	background: inherit;
+.song-row .song-indicator {
+    background: $background
 }
 
-.nav-bar {
-	background: inherit;
+/* Customize the loading page */
+#loading-progress {
+    background: $loading-background;
 }
 
-#breadcrumbs {
-	background: inherit;
+#loading-progress-bar, #current-loading-progress {
+    height: $loading-width;
 }
 
-#nav {
-	background: inherit;
-}
-
-.fade-out:after {
-	background: inherit;
-	
-	.gray {
-		background: %
-	}
-}
-
-#music-content {
-	background: inherit;
-}
-
-
-#breadcrumbs {
-	background: inherit;
-}
-
-#breadcrumbs {
-	background: inherit;
-}
-
-#breadcrumbs {
-	background: inherit;
-}
-
-#breadcrumbs {
-	background: inherit;
-}
-
-#breadcrumbs {
-	background: inherit;
+.music-banner-title,
+#nav:not(.material) #nav_collections.nav-section .nav-item-container,
+.nav-item-container,
+.nav-section-header,
+#headerBar .tab-text.spacer,
+#headerBar .tab-text,
+#headerBar .tab-text.has-parent,
+#headerBar .tab-text.parent,
+.header-tab-title,
+.header-tab-title.selected,
+#countSummary,
+.artist-view .bio,
+.section-header,
+.cluster .header .title,
+.cluster .header,
+.recommended-header,
+.playlist-view .description,
+.playlist-view .song-count,
+.playlist-view .song-duration,
+.playlist-view .owner-name,
+.album-view .song-count,
+.album-view .album-length,
+.album-view .year,
+.genres .genre,
+.song-table th,
+.song-row td,
+.song-table [data-col="track"] .content,
+.song-table [data-col="track"],
+#player,
+#playerSongTitle,
+#player-artist,
+.player-album,
+.player-dash,
+#loading-progress-message 
+{
+    color: inherit;
 }

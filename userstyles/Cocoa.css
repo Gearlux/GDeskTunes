@@ -13,29 +13,6 @@
     background-color: white;
 }
 
-#loading-progress {
-    background: #e5e5e5;
-    background: -webkit-linear-gradient(90deg, #B0B0B0, #e5e5e5);
-    background: linear-gradient(0deg, #B0B0B0, #e5e5e5);
-}
-
-#loading-progress-content {
-    top: 40%;
-}
-
-#loading-progress-message {
-    color: #444;
-    text-align: center;
-}
-
-#loading-progress-bar {
-    height: 3px;
-}
-
-#current-loading-progress {
-    height: 3px;
-}
-
 .g-content {
     margin: 0;
 }
@@ -397,3 +374,27 @@ div.simple-dialog-bg {
     background: #DBDFE7 !important;
     border-width: 0 !important;
 }
+
+#loading-progress {
+    background: #e5e5e5;
+    background: -webkit-linear-gradient(90deg, #B0B0B0, #e5e5e5);
+    background: linear-gradient(0deg, #B0B0B0, #e5e5e5);
+}
+
+#loading-progress-content {
+    top: 40%;
+}
+
+#loading-progress-message {
+    color: #444;
+    text-align: center;
+}
+
+#loading-progress-bar {
+    height: 3px;
+}
+
+#current-loading-progress {
+    height: 3px;
+}
+

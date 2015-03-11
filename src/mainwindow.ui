@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
+    <width>670</width>
     <height>430</height>
    </rect>
   </property>
@@ -34,7 +34,65 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="WebView" name="webView" native="true"/>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QVBoxLayout" name="widget_layout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="searchbar" native="true">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16</height>
+          </size>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>319</width>
+              <height>13</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="WebView" name="webView" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -43,8 +101,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>890</width>
-     <height>21</height>
+     <width>670</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
