@@ -1,0 +1,19 @@
+@import "Defaults.scss";
+
+$background: white;
+$color: black;
+$font-size: 13px;
+
+$loading-background: linear-gradient(0deg, #B0B0B0, #e5e5e5);
+$loading-width: 3px;
+
+@import "GDeskTunes.scss";
+
+#loading-progress-content {
+    top: 40%;
+}
+
+#loading-progress-message {
+    color: #444;
+    text-align: center;
+}
