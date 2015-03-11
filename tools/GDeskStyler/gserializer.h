@@ -6,7 +6,7 @@
 class GSerializer
 {
 public:
-    GSerializer() {}
+    GSerializer(): name(0) {}
     ~GSerializer() { if (name != 0) delete name; name = 0; }
 
     template <class Stream>

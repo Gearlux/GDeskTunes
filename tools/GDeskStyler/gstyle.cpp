@@ -5,6 +5,47 @@
 #include <QApplication>
 #include <QTextStream>
 
+void Style::parseExtra(GStyle &style, QString elt, QString extra)
+{
+    QStringList elements = extra.split(";", QString::SkipEmptyParts);
+    for(int i=0; i<elements.size(); ++i)
+    {
+        QStringList element = elements.at(i).split(":", QString::SkipEmptyParts);
+        if (element.size() == 2)
+        {
+            style.add_property(elt, element.at(0).trimmed(), element.at(1).trimmed());
+        }
+    }
+}
+
+void Background::generate(GStyle &style, QString elt)
+{
+    if (this->backgroundColor.isValid())
+        style.add_property(elt, "background-color", this->backgroundColor);
+    if (!this->background.isNull())
+        style.add_property(elt, "background", this->background);
+}
+
+void Border::generate(GStyle &style, QString elt)
+{
+    if (this->borderColor.isValid())
+        style.add_property(elt, QString("border%1-color").arg(borderSide), borderColor);
+    if (this->borderRadius != 0)
+        style.add_property(elt, QString("border%1-radius").arg(borderSide), QString("%1px").arg(this->borderRadius));
+    if (this->borderWidth != 0)
+    {
+        style.add_property(elt, QString("border%1-width").arg(borderSide), QString("%1px").arg(this->borderWidth));
+        style.add_property(elt, QString("border%1-style").arg(borderSide), "solid");
+    }
+}
+
+void BorderStyle::generate(GStyle &style, QString elt)
+{
+    Background::generate(style, elt);
+    Border::generate(style, elt);
+    Style::parseExtra(style, elt, extra);
+}
+
 void MusicBanner::generate(GStyle& style)
 {
     if (!this->display)
@@ -17,19 +58,11 @@ void MusicBanner::generate(GStyle& style)
 void Banner::generate(GStyle &style)
 {
     QString elt("#oneGoogleWrapper > div:first-child > div:first-child");
-    if (this->backgroundColor.isValid())
-        style.add_property(elt, "background-color", this->backgroundColor);
-    if (!this->background.isNull())
-        style.add_property(elt, "background", this->background);
+    Background::generate(style, elt);
+    Border::generate(style, elt);
     if (this->borderWidth != 0)
     {
         style.add_property(elt, "height", QString("%1px").arg(60 - this->borderWidth));
-        style.add_property(elt, "border-bottom-width", QString("%1px").arg(this->borderWidth));
-    }
-    if (this->borderColor.isValid() && this->borderWidth != 0)
-    {
-        style.add_property(elt, "border-bottom-color", this->borderColor);
-        style.add_property(elt, "border-bottom-style", "solid");
     }
 }
 
@@ -54,22 +87,51 @@ void Search::generate(GStyle &style)
     {
         style.add_property(".gbqfqw", "border-color", this->borderColor);
     }
+    parseExtra(style, ".gbqfqw", extra);
+}
+
+void NavigationBar::generate(GStyle &style)
+{
+    Background::generate(style, ".nav-bar");
+    style.add_property(".nav-bar #breadcrumbs", "background", "none");
+    button->generate(style, ".header-tab-title.selected");
 }
 
 void SideBar::generate(GStyle &style)
 {
-    if (!this->background.isNull())
-        style.add_property("#nav", "background", this->background);
-    if (this->backgroundColor.isValid())
-        style.add_property("#nav", "background-color", this->backgroundColor);
+    Background::generate(style, "#nav");
 }
 
 void Player::generate(GStyle &style)
 {
+    Background::generate(style, "#player");
+}
+
+void ScrollBar::generate(GStyle &style)
+{
+    if (this->width != 0)
+    {
+        style.add_property("::-webkit-scrollbar", "width", QString("%1px").arg(this->width));
+    }
+    track->generate(style, "::-webkit-scrollbar-track");
+    thumb->generate(style, "::-webkit-scrollbar-thumb");
+}
+
+void LoadingPage::generate(GStyle &style)
+{
     if (!this->background.isNull())
-        style.add_property("#player", "background", this->background);
+        style.add_property("#loading-progress", "background", this->background);
     if (this->backgroundColor.isValid())
-        style.add_property("#player", "background-color", this->backgroundColor);
+        style.add_property("#loading-progress", "background-color", this->backgroundColor);
+    if (this->color.isValid())
+        style.add_property("#loading-progress-message", "color", this->color);
+    if (this->position != 0)
+        style.add_property("#loading-progress-content", "top", QString("%1%%").arg(this->position));
+    if (this->height != 0)
+    {
+        style.add_property("#loading-progress-bar", "height", QString("%1px").arg(this->height));
+        style.add_property("#current-loading-progress", "height", QString("%1px").arg(this->height));
+    }
 }
 
 GStyle::GStyle() :
@@ -80,8 +142,11 @@ GStyle::GStyle() :
     banner(new Banner()),
     musicBanner(new MusicBanner()),
     search(new Search()),
+    navigationBar(new NavigationBar()),
     sideBar(new SideBar()),
-    player(new Player())
+    player(new Player()),
+    loadingPage(new LoadingPage()),
+    scrollBar(new ScrollBar())
 {
 
 }
@@ -136,6 +201,7 @@ void GStyle::styleBackground()
     add_property("#player:not(.material) [data-id=\"now-playing-menu\"]", "border", "inherit");
     add_property(".now-playing-menu-wrapper.fade-out:after", "background", "inherit");
     add_property(".player-middle", "background-color", "inherit");
+    add_property("#loading-progress", "background-color", "inherit");
 }
 
 void GStyle::styleForeground()
@@ -174,28 +240,29 @@ void GStyle::styleForeground()
     add_property("#player-artist", "color", "inherit");
     add_property(".player-album", "color", "inherit");
     add_property(".player-dash", "color", "inherit");
+    add_property("#loading-progress-message", "color", "inherit");
 }
 
 void GStyle::setFontSize()
 {
     if (fontSize == 0) { row_height =0; return; }
-    float fraction = 36. / 18.;
+    float fraction = 36.f / 18.f;
     add_property("#nav:not(.material) #nav_collections.nav-section .nav-item-container", "font-size", QString("%1px").arg(fontSize));
     add_property("#nav:not(.material) #nav_collections.nav-section .nav-item-container", "height", QString("%1px").arg((int)(fontSize*fraction)));
     add_property("#nav:not(.material) #nav_collections.nav-section .nav-item-container", "line-height", QString("%1px").arg((int)(fontSize*fraction)));
 
     // Playlist items
-    fraction = 30. / 14.;
+    fraction = 30.f / 14.f;
     add_property(".nav-item-container", "font-size", QString("%1px").arg(fontSize));
     add_property(".nav-item-container", "height", QString("%1px").arg((int)(fontSize*fraction)));
     add_property(".nav-item-container", "line-height", QString("%1px").arg((int)(fontSize*fraction)));
 
     // Header of the table
-    fraction = 36. / 12.;
+    fraction = 36.f / 12.f;
     add_property(".song-table th", "font-size", QString("%1px").arg(fontSize));
     add_property(".song-table th", "height", QString("%1px").arg((int)(fontSize * fraction)));
 
-    fraction = 40. / 14.;
+    fraction = 40.f / 14.f;
     row_height = (int)(fontSize * fraction);
     add_property(".song-row td", "font-size", QString("%1px").arg(fontSize));
 }
@@ -225,6 +292,7 @@ void GStyle::adjustRowHeight()
 
 QString GStyle::generate(QString name)
 {
+    qDebug() << "GStyle::generate(" << name << ")";
     if (name == QString::null)
     {
         qDebug() << "No name specified";
@@ -251,8 +319,11 @@ QString GStyle::generate(QString name)
     banner->generate(*this);
     search->generate(*this);
     musicBanner->generate(*this);
+    navigationBar->generate(*this);
     sideBar->generate(*this);
     player->generate(*this);
+    loadingPage->generate(*this);
+    scrollBar->generate(*this);
 
     // Adjust the row height
     adjustRowHeight();

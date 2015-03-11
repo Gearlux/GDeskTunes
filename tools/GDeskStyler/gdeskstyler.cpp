@@ -23,7 +23,8 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
     style(0),
     css(QString::null),
     filename(QString::null),
-    modified(false)
+    modified(false),
+    block(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -77,6 +78,8 @@ GDeskStyler::~GDeskStyler()
 
 void GDeskStyler::populate(QObject *object, QtProperty *parent)
 {
+    block = true;
+
     const QMetaObject* meta = object->metaObject();
 
     for(int i=1; i<meta->propertyCount(); ++i)
@@ -122,6 +125,8 @@ void GDeskStyler::populate(QObject *object, QtProperty *parent)
         }
     }
 
+    block = false;
+
 }
 
 template <typename T>
@@ -163,17 +168,22 @@ void GDeskStyler::valueChanged(QtProperty *property, bool value)
 
 void GDeskStyler::test()
 {
-    GSerializer serializer;
-    serializer.serialize(as_lvalue(qDebug()), style);
+    if (block) return;
+
+    qDebug() << "GDeskStyler::test()";
+    // GSerializer serializer;
+    // serializer.serialize(as_lvalue(qDebug()), style);
 
     modified = true;
 
     if (this->gdesktunes)
     {
+        qDebug() << "Apply test css";
         QString css_file = style->generate("__gdesktunes_test");
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, "__gdesktunes_test"));
         QFile::remove(css_file);
+        qDebug() << "Test css applied";
     }
 }
 
@@ -184,6 +194,7 @@ void GDeskStyler::on_actionExit_triggered()
 
 void GDeskStyler::on_actionGenerate_triggered()
 {
+    qDebug() << "GDeskStyler::on_actionGenerate_triggered()";
     style->generate();
 
     this->css = style->name;

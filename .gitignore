@@ -11,3 +11,4 @@ moc_*
 *.moc
 qrc*
 *.autosave
+*.map

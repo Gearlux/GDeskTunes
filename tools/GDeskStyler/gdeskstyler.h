@@ -70,6 +70,8 @@ private:
     QtGroupPropertyManager* groupManager;
     QtBoolPropertyManager* boolManager;
 
+    bool block;
+
 };
 
 #endif // GDESKSTYLER_H
