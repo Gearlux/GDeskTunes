@@ -1,4 +1,4 @@
-// #define QT_NO_DEBUG_OUTPUT
+#define QT_NO_DEBUG_OUTPUT
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -529,6 +529,7 @@ void MainWindow::receiveMacMediaKey(int key, bool repeat, bool pressed)
 void MainWindow::show()
 {
     qDebug() << "MainWindow::show()";
+    ui->searchbar->hide();
 
     // Compute the windows_offset if necessary
     if (windows_offset.isNull())

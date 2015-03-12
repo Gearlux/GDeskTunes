@@ -104,7 +104,7 @@ QStringList Settings::getStyles(QString subdir)
 #endif
     qDebug() << dir;
     QStringList filters;
-    filters << "*.css";
+    filters << "*.css" << "*.scss";
     QList<QFileInfo> files = dir.entryInfoList(filters);
     QStringList result;
     for(QList<QFileInfo>::iterator it = files.begin(); it != files.end(); ++it)
@@ -112,7 +112,7 @@ QStringList Settings::getStyles(QString subdir)
         if ((*it).isFile())
         {
             QString basename = (*it).baseName();
-            if (!basename.contains("mini"))
+            if (!basename.contains("mini") && !basename.startsWith("_"))
                 result.append(basename);
         }
     }

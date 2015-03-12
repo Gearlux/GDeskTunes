@@ -18,6 +18,8 @@
 #endif
 #endif
 
+#include "sass_context.h"
+
 GDeskTunes::GDeskTunes(QWidget* parent):
     MainWindow(parent),
     css(QString::null),
@@ -296,6 +298,38 @@ void GDeskTunes::setStyle(QString name, QString css_content)
     page->evaluateJavaScript(script);
 }
 
+int output(int error_status, const char* error_message, const char* output_string, const char* outfile) {
+    if (error_status) {
+        if (error_message) {
+            fprintf(stderr, "%s", error_message);
+        } else {
+            fprintf(stderr, "An error occured; no error message available.\n");
+        }
+        return 1;
+    } else if (output_string) {
+        if(outfile) {
+            FILE* fp = fopen(outfile, "w");
+            if(!fp) {
+                perror("Error opening output file");
+                return 1;
+            }
+            if(fprintf(fp, "%s", output_string) < 0) {
+                perror("Error writing to output file");
+                fclose(fp);
+                return 1;
+            }
+            fclose(fp);
+        }
+        else {
+            printf("%s", output_string);
+        }
+        return 0;
+    } else {
+        fprintf(stderr, "Unknown internal error.\n");
+        return 2;
+    }
+}
+
 /*
  * Applies the style with name css and in located in the subdir
  * of the application's directory.
@@ -305,11 +339,51 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     qDebug() << "GDeskTunes::applyStyle(" << css << "," << subdir << ")";
     QString full_css = getStyle(css, subdir);
 
-    QFile cssFile(full_css);
-    cssFile.open(QFile::ReadOnly);
-    QTextStream stream(&cssFile);
-    QString css_content = stream.readAll();
-    setStyle(subdir + css, css_content);
+    QFileInfo info(full_css);
+    if (info.suffix() == "scss")
+    {
+        QString outfile = info.absoluteDir().absolutePath() + QDir::separator() + "__temp.css";
+        struct Sass_File_Context* ctx = sass_make_file_context(full_css.toUtf8().constData());
+        struct Sass_Options* options = sass_make_options();
+        struct Sass_Context* ctx_out = sass_file_context_get_context(ctx);
+        sass_option_set_output_path(options, outfile.toUtf8().constData());
+        sass_option_set_input_path(options, full_css.toUtf8().constData());
+        sass_file_context_set_options(ctx, options);
+
+        sass_compile_file_context(ctx);
+
+        int ret = output(
+            sass_context_get_error_status(ctx_out),
+            sass_context_get_error_message(ctx_out),
+            sass_context_get_output_string(ctx_out),
+            outfile.toUtf8().constData()
+        );
+
+        if (ret == 0 && sass_option_get_source_map_file(options)) {
+            ret = output(
+                sass_context_get_error_status(ctx_out),
+                sass_context_get_error_message(ctx_out),
+                sass_context_get_source_map_string(ctx_out),
+                sass_option_get_source_map_file(options)
+            );
+        }
+
+        sass_delete_file_context(ctx);
+
+        QFile cssFile(outfile);
+        cssFile.open(QFile::ReadOnly);
+        QTextStream stream(&cssFile);
+        QString css_content = stream.readAll();
+        setStyle(subdir + css, css_content);
+    }
+    else
+    {
+        QFile cssFile(full_css);
+        cssFile.open(QFile::ReadOnly);
+        QTextStream stream(&cssFile);
+        QString css_content = stream.readAll();
+        setStyle(subdir + css, css_content);
+    }
 
     GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
     QColor qColor = page->getBackgroundColor();

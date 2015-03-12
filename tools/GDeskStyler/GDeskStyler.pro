@@ -15,12 +15,9 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 
-SOURCES += main.cpp\
-        gdeskstyler.cpp \
-    gstyle.cpp
+SOURCES +=\
+        gdeskstyler.cpp
 
-HEADERS  += gdeskstyler.h \
-    gstyle.h \
-    gserializer.h
+HEADERS  += gdeskstyler.h
 
 FORMS    += gdeskstyler.ui
