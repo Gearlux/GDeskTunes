@@ -265,8 +265,12 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../tools/GDeskStyler/libGDeskStyler.a
 
 # Libsass
 macx: LIBS += -L$$PWD/../thirdparty/libsass/lib/ -lsass
+win32: LIBS += -L$$PWD/../thirdparty/libsass/win/bin/ -llibsass
 
 INCLUDEPATH += $$PWD/../thirdparty/libsass
 DEPENDPATH += $$PWD/../thirdparty/libsass
 
 macx: PRE_TARGETDEPS += $$PWD/../thirdparty/libsass/lib/libsass.a
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../thirdparty/libsass/win/bin/libsass.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../thirdparty/libsass/win/bin/liblibsass.a

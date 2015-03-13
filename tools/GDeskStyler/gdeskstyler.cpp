@@ -77,6 +77,7 @@ void GDeskStyler::populate()
     block = true;
 
     qDeleteAll(elements);
+    style.clear();
     elements.clear();
     holders.clear();
 
@@ -89,6 +90,7 @@ void GDeskStyler::populate()
     while(!os.atEnd())
     {
         QString line = os.readLine();
+        style.append(line);
         if (line.startsWith("$"))
         {
             int c = line.indexOf(':', 1);
@@ -165,23 +167,21 @@ void GDeskStyler::test()
 
     qDebug() << "GDeskStyler::test()";
 
-    for(int i=0; i<elements.size(); ++i)
-    {
-        Element* elt = elements.at(i);
-
-    }
-    // GSerializer serializer;
-    // serializer.serialize(as_lvalue(qDebug()), style);
-
     modified = true;
 
     if (this->gdesktunes)
     {
         qDebug() << "Apply test css";
-        // QString css_file = style->generate("__gdesktunes_test");
+#ifdef Q_OS_MAC
+        QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/userstyles");
+#else
+        QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles");
+#endif
+        QString css_file = dir.absolutePath() + QDir::separator() + "__gdesktunes_test.scss";
+        save(css_file);
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, "__gdesktunes_test"));
-        // QFile::remove(css_file);
+        QFile::remove(css_file);
         qDebug() << "Test css applied";
     }
 }
@@ -225,13 +225,25 @@ void GDeskStyler::on_actionSave_As_triggered()
 
 void GDeskStyler::save(QString filename)
 {
+
     // style->generate();
 
-    // QFile gss_file(filename);
-    // gss_file.open(QIODevice::WriteOnly);
-    // QDataStream os(&gss_file);
-    // GSerializer().serialize(os, style);
-    // gss_file.close();
+    QFile gss_file(filename);
+    gss_file.open(QIODevice::WriteOnly);
+    QDataStream os(&gss_file);
+
+    for(int e=0; e<elements.size(); ++e)
+    {
+        Element *elt = elements.at(e);
+        style.replace(elt->line, QString("$") + elt->name + ":" + elt->value + ";");
+    }
+
+    for(int l=0; l<style.size(); ++l)
+    {
+        QString line = style.at(l);
+        os << line << "\n";
+    }
+    gss_file.close();
 }
 
 void GDeskStyler::load(QString filename)
@@ -251,7 +263,7 @@ void GDeskStyler::setGDeskTunes(QObject *gdesktunes)
 #ifdef Q_OS_MAC
     QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/userstyles");
 #else
-    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles";
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles");
 #endif
 
     if (this->gdesktunes)

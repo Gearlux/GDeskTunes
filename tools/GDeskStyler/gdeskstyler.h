@@ -67,6 +67,7 @@ private:
     bool modified;
     bool block;
 
+    QStringList style;
     QList<Element*> elements;
     QMap<QtProperty*, Element*> holders;
 
