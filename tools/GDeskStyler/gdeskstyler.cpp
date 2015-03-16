@@ -1,11 +1,14 @@
 #include <QDebug>
 #include <QSettings>
 #include <QFileDialog>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QCloseEvent>
+#include <QScreen>
 
 #include "gdeskstyler.h"
 #include "ui_gdeskstyler.h"
 
-#include "QtProperty"
 #include "QtStringPropertyManager"
 #include "QtColorPropertyManager"
 #include "QtGroupPropertyManager"
@@ -13,6 +16,11 @@
 #include "QtLineEditFactory"
 #include "QtColorEditorFactory"
 #include "QtSpinBoxFactory"
+
+Element::~Element()
+{
+   delete ui;
+}
 
 GDeskStyler::GDeskStyler(QWidget *parent) :
     QMainWindow(parent),
@@ -52,7 +60,6 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
 GDeskStyler::~GDeskStyler()
 {
     qDebug() << "Deleting the styler";
-    ask();
 
     if (this->gdesktunes && this->css != QString::null)
     {
@@ -70,15 +77,40 @@ GDeskStyler::~GDeskStyler()
     delete ui;
 }
 
+void GDeskStyler::show()
+{
+    QCoreApplication *app = QCoreApplication::instance();
+
+    QApplication *gui = dynamic_cast<QApplication*>(app);
+    if ( gui != 0)
+    {
+        QList<QScreen *> screens = gui->screens();
+        QPoint pt = pos();
+        for(int s=0; s<screens.size(); ++s)
+        {
+            QRect screen_rect = screens.at(s)->geometry();
+            if (screen_rect.contains(pt))
+            {
+                setMaximumSize(screen_rect.width(), screen_rect.height()-200);
+                break;
+            }
+        }
+    }
+    QMainWindow::show();
+}
+
 void GDeskStyler::populate()
 {
     qDebug() << "GDeskStyler::populate()";
+
+    QRegExp comment_re("/\\*(.*)\\*/");
 
     block = true;
 
     qDeleteAll(elements);
     style.clear();
     elements.clear();
+    groups.clear();
     holders.clear();
 
     QFile qfile(this->filename);
@@ -96,22 +128,98 @@ void GDeskStyler::populate()
             int c = line.indexOf(':', 1);
             if (c != -1)
             {
-                QString name = line.mid(1, c-1);
-                qDebug() << name;
-                Element* elt = new Element(name, line_nr);
+                QString full_name = line.mid(1, c-1).trimmed();
+
+                QStringList name_parts = full_name.split("-");
+
+                QString group_name = name_parts.at(0);
+                QtProperty *parent = 0;
+                for(int i=1; i<name_parts.size(); ++i)
+                {
+                    QString n = name_parts.at(i-1);
+                    qDebug() << "Part" << n << "from" << name_parts << group_name;
+                    if (groups.contains(group_name))
+                    {
+                        parent = groups[group_name]->ui;
+                    }
+                    else
+                    {
+                        QtProperty* child = groupManager->addProperty(n.replace("_", " "));
+                        if (parent)
+                        {
+                            parent->addSubProperty(child);
+                        }
+                        else
+                        {
+                            ui->property_browser->addProperty(child);
+                        }
+                        Element *elt = new Element(full_name, -1);
+                        elt->ui = child;
+                        elements.append(elt);
+                        parent = child;
+                        groups[group_name] = elt;
+                    }
+                    group_name = group_name + "-";
+                    group_name += name_parts.at(i);
+                }
+
+
+                qDebug() << full_name;
+                Element* elt = new Element(full_name, line_nr);
                 elements.append(elt);
-                QtProperty *property = stringManager->addProperty(name);
+                QtProperty *property = 0;
 
                 int comma = line.indexOf(';', c);
-
                 QString value = line.mid(c+1, comma-c-1).trimmed();
-                stringManager->setValue(property, value);
+
+                int comment_index = line.indexOf(comment_re, comma);
+
+                if (comment_index != -1)
+                {
+                    elt->comment = comment_re.cap(0);
+                    QString comment = comment_re.cap(1);
+                    QStringList parts = comment.split(',');
+
+                    qDebug() << parts.at(0);
+                    if (parts.at(0).trimmed() == "color")
+                    {
+                        property = colorManager->addProperty(name_parts.last().replace("_", " "));
+                        QColor color(value);
+                        colorManager->setValue(property, color);
+                        elt->value = color;
+                    }
+                    if (parts.at(0).trimmed() == "int")
+                    {
+                        property = intManager->addProperty(name_parts.last().replace("_", " "));
+                        int v = value.toInt();
+                        intManager->setValue(property, v);
+                        elt->value = v;
+
+                    }
+
+                }
+                else
+                {
+                    // We assume a string
+                    property = stringManager->addProperty(name_parts.last().replace("_", " "));
+                    stringManager->setValue(property, value);
+                    elt->value = value;
+                }
+
+
                 elt->ui = property;
-                elt->value = value;
                 holders[property] = elt;
 
-                QtBrowserItem *it = ui->property_browser->addProperty(property);
-                ui->property_browser->setExpanded(it, false);
+                if (parent == 0)
+                {
+                    QtBrowserItem *it = ui->property_browser->addProperty(property);
+                    ui->property_browser->setExpanded(it, false);
+                }
+                else
+                {
+                    parent->addSubProperty(property);
+
+                }
             }
         }
         line_nr += 1;
@@ -145,13 +253,13 @@ void GDeskStyler::valueChanged(QtProperty *property, QString value)
 
 void GDeskStyler::valueChanged(QtProperty *property, QColor value)
 {
-    // value_changed(holders[property], property, value);
+    value_changed(holders[property], property, value);
     test();
 }
 
 void GDeskStyler::valueChanged(QtProperty *property, int value)
 {
-    // value_changed(holders[property], property, value);
+    value_changed(holders[property], property, value);
     test();
 }
 
@@ -181,7 +289,7 @@ void GDeskStyler::test()
         save(css_file);
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, "__gdesktunes_test"));
-        QFile::remove(css_file);
+        // QFile::remove(css_file);
         qDebug() << "Test css applied";
     }
 }
@@ -200,50 +308,76 @@ void GDeskStyler::on_actionSave_triggered()
     else
     {
         save(filename);
+
+        modified = false;
     }
 }
 
 void GDeskStyler::on_actionSave_As_triggered()
 {
-    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+#ifdef Q_OS_MAC
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "../Resources/userstyles");
+#else
+    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + "userstyles");
+#endif
 
-    QString dir = settings.value("gss.dir", QCoreApplication::applicationDirPath()).toString();
+    QString name = QInputDialog::getText(this, "Style Name", "Type the name of your new style sheet");
 
-    QString filename = QFileDialog::getSaveFileName(this, "Save style sheet", dir, "*.gss");
+    QString new_filename = dir.absolutePath() + QDir::separator() + name + ".scss";
 
-    if (filename != QString::null)
+    QFile file(new_filename);
+    if (file.exists())
     {
-        save(filename);
+        QMessageBox::StandardButton btn = QMessageBox::warning(this, "Override Style",
+                                                               QString("The style sheet '%1' already exists!\nDo you want to continue ?").arg(name),
+                                                               QMessageBox::Yes|QMessageBox::No);
 
-        this->filename = filename;
-
-        QFileInfo info(filename);
-        settings.setValue("gss.dir", info.absoluteDir().absolutePath());
+        if (btn != QMessageBox::Yes)
+            return;
     }
 
+    this->css = name;
+    this->filename = new_filename;
+
+    setWindowTitle(QString("GDeskStyler - ") + name);
+
+    save(filename);
+
+    modified = false;
+
+    test();
 }
 
 void GDeskStyler::save(QString filename)
 {
-
-    // style->generate();
-
-    QFile gss_file(filename);
-    gss_file.open(QIODevice::WriteOnly);
-    QDataStream os(&gss_file);
-
-    for(int e=0; e<elements.size(); ++e)
+    QFileInfo info(filename);
+    qDebug() << filename << info.isWritable() << info.exists();
+    if (info.isWritable() || !info.exists())
     {
-        Element *elt = elements.at(e);
-        style.replace(elt->line, QString("$") + elt->name + ":" + elt->value + ";");
-    }
+        QFile gss_file(filename);
+        gss_file.open(QIODevice::WriteOnly);
+        QTextStream os(&gss_file);
 
-    for(int l=0; l<style.size(); ++l)
-    {
-        QString line = style.at(l);
-        os << line << "\n";
+        for(int e=0; e<elements.size(); ++e)
+        {
+            Element *elt = elements.at(e);
+            if (elt->line != -1)
+            {
+                style.replace(elt->line, QString("$") + elt->name + ":" + elt->value.toString() + ";" + elt->comment);
+            }
+        }
+
+        for(int l=0; l<style.size(); ++l)
+        {
+            QString line = style.at(l);
+            os << line << "\n";
+        }
+        gss_file.close();
     }
-    gss_file.close();
+    else
+    {
+        QMessageBox::information(this, "Could not save file.", QString("Can not save %1 style sheet.\n Use Save As to save your changes").arg(this->css), QMessageBox::Ok);
+    }
 }
 
 void GDeskStyler::load(QString filename)
@@ -256,6 +390,10 @@ void GDeskStyler::load(QString filename)
     populate();
 
     modified = false;
+
+    QFileInfo info(filename);
+
+    setWindowTitle(QString("GDeskStyler - ") + info.baseName());
 }
 
 void GDeskStyler::setGDeskTunes(QObject *gdesktunes)
@@ -294,7 +432,32 @@ void GDeskStyler::setGDeskTunes(QObject *gdesktunes)
     }
 }
 
-void GDeskStyler::ask()
+void GDeskStyler::closeEvent(QCloseEvent *evt)
 {
-    qDebug() << "Save ?";
+    qDebug() << "GDeskStyler::closeEvent()";
+    if (modified)
+    {
+        QMessageBox::Button btn = QMessageBox::warning(this, "Confirm exit",
+                                                       "You have modified the style sheet.\n Do you want to exit without saving?",
+                                                       QMessageBox::Yes | QMessageBox::No);
+        if (btn == QMessageBox::Yes)
+        {
+            if (this->gdesktunes != 0)
+            {
+                QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
+                QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, this->css));
+            }
+            evt->accept();
+        }
+        else
+            evt->ignore();
+    }
+    else
+        evt->accept();
+}
+
+void GDeskStyler::on_actionReload_triggered()
+{
+    load(this->filename);
+    test();
 }

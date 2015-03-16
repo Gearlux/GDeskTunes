@@ -20,15 +20,16 @@ class QtBoolPropertyManager;
 class Element
 {
 public:
-    Element(QString name, int line) : name(name), line(line), ui(0), parent(0) {}
-    ~Element() { delete ui; }
+    Element(QString name, int line) : name(name), line(line), ui(0), parent(0), comment(QString::null) {}
+    virtual ~Element();
 
 public:
     QString name;
-    QString value;
+    QVariant value;
     int line;
     QtProperty *ui;
     Element *parent;
+    QString comment;
 };
 
 class GDeskStyler : public QMainWindow
@@ -40,6 +41,7 @@ public:
     ~GDeskStyler();
 
     void setGDeskTunes(QObject *gdesktunes);
+    void closeEvent(QCloseEvent *evt);
 
 private slots:
     void valueChanged(QtProperty *property, QString value);
@@ -50,6 +52,11 @@ private slots:
     void on_actionSave_triggered();
     void on_actionSave_As_triggered();
     void on_actionExit_triggered();
+
+    void on_actionReload_triggered();
+
+public:
+    void show();
 
 private:
     void save(QString filename);
@@ -69,6 +76,7 @@ private:
 
     QStringList style;
     QList<Element*> elements;
+    QMap<QString, Element*> groups;
     QMap<QtProperty*, Element*> holders;
 
     QtStringPropertyManager *stringManager;

@@ -342,6 +342,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     QFileInfo info(full_css);
     if (info.suffix() == "scss")
     {
+        ui->actionStyleEditor->setEnabled(true);
         QString outfile = info.absoluteDir().absolutePath() + QDir::separator() + "__temp.css";
         struct Sass_File_Context* ctx = sass_make_file_context(full_css.toUtf8().constData());
         struct Sass_Options* options = sass_make_options();
@@ -378,6 +379,8 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     }
     else
     {
+        ui->actionStyleEditor->setEnabled(false);
+
         QFile cssFile(full_css);
         cssFile.open(QFile::ReadOnly);
         QTextStream stream(&cssFile);
@@ -539,7 +542,10 @@ void GDeskTunes::save()
 
     settings.setValue("miniPlayerOnTop", this->mini_player_on_top);
     settings.setValue("customize", this->customize);
-    settings.setValue("css", this->css);
+    if (!this->css.startsWith("_")) // Sanity check if something went wrong with the styler
+    {
+        settings.setValue("css", this->css);
+    }
     settings.setValue("minicss", this->mini_css);
     settings.setValue("hideMenu", this->ui->menuBar->isHidden());
     settings.setValue("showSidebar", this->show_sidebar);

@@ -16,6 +16,7 @@ OTHER_FILES += \
     icons/gdesktunes.iconset/* \
     js/*.js \
     userstyles/*.css \
+    userstyles/*.scss \
     userstyles/mini/*.css \
     README.md \
     LICENSE \
