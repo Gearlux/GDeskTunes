@@ -3,6 +3,8 @@
 
 #include "mainwindow.h"
 
+class QFileSystemWatcher;
+
 class GDeskTunes : public MainWindow
 {
     Q_OBJECT
@@ -57,6 +59,8 @@ public slots:
 
     void repaint();
 
+    void applyStyleFile(QString full_css);
+
 public:
     void setShowSidebar(bool show);
     void setMini(bool toMini);
@@ -92,6 +96,8 @@ private:
     bool updates_checked;
 
     Qt::WindowFlags normal_flags;
+
+    QFileSystemWatcher *watcher;
 };
 
 #endif // GDESKTUNES_H

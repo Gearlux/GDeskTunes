@@ -34,11 +34,13 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     style_menu(false),
     show_sidebar(true),
     check_update_startup(false),
-    updates_checked(false)
+    updates_checked(false),
+    watcher(new QFileSystemWatcher)
 {
     // Setup webview and windows interaction
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
 
+    connect(watcher, SIGNAL(fileChanged(QString)), this, SLOT(applyStyleFile(QString)));
 }
 
 /*
@@ -334,11 +336,8 @@ int output(int error_status, const char* error_message, const char* output_strin
  * Applies the style with name css and in located in the subdir
  * of the application's directory.
  */
-void GDeskTunes::applyStyle(QString css, QString subdir)
+void GDeskTunes::applyStyleFile(QString full_css)
 {
-    qDebug() << "GDeskTunes::applyStyle(" << css << "," << subdir << ")";
-    QString full_css = getStyle(css, subdir);
-
     QFileInfo info(full_css);
     if (info.suffix() == "scss")
     {
@@ -375,7 +374,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
         cssFile.open(QFile::ReadOnly);
         QTextStream stream(&cssFile);
         QString css_content = stream.readAll();
-        setStyle(subdir + css, css_content);
+        setStyle( (mini ? "mini" : "") + css, css_content);
     }
     else
     {
@@ -385,7 +384,8 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
         cssFile.open(QFile::ReadOnly);
         QTextStream stream(&cssFile);
         QString css_content = stream.readAll();
-        setStyle(subdir + css, css_content);
+        setStyle( (mini ? "mini" : "") + css, css_content);
+        qDebug() << (mini ? "mini" : "") + css;
     }
 
     GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
@@ -426,6 +426,25 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
 
     qDebug() << "emit backgroundColor(" << qColor << ")";
     emit backgroundColor(qColor);
+}
+
+void GDeskTunes::applyStyle(QString css, QString subdir)
+{
+    qDebug() << "GDeskTunes::applyStyle(" << css << "," << subdir << ")";
+    QString full_css = getStyle(css, subdir);
+
+    if (!css.startsWith("_"))
+    {
+        // Remove all watched files
+        QStringList files = watcher->files();
+        for(int i=0; i<files.count(); ++i)
+        {
+            watcher->removePath(files.at(i));
+        }
+        watcher->addPath(full_css);
+    }
+
+    applyStyleFile(full_css);
 }
 
 /*
