@@ -1,13 +1,9 @@
-/*CUSTOMCOLORS 
-It will only read lines [4 to 8], other lines will be ignored 
------- Only #RRGGBB or #RGB colors are accepted -----
-#4285f4 	//TitleBarColor 
-#FFF 		//TitleBarTextColor
-#dedede 	//LoadingBarColor 
-#4285f4 		//LoadingBarBGColor
-#fff 		//SettingsTextColor= 
------- Respecting the order, comments are ignored ------
-!CUSTOMCOLORS*/
+#oneGoogleWrapper > div:first-child > div:first-child {
+    background-color: $Theme;
+}
+#gbqfb {
+	background: $Theme_Button;
+}
 
 @import url(https://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,700,300,400&subset=cyrillic,cyrillic-ext,latin,greek-ext,greek,latin-ext,vietnamese);
 
@@ -15,13 +11,13 @@ It will only read lines [4 to 8], other lines will be ignored
     width: 5px;
 }
 ::-webkit-scrollbar-track {
-    background: #fff!important;    
+    background: $Sidebar-Color !important;    
 }
 ::-webkit-scrollbar-thumb {
-    background: #4285f4!important;    
+    background: $Theme !important;    
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-    background: #4285f4!important;
+    background: $Theme !important;
 }
 body{
   font-family: 'Roboto Condensed', sans-serif;
@@ -62,14 +58,14 @@ body{
 /*Left Navbar*/
 #nav .nav-item-container{
   position: relative;
-  height: 48px;
-  line-height: 40px;
+  height: $Sidebar-Height+px;
+  line-height: $Sidebar-Height+px;
   font-size: 0.9em;
   color: #757575 !important;
 }
 #nav .nav-section{
   display: inline-block;
-  background-color: #fff;
+  background-color: $Sidebar-Color;
   width: 100%;
   box-shadow: 0 8px 17px 0 rgba(0,0,0,0.05);
   transition: all 0.7s ease 0.1s;
@@ -80,23 +76,23 @@ body{
 
 /*Top Google Music Banner icon*/
 .music-banner{
-  background: #4285f4 !important;
+  background: $Theme !important;
 }
 /*Container background color*/
 #nav, .nav-section, .nav-item-container, .tooltip,.fade-out:after, 
 .card, #content-container, #music-content, #breadcrumbs, .nav-bar
 {
-  background: #ececec !important;
+  background: $Background !important;
 }
 /*Left menus color*/
 #nav, .nav-item-container, 
 #nav .tooltip, 
 #nav .fade-out:after{
-  background: #fff!important;
+  background: $Sidebar-Color!important;
 }
 /*PlayLists' add button*/
 .button.primary, .simple-dialog-buttons button.goog-buttonset-default{
-  background-color:#4285f4 !important;
+  background-color:$Theme_Button !important;
 }
 .button.primary:hover, .simple-dialog-buttons button.goog-buttonset-default{
   background-color:#33ac71 !important;
@@ -104,7 +100,7 @@ body{
 
 /*Section Header*/
 .nav-section-header{
-  color: #4285f4 !important;
+  color: $Theme !important;
 }
 #nav .nav-item-container:hover,
 #nav .nav-section a:hover .tooltip,
@@ -118,7 +114,7 @@ body{
 }
 .button.primary.small,
 .simple-dialog-buttons button.goog-buttonset-default.small{
-  background: #3262ba !important;
+  background: $Theme_Button !important;
 }
 
 /*Right Side*/
@@ -128,7 +124,7 @@ body{
 #headerBar .tab-text,
 #headerBar .header-tab-title,
 #headerBar #countSummary{
-  background: #4285f4 !important;
+  background: $Theme !important;
   color: #fff !important;
 }
 #headerBar .header-tab-title.selected{
@@ -142,7 +138,7 @@ body{
 .song-row  td .content,
 .song-row  td  .fade-out:after,
 .song-table .header-row th{
- background: #fff !important;
+ background: $Sidebar-Color !important;
 }
 .song-row  td .content img,
 .song-row  td .content .hover-button[data-id="play"]{
@@ -153,7 +149,7 @@ body{
 /*Play Button in a table list*/
 .song-row .hover-button[data-id="play"]{
   background: no-repeat url(sprites.png) -264px -720px;
-  background-color: #4285f4;
+  background-color: $Theme;
   transform: scale(1) rotate(360deg);
   transition: transform .2s cubic-bezier(.4,0,.2,1);
 }
@@ -167,8 +163,8 @@ box-shadow: 0 -1px 0 #e5e5e5,0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24) !
 background: #fff !important;
 }
 .card, .card .tooltip, .card .fade-out:after,{
-  background: #333!important;
-  color: #dedede !important;
+  background: $Card-Background!important;
+  color: $Card-Foreground !important;
 }
 
 /*Play controls*/
@@ -177,7 +173,7 @@ background: #fff !important;
 }
 #player, .player-top #top_divider_line,
 .player-left .fade-out:after,.player-left .now-playing-menu-wrapper, #playerSongTitle, .player-middle,.upload-dialog, .player-album{
-  background: #4285f4 !important;
+  background: $Theme !important;
   color: #eee !important;
 }
 #player-artist{
@@ -213,10 +209,10 @@ background: #fff !important;
 #slider_wrapper #slider #time_container_current,
 #slider_wrapper #slider #time_container_duration{
   background: #fff !important;
-  color: #4285f4 !important;
+  color: $Theme !important;
 }
 #slider_wrapper #slider .playing-progress-background{
-  background: #3275e4 !important;
+  background: $Theme_Button !important;
 }
 #slider_wrapper #slider .goog-slider-thumb{border-radius: 9px;}
 

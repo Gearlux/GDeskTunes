@@ -9,6 +9,8 @@
 #include "gdeskstyler.h"
 #include "ui_gdeskstyler.h"
 
+#include "donatedialog.h"
+
 #include "QtStringPropertyManager"
 #include "QtColorPropertyManager"
 #include "QtGroupPropertyManager"
@@ -31,6 +33,21 @@ GDeskStyler::GDeskStyler(QWidget *parent) :
     modified(false),
     block(false)
 {
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+    qDebug() << QApplication::organizationName() << QApplication::applicationName();
+    qDebug() << settings.fileName();
+
+    int next_count = settings.value("gdeskstyler.next", 0).toInt();
+    int this_count = settings.value("gdeskstyler.current", 0).toInt();
+
+    qDebug() << "GDeskStyler::GDeskStyler()" << next_count << this_count;
+    if (next_count <= this_count)
+    {
+        DonateDialog *dlg = new DonateDialog(this);
+        settings.setValue("gdeskstyler.next", qMax(1, next_count * 2));
+        dlg->show();
+    }
+
     setAttribute(Qt::WA_DeleteOnClose);
 
     ui->setupUi(this);
@@ -64,14 +81,14 @@ GDeskStyler::~GDeskStyler()
     if (this->gdesktunes && this->css != QString::null)
     {
         QObject *settings = this->gdesktunes->findChild<QObject*>("Settings");
+        // QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
+        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, this->css));
         if (settings != 0)
         {
             qDebug() << "Update styles";
             QMetaObject::invokeMethod(settings, "updateStyles");
         }
 
-        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
-        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, this->css));
     }
 
     delete ui;
@@ -287,7 +304,7 @@ void GDeskStyler::test()
 #endif
         QString css_file = dir.absolutePath() + QDir::separator() + "__gdesktunes_test.scss";
         save(css_file);
-        QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
+        // QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
         QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, "__gdesktunes_test"));
         // QFile::remove(css_file);
         qDebug() << "Test css applied";
@@ -350,6 +367,11 @@ void GDeskStyler::on_actionSave_As_triggered()
 
 void GDeskStyler::save(QString filename)
 {
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    int this_count = settings.value("gdeskstyler.current", 0).toInt();
+    settings.setValue("gdeskstyler.current", this_count + 1);
+
     QFileInfo info(filename);
     qDebug() << filename << info.isWritable() << info.exists();
     if (info.isWritable() || !info.exists())
@@ -444,7 +466,7 @@ void GDeskStyler::closeEvent(QCloseEvent *evt)
         {
             if (this->gdesktunes != 0)
             {
-                QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
+                // QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, ""));
                 QMetaObject::invokeMethod(this->gdesktunes, "setCSS", Q_ARG(QString, this->css));
             }
             evt->accept();

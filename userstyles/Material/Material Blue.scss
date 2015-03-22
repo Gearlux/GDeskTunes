@@ -1,0 +1,20 @@
+/*CUSTOMCOLORS 
+It will only read lines [4 to 8], other lines will be ignored 
+------ Only #RRGGBB or #RGB colors are accepted -----
+#4285f4 	//TitleBarColor 
+#FFF 		//TitleBarTextColor
+#dedede 	//LoadingBarColor 
+#4285f4 		//LoadingBarBGColor
+#fff 		//SettingsTextColor= 
+------ Respecting the order, comments are ignored ------
+!CUSTOMCOLORS*/
+
+$Theme: #4285f4; /* color */
+$Theme_Button: #3262ba; /* color */
+$Background: #ececec; /* color */
+$Sidebar-Color: #fff; /* color */
+$Sidebar-Height: 40; /* int */
+$Card-Background: #333; /* color */
+$Card-Foreground: #dedede; /* color */
+
+@import "_Material.scss";

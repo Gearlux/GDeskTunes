@@ -150,6 +150,9 @@ void Settings::keyPressEvent(QKeyEvent *event)
 
 void Settings::updateStyles()
 {
+    ui->CSS->blockSignals(true);
+    ui->mini_CSS->blockSignals(true);
+
     ui->CSS->clear();;
     ui->mini_CSS->clear();
 
@@ -159,4 +162,6 @@ void Settings::updateStyles()
     QStringList mini_styles = getStyles(QString("mini"));
     ui->mini_CSS->addItems(mini_styles);
 
+    ui->CSS->blockSignals(false);
+    ui->mini_CSS->blockSignals(false);
 }

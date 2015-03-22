@@ -144,13 +144,19 @@ FORMS += \
 
 win32|linux: css.path = $$DESTDIR/userstyles
 mac: css.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
-css.files = ../userstyles/*
+css.files = ../userstyles/*.css
+css.files += ../userstyles/*.scss
 export(css)
 
 win32|linux: minicss.path = $$DESTDIR/userstyles/mini
 mac: minicss.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles/mini
 minicss.files = ../userstyles/mini/*
 export(minicss)
+
+win32|linux: material.path = $$DESTDIR/userstyles
+mac: material.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/userstyles
+material.files = ../userstyles/Material/*
+export(material)
 
 win32|linux: js.path = $$DESTDIR/js
 mac: js.path = $$DESTDIR/GDeskTunes.app/Contents/Resources/js
@@ -168,7 +174,7 @@ win32: {
     INSTALLS += gdeskhook
 }
 
-INSTALLS += css minicss js
+INSTALLS += css minicss material js
 
 # Liblastfm
 DEFINES += LASTFM_LIB_STATIC

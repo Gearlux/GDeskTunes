@@ -59,7 +59,10 @@ public slots:
 
     void repaint();
 
+    void reapplyStyleFile(QString full_css);
     void applyStyleFile(QString full_css);
+
+    void onLinkClicked(const QUrl &url);
 
 public:
     void setShowSidebar(bool show);

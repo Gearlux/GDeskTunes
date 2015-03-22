@@ -16,8 +16,11 @@ CONFIG += staticlib
 
 
 SOURCES +=\
-        gdeskstyler.cpp
+        gdeskstyler.cpp \
+    donatedialog.cpp
 
-HEADERS  += gdeskstyler.h
+HEADERS  += gdeskstyler.h \
+    donatedialog.h
 
-FORMS    += gdeskstyler.ui
+FORMS    += gdeskstyler.ui \
+    donatedialog.ui

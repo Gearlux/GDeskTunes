@@ -18,6 +18,8 @@ OTHER_FILES += \
     userstyles/*.css \
     userstyles/*.scss \
     userstyles/mini/*.css \
+    userstyles/Material/* \
+    userstyles/GDeskTunes/* \
     README.md \
     LICENSE \
     deploy/windows.bat \

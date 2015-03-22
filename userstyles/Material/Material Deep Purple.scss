@@ -1,0 +1,28 @@
+/*CUSTOMCOLORS 
+It will only read lines [4 to 8], other lines will be ignored 
+------ Only #RRGGBB or #RGB colors are accepted -----
+#ff5722 	//TitleBarColor 
+#FFF 		//TitleBarTextColor
+#dedede 	//LoadingBarColor 
+#ff5722 		//LoadingBarBGColor
+#fff 		//SettingsTextColor= 
+------ Respecting the order, comments are ignored ------
+!CUSTOMCOLORS*/
+
+/*
+Material colors: 
+
+#673ab7 Deep Purple
+#512da8 dark Deep Purple
+
+*/
+
+$Theme: #673ab7; /* color */
+$Theme_Button: #512da8; /* color */
+$Background: #ececec; /* color */
+$Sidebar-Color: #fff; /* color */
+$Sidebar-Height: 40; /* int */
+$Card-Background: #ececec; /* color */
+$Card-Foreground: #333; /* color */
+
+@import "_Material.scss";

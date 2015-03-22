@@ -15,18 +15,23 @@ if (typeof window.Styles === 'undefined') {
         appliedStyles: {},
         
         applyStyle: function(key, css) {
+            var style;
             if (Styles.appliedStyles[key]) {
-                Styles.appliedStyles[key].disabled = false;
+                style = Styles.appliedStyles[key];
+                // if (Styles.appliedStyles[key].parentNode) {
+                //    Styles.appliedStyles[key].parentNode.removeChild(Styles.appliedStyles[key]);
+                //    delete Styles.appliedStyles[key];
+                // }
             }
-            else {
-                var style = document.createElement('style');
+            else
+            {
+                style = document.createElement('style');
                 style.type = 'text/css';
-                style.innerHTML = css;
                 style.id = 'style-' + key;
-
                 document.getElementsByTagName('head')[0].appendChild(style);
                 Styles.appliedStyles[key] = style;
             }
+            style.innerHTML = css;
         },
         
         disableStyle: function(key) {

@@ -11,6 +11,7 @@
 #include <QWebElement>
 #include <QSettings>
 #include <QDebug>
+#include <QFileSystemWatcher>
 
 #ifdef Q_OS_WIN
 #if QT_VERSION >= QT_VERSION_CHECK(5, 3, 0)
@@ -40,7 +41,9 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     // Setup webview and windows interaction
     connect(ui->webView, SIGNAL(loadFinished(bool)), this, SLOT(finishedLoad(bool)));
 
-    connect(watcher, SIGNAL(fileChanged(QString)), this, SLOT(applyStyleFile(QString)));
+    connect(watcher, SIGNAL(fileChanged(QString)), this, SLOT(reapplyStyleFile(QString)));
+    connect(ui->webView, SIGNAL(linkClicked( const QUrl & )), this, SLOT(onLinkClicked( const QUrl & )) );
+
 }
 
 /*
@@ -50,10 +53,12 @@ GDeskTunes::GDeskTunes(QWidget* parent):
 void GDeskTunes::setCSS(QString css)
 {
     qDebug() << "GDeskTunes::setCSS(" << css << ")";
-    if (this->css == css) return;
-    disableStyle(this->css);
+    if (this->css != css)
+    {
+        disableStyle(this->css, QString::null);
+        emit CSS(css);
+    }
     this->css = css;
-    emit CSS(css);
     if (this->customize)
     {
         if (this->mini)
@@ -332,13 +337,25 @@ int output(int error_status, const char* error_message, const char* output_strin
     }
 }
 
+void GDeskTunes::reapplyStyleFile(QString full_css)
+{
+    bool mini = full_css.contains("mini");
+    if (!mini)
+    {
+        this->disableStyle(this->css, QString::null);
+        applyStyleFile(full_css);
+    }
+}
+
 /*
  * Applies the style with name css and in located in the subdir
  * of the application's directory.
  */
 void GDeskTunes::applyStyleFile(QString full_css)
 {
+    qDebug() << "GDeskTunes::applyStyleFile(" << full_css << ")";
     QFileInfo info(full_css);
+    bool mini = full_css.contains("mini");
     if (info.suffix() == "scss")
     {
         ui->actionStyleEditor->setEnabled(true);
@@ -374,7 +391,8 @@ void GDeskTunes::applyStyleFile(QString full_css)
         cssFile.open(QFile::ReadOnly);
         QTextStream stream(&cssFile);
         QString css_content = stream.readAll();
-        setStyle( (mini ? "mini" : "") + css, css_content);
+        qDebug() << (mini ? "mini" + mini_css : css);
+        setStyle( (mini ? "mini" + mini_css : css), css_content);
     }
     else
     {
@@ -384,9 +402,10 @@ void GDeskTunes::applyStyleFile(QString full_css)
         cssFile.open(QFile::ReadOnly);
         QTextStream stream(&cssFile);
         QString css_content = stream.readAll();
-        setStyle( (mini ? "mini" : "") + css, css_content);
-        qDebug() << (mini ? "mini" : "") + css;
+        setStyle( (mini ? "mini" + mini_css : css), css_content);
+        qDebug() << (mini ? "mini" + mini_css : css) + css;
     }
+
 
     GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
     QColor qColor = page->getBackgroundColor();
@@ -433,14 +452,14 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
     qDebug() << "GDeskTunes::applyStyle(" << css << "," << subdir << ")";
     QString full_css = getStyle(css, subdir);
 
-    if (!css.startsWith("_"))
+    // Remove all watched files
+    QStringList files = watcher->files();
+    for(int i=0; i<files.count(); ++i)
     {
-        // Remove all watched files
-        QStringList files = watcher->files();
-        for(int i=0; i<files.count(); ++i)
-        {
-            watcher->removePath(files.at(i));
-        }
+        watcher->removePath(files.at(i));
+    }
+    if (!css.startsWith("_") && !css.isEmpty())
+    {
         watcher->addPath(full_css);
     }
 
@@ -452,6 +471,7 @@ void GDeskTunes::applyStyle(QString css, QString subdir)
  */
 void GDeskTunes::disableStyle(QString css, QString subdir)
 {
+    qDebug() << "GDeskTunes::disableStyle(" << css << "," << subdir << ")";
     // ui->webView->page()->mainFrame()->evaluateJavaScript(QString("Styles.disableStyle(\"%2%1\")").arg(css, subdir));
     GoogleMusicApp *page = dynamic_cast<GoogleMusicApp*>(ui->webView->page());
     page->evaluateJavaScript(QString("Styles.removeStyle(\"%2%1\")").arg(css, subdir));
@@ -688,6 +708,7 @@ void GDeskTunes::checkFlashPlayer()
             setMini(false);
 
         ui->webView->load(QUrl("http://helpx.adobe.com/flash-player.html"));
+        ui->webView->page()->setLinkDelegationPolicy( QWebPage::DelegateAllLinks );
     }
     else
     {
@@ -722,5 +743,14 @@ void GDeskTunes::loadUrl()
 {
     ui->webView->load(QUrl("https://play.google.com/music/listen#"));
     // ui->webView->load(QUrl("http://www.last.fm/home"));
+}
+
+void GDeskTunes::onLinkClicked(const QUrl &url)
+{
+    qDebug() << "GDeskTunes::onLinkClicked(" << url << ")";
+    if (ui->actionCheck_Flash_Player->isChecked())
+    {
+        ui->webView->load(url);
+    }
 }
 

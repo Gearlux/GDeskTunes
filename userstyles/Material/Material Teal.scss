@@ -1,0 +1,29 @@
+/*CUSTOMCOLORS 
+It will only read lines [4 to 8], other lines will be ignored 
+------ Only #RRGGBB or #RGB colors are accepted -----
+#ff5722 	//TitleBarColor 
+#FFF 		//TitleBarTextColor
+#dedede 	//LoadingBarColor 
+#ff5722 		//LoadingBarBGColor
+#fff 		//SettingsTextColor= 
+------ Respecting the order, comments are ignored ------
+!CUSTOMCOLORS*/
+
+/*
+Material colors: 
+
+#009688 teal
+#00796b dark teal
+
+*/
+
+
+$Theme: #009688; /* color */
+$Theme_Button: #00796b; /* color */
+$Background: #ececec; /* color */
+$Sidebar-Color: #fff; /* color */
+$Sidebar-Height: 40; /* int */
+$Card-Background: #ececec; /* color */
+$Card-Foreground: #333; /* color */
+
+@import "_Material.scss";
