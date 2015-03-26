@@ -153,6 +153,9 @@ void Settings::updateStyles()
     ui->CSS->blockSignals(true);
     ui->mini_CSS->blockSignals(true);
 
+    QString css = ui->CSS->currentText();
+    QString minicss = ui->mini_CSS->currentText();
+
     ui->CSS->clear();;
     ui->mini_CSS->clear();
 
@@ -161,6 +164,9 @@ void Settings::updateStyles()
 
     QStringList mini_styles = getStyles(QString("mini"));
     ui->mini_CSS->addItems(mini_styles);
+
+    ui->CSS->setCurrentText(css);
+    ui->mini_CSS->setCurrentText(minicss);
 
     ui->CSS->blockSignals(false);
     ui->mini_CSS->blockSignals(false);

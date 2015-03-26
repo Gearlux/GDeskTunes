@@ -358,7 +358,7 @@ void GDeskTunes::applyStyleFile(QString full_css)
     bool mini = full_css.contains("mini");
     if (info.suffix() == "scss")
     {
-        ui->actionStyleEditor->setEnabled(true);
+        ui->actionStyleEditor->setVisible(true);
         QString outfile = info.absoluteDir().absolutePath() + QDir::separator() + "__temp.css";
         struct Sass_File_Context* ctx = sass_make_file_context(full_css.toUtf8().constData());
         struct Sass_Options* options = sass_make_options();
@@ -396,7 +396,7 @@ void GDeskTunes::applyStyleFile(QString full_css)
     }
     else
     {
-        ui->actionStyleEditor->setEnabled(false);
+        ui->actionStyleEditor->setVisible(false);
 
         QFile cssFile(full_css);
         cssFile.open(QFile::ReadOnly);
@@ -421,11 +421,11 @@ void GDeskTunes::applyStyleFile(QString full_css)
 
         if (gray < 128)
         {
-            qApp->setStyleSheet("QMenuBar::item { background-color: transparent; color: white; }");
+            this->setStyleSheet("QMenuBar::item { background-color: transparent; color: white; } QMenu::item { color: lightgray; } QMenu::item::selected { color: white; } QMenu::item::disabled { color: dimgray; } QMenu::item::disabled::selected { color: dimgray; }");
         }
         else
         {
-            qApp->setStyleSheet("QMenuBar::item { background-color: transparent; color: black; }");
+            this->setStyleSheet("QMenuBar::item { background-color: transparent; color: black; } QMenu::item { color: dimgray; } QMenu::item::selected { color: black; }  QMenu::item::disabled { color: lightgray; } QMenu::item::disabled::selected { color: lightgray; }");
         }
     }
 

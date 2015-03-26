@@ -465,6 +465,8 @@ int main(int argc, char *argv[])
         NetworkManager* manager = new NetworkManager();
         manager->setCookieJar(jar);
 
+        connectUI();
+
         a->setActivationWindow(w);
         connect(a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
 

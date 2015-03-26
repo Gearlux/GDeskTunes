@@ -95,6 +95,9 @@ void connectUI(QObject *ui, QObject *object)
         signal_index = mui->indexOfSignal("currentIndexChanged(QString)");
         if (signal_index != -1) { slot_method = "setCurrentText(QString)"; argument = "(QString)"; goto _connect;}
 
+        signal_index = mui->indexOfSignal("valueChanged(int)");
+        if (signal_index != -1) { slot_method = "setValue(int)"; argument = "(int)"; goto _connect; }
+
 _button:
         signal_index = mui->indexOfSignal("clicked()");
         if (signal_index != -1) { slot_method = QString::null; argument = "()"; goto _connect;}
