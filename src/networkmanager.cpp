@@ -1,4 +1,4 @@
-#define QT_NO_DEBUG_OUTPUT
+// #define QT_NO_DEBUG_OUTPUT
 
 #include "networkmanager.h"
 #include <QNetworkRequest>
@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QTimer>
 #include <QStandardPaths>
+#include <QSettings>
+#include <QApplication>
 
 ImageReply::ImageReply(const QUrl &url) :
     QNetworkReply(),
@@ -90,6 +92,7 @@ QByteArray ImageReply::readAll()
 NetworkManager::NetworkManager(QObject *parent) :
     QNetworkAccessManager(parent)
 {
+    setObjectName("NetworkManager");
     cache = new QNetworkDiskCache(this);
 
     qDebug() <<  QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
@@ -97,14 +100,20 @@ NetworkManager::NetworkManager(QObject *parent) :
     cache->setCacheDirectory(cache_loc);
     cache->clear();
 
-    cache->setMaximumCacheSize(10*1024*1024);
-
     this->setCache(cache);
 }
 
 NetworkManager::~NetworkManager()
 {
     cache->clear();
+}
+
+void NetworkManager::setCacheSize(int MB)
+{
+    qDebug() << "NetworkManager::setCacheSize(" << MB << ")";
+    cache->setMaximumCacheSize(MB * 1024 * 1024);
+
+    emit cacheSize(MB);
 }
 
 QNetworkReply *NetworkManager::createRequest(
@@ -122,6 +131,23 @@ QNetworkReply *NetworkManager::createRequest(
     else
         return QNetworkAccessManager::createRequest(operation, request, device);
 }
+
+void NetworkManager::save()
+{
+    qDebug() << "NetworkManager::save()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    settings.setValue("cache.size", this->cache->maximumCacheSize() / 1024 / 1024);
+}
+
+void NetworkManager::load()
+{
+    qDebug() << "NetworkManager::load()";
+    QSettings settings(QApplication::organizationName(), QApplication::applicationName());
+
+    this->setCacheSize(settings.value("cache.size", 0).toInt());
+}
+
 
 FileDownloader::FileDownloader(QUrl imageUrl, QObject *parent) :
     QObject(parent)

@@ -36,9 +36,13 @@ public:
     virtual ~NetworkManager();
 
 signals:
+    void cacheSize(int MB);
 
 public slots:
     QNetworkReply* createRequest(Operation op, const QNetworkRequest & req, QIODevice * outgoingData = 0);
+    void setCacheSize(int MB);
+    void load();
+    void save();
 
 private:
     QNetworkDiskCache *cache;

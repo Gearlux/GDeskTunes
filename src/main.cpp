@@ -378,6 +378,13 @@ int main(int argc, char *argv[])
         connectUI(settings, keys);
         QObject::connect(keys, SIGNAL(ignoreMediaKeys(bool)), w, SLOT(setIgnoreMediaKeys(bool)));
 #endif
+
+        NetworkManager* manager = new NetworkManager();
+        manager->setCookieJar(jar);
+
+        connectUI(settings, manager);
+
+
         // Notify changes of the google app to the application
         connectSlotsByName(app, w);
         connectSlotsByName(w, app);
@@ -403,6 +410,7 @@ int main(int argc, char *argv[])
         connectSlotsByName(app, miniplayer);
 
         // Save status on exit
+        connect(a, SIGNAL(aboutToQuit()), manager, SLOT(save()));
         connect(a, SIGNAL(aboutToQuit()), trayIcon, SLOT(hide()));
         connect(a, SIGNAL(aboutToQuit()), trayIcon, SLOT(save()));
         connect(a, SIGNAL(aboutToQuit()), w, SLOT(save()));
@@ -456,16 +464,12 @@ int main(int argc, char *argv[])
         last_fm->load();
         jar->load();
         trayIcon->load();
+        manager->load();
 
 #ifdef Q_OS_WIN
         keys->load();
 #endif
         miniplayer->load();
-
-        NetworkManager* manager = new NetworkManager();
-        manager->setCookieJar(jar);
-
-        connectUI();
 
         a->setActivationWindow(w);
         connect(a, SIGNAL(messageReceived(const QString&)), w, SLOT(receiveMessage(const QString&)));
