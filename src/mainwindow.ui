@@ -36,6 +36,9 @@
     <item>
      <widget class="QWidget" name="widget" native="true">
       <layout class="QVBoxLayout" name="widget_layout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -57,6 +60,9 @@
           </size>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -83,7 +89,49 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="search"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="previousSearch">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../gdesktunes.qrc">
+              <normaloff>:/icons/32x32/up.png</normaloff>:/icons/32x32/up.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="nextSearch">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../gdesktunes.qrc">
+              <normaloff>:/icons/32x32/down.png</normaloff>:/icons/32x32/down.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="closeSearch">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../gdesktunes.qrc">
+              <normaloff>:/icons/8x8/close_delete.png</normaloff>:/icons/8x8/close_delete.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -102,7 +150,7 @@
      <x>0</x>
      <y>0</y>
      <width>670</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGDeskTunes">
@@ -149,6 +197,7 @@
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="actionStyleEditor"/>
+    <addaction name="actionFind"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -425,6 +474,14 @@
   <action name="actionStyleEditor">
    <property name="text">
     <string>Style</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

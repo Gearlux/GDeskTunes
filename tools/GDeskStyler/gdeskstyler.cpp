@@ -282,7 +282,7 @@ void GDeskStyler::valueChanged(QtProperty *property, int value)
 
 void GDeskStyler::valueChanged(QtProperty *property, bool value)
 {
-    // value_changed(holders[property], property, value);
+    value_changed(holders[property], property, value);
     test();
 }
 

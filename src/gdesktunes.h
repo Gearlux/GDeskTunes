@@ -64,6 +64,9 @@ public slots:
 
     void onLinkClicked(const QUrl &url);
 
+    void on_actionFind_triggered();
+    void on_closeSearch_clicked();
+
 public:
     void setShowSidebar(bool show);
     void setMini(bool toMini);

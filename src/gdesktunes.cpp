@@ -44,6 +44,8 @@ GDeskTunes::GDeskTunes(QWidget* parent):
     connect(watcher, SIGNAL(fileChanged(QString)), this, SLOT(reapplyStyleFile(QString)));
     connect(ui->webView, SIGNAL(linkClicked( const QUrl & )), this, SLOT(onLinkClicked( const QUrl & )) );
 
+    connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(on_actionFind_triggered()));
+    connect(ui->closeSearch, SIGNAL(clicked()), this, SLOT(on_closeSearch_clicked()));
 }
 
 /*
@@ -223,7 +225,12 @@ void GDeskTunes::setCustomized(bool customize)
 
         ui->toolBar->setStyleSheet("");
         ui->menuBar->setStyleSheet("");
-        qApp->setStyleSheet("");
+        ui->searchbar->setStyleSheet("");
+        ui->search->setStyleSheet("");
+        ui->closeSearch->setStyleSheet("");
+        ui->nextSearch->setStyleSheet("");
+        ui->previousSearch->setStyleSheet("");
+        this->setStyleSheet("");
 
         emit backgroundColor(QColor(250,250,250));
     }
@@ -241,7 +248,12 @@ void GDeskTunes::updateStyle()
     if (!style_menu)
     {
         ui->menuBar->setStyleSheet("");
-        qApp->setStyleSheet("");
+        ui->searchbar->setStyleSheet("");
+        ui->search->setStyleSheet("");
+        ui->closeSearch->setStyleSheet("");
+        ui->nextSearch->setStyleSheet("");
+        ui->previousSearch->setStyleSheet("");
+        this->setStyleSheet("");
     }
 
     updateAppearance();
@@ -414,8 +426,16 @@ void GDeskTunes::applyStyleFile(QString full_css)
     qDebug() << "Toolbar background: " << color;
     ui->toolBar->setStyleSheet("border: 0px; background: " + color);
 
+    QPalette pal = ui->search->palette();
+
     if (style_menu)
     {
+        ui->searchbar->setStyleSheet("background: " + color);
+        ui->search->setStyleSheet("background: " + pal.base().color().name());
+        ui->closeSearch->setStyleSheet("QPushButton { border:0; background-color: lightgray; }");
+        ui->nextSearch->setStyleSheet("QPushButton { border:0; background-color: lightgray; }");
+        ui->previousSearch->setStyleSheet("QPushButton { border:0; background-color: lightgray; }");
+
         ui->menuBar->setStyleSheet("border: 0px; background: " + color );
         int gray = qGray(qColor.rgb());
 
@@ -427,6 +447,16 @@ void GDeskTunes::applyStyleFile(QString full_css)
         {
             this->setStyleSheet("QMenuBar::item { background-color: transparent; color: black; } QMenu::item { color: dimgray; } QMenu::item::selected { color: black; }  QMenu::item::disabled { color: lightgray; } QMenu::item::disabled::selected { color: lightgray; }");
         }
+    }
+    else
+    {
+        ui->searchbar->setStyleSheet("");
+        ui->search->setStyleSheet("");
+        ui->closeSearch->setStyleSheet("");
+        ui->nextSearch->setStyleSheet("");
+        ui->previousSearch->setStyleSheet("");
+        ui->menuBar->setStyleSheet("");
+        this->setStyleSheet("");
     }
 
     /*
@@ -753,4 +783,17 @@ void GDeskTunes::onLinkClicked(const QUrl &url)
         ui->webView->load(url);
     }
 }
+
+void GDeskTunes::on_actionFind_triggered()
+{
+    qDebug() << "GDeskTunes::on_actionFind_triggered()";
+    ui->searchbar->setVisible(true);
+}
+
+void GDeskTunes::on_closeSearch_clicked()
+{
+    qDebug() << "GDeskTunes::on_closeSearch_clicked()";
+    ui->searchbar->setVisible(false);
+}
+
 
